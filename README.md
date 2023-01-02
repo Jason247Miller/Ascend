@@ -20,7 +20,7 @@ A Web App that helps you set SMART goals, and track them to completion, along wi
 
 6. Insert a Journal entry to track any challenges or downfalls. The user can review these later and write how they were able to overcome these challenges. 
 7. Use logic to make a difficult decision. 
-  * User will be asked to enter each thing they are having difficulty deciding between. ex.) a list of universities to attend
+  * User will be asked to enter each thing they are having difficulty deciding between. 
   * User will be asked to list the pros and cons of each.
   * User will be asked to rank from 1 to 10 how much they value each pro for each option. 
   * A value will be computed to determine the best option based on what the user values most. 
