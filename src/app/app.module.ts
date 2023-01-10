@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
-import { AppRoutingModule } from './app-routing.module';
+import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
@@ -18,9 +17,18 @@ import { KnowledgeBaseComponent } from './knowledge-base/knowledge-base.componen
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    RouterModule.forRoot([
+     //moved all the routes here and deleted the unneeded modules 
+      {path: 'kb', component:KnowledgeBaseComponent},
+      {path: 'login', component:LoginComponent},
+      {path: 'sign-up', component:SignUpComponent},
+      {path: 'Home', component:HomeComponent},
+      {path: '', redirectTo: 'Home', pathMatch: 'full'},
+      {path: '**', redirectTo: 'Home', pathMatch: 'full'},
+
+    ])
   ],
-  providers: [],
+  
   bootstrap: [AppComponent]
 })
 export class AppModule { }
