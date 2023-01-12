@@ -1,1 +1,66 @@
-<p>sign-up works!</p>
+<div class="container">
+    <h2>Sign-Up!</h2>
+    <form [formGroup] = "signUpForm" (ngSubmit)="submitUser()" >
+       <div class="row">
+          <!--Optional: add min/max length attributes-->
+          <div class="col-md-6">
+             <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input id="firstName"
+                       formControlName="firstName"
+                       required
+                       class="form-control"
+                       [class.field-error] = "firstName && firstName.invalid && firstName.touched"
+                       placeholder="First Name"
+                       formControlName="firstName"/> 
+               <div class ="alert alert-danger" *ngIf="firstName && firstName.invalid && firstName.touched">first name is required</div>
+             </div>
+             <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input id="lastName"
+                       formControlName="lastName"
+                       required                     
+                       class="form-control"
+                       [class.field-error] = "lastName && lastName.invalid && lastName.touched"
+                       placeholder="Last Name"               
+                   /> 
+                   <div class ="alert alert-danger" *ngIf="lastName && lastName.invalid && lastName.touched">last name is required</div>
+             </div>
+          </div>
+          <div class="col-md-6">
+             <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email"
+                       id="email"
+                       required 
+                       formControlName="email"
+                       class="form-control"
+                       [class.field-error] = "email && email.invalid && email.touched"
+                       placeholder="example@domain.com"  
+                       email/> 
+                       <div class ="alert alert-danger" *ngIf="email && email.invalid && email.touched">email is required</div>
+                <label for="password">Password</label>
+                <input type="password"
+                       id="password" 
+                       required 
+                       formControlName="password"
+                       class="form-control"
+                       [class.field-error] = "password && password.invalid && password.touched"
+                       placeholder="password"   />
+                     <div class ="alert alert-danger" *ngIf="password && password.invalid && password.touched">password is required</div>
+             </div>
+             <label for="confirmPassword">Re-Enter Password</label>
+             <input type="password"
+                    id="confirmPassword"
+                    required 
+                    formControlName="confirmPassword"
+                    class="form-control"
+                    [class.field-error] = "confirmPassword && confirmPassword.invalid && confirmPassword.touched && passwordMatch"
+                    placeholder="Confirm Password" 
+                />  
+                <div class ="alert alert-danger" *ngIf="confirmPassword && confirmPassword.invalid && confirmPassword.touched">Confirm Password Invalid</div>
+          </div>
+       </div>
+       <button class="btn btn-primary" [disabled]="signUpForm.invalid" type="submit">Create Account</button>
+    </form>
+ </div>
