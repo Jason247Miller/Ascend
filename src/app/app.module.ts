@@ -6,7 +6,7 @@ import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { KnowledgeBaseComponent } from './knowledge-base/knowledge-base.component';
-
+import {ReactiveFormsModule} from '@angular/forms'
 @NgModule({
   declarations: [
     AppComponent,
@@ -17,6 +17,7 @@ import { KnowledgeBaseComponent } from './knowledge-base/knowledge-base.componen
   ],
   imports: [
     BrowserModule,
+    ReactiveFormsModule,
     RouterModule.forRoot([
      //moved all the routes here and deleted the unneeded modules 
       {path: 'kb', component:KnowledgeBaseComponent},
