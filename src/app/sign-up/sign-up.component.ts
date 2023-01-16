@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
+import { MustMatch } from '../helpers/mustmatch';
 /*
 The password regular expression enforces the following rules for the password:
 Must contain at least one uppercase letter
@@ -29,6 +30,8 @@ ngOnInit(): void {
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.pattern('^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9])(?=.*[a-z]).{8,}$')]],
     confirmPassword: ['', [Validators.required, Validators.pattern('^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9])(?=.*[a-z]).{8,}$')]]
+  }, {
+    validator:MustMatch('password', 'confirmPassword')
   });
 }
 submitUser(){
@@ -40,13 +43,7 @@ get lastName(){ return this.signUpForm.get('lastName');}
 get email(){ return this.signUpForm.get('email');}
 get password(){ return this.signUpForm.get('password');}
 get confirmPassword(){ return this.signUpForm.get('confirmPassword');}
-
-  passwordMatch(): boolean{ 
-  if(this.password === this.confirmPassword){
-     return true;
-  }
-  else{return false}
- }
+  
 
 }
 

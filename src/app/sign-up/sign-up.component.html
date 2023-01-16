@@ -55,10 +55,21 @@
                     required 
                     formControlName="confirmPassword"
                     class="form-control"
-                    [class.field-error] = "confirmPassword && confirmPassword.invalid && confirmPassword.touched && passwordMatch"
+                    [class.field-error] = "confirmPassword && confirmPassword.invalid && confirmPassword.touched"
                     placeholder="Confirm Password" 
                 />  
-                <div class ="alert alert-danger" *ngIf="confirmPassword && confirmPassword.invalid && confirmPassword.touched">Confirm Password Invalid</div>
+                <div class ="alert alert-danger" *ngIf="confirmPassword &&
+                  confirmPassword.invalid &&
+                  confirmPassword.touched &&
+                  confirmPassword.errors?.['mustMatch'] ">
+                  Confirm Password Must Match Password
+               </div>
+               <div class ="alert alert-danger" *ngIf="confirmPassword &&
+                  confirmPassword.invalid &&
+                  confirmPassword.touched &&
+                  !confirmPassword.errors?.['mustMatch'] ">
+               Confirm Password is Invalid
+             </div>
           </div>
        </div>
        <button class="btn btn-primary" [disabled]="signUpForm.invalid" type="submit">Create Account</button>

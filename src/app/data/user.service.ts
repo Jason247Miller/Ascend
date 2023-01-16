@@ -13,7 +13,7 @@ export class UserService {
   getUsers(): Observable<User[]>{
     return this.http.get<User[]>(this.usersUrl)
       .pipe(
-        
+       
         catchError(this.handleError<User[]>('getUsers', []))
       );
   }
@@ -21,3 +21,5 @@ export class UserService {
     throw new Error('There was an error');
   }
 }
+
+
