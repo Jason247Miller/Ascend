@@ -46,7 +46,7 @@
                        formControlName="password"
                        class="form-control"
                        [class.field-error] = "password && password.invalid && password.touched"
-                       placeholder="password"   />
+                       placeholder="password"/>
                      <div class ="alert alert-danger" *ngIf="password && password.invalid && password.touched">password is required</div>
              </div>
              <label for="confirmPassword">Re-Enter Password</label>

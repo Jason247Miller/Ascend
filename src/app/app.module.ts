@@ -6,10 +6,12 @@ import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { KnowledgeBaseComponent } from './knowledge-base/knowledge-base.component';
-import {ReactiveFormsModule} from '@angular/forms'
+import { ReactiveFormsModule} from '@angular/forms'
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
-import { InMemoryDataService } from './data/in-memory-data.service';
+import { InMemoryDataService } from './services/in-memory-data.service';
+import { AccountService } from './services/account.service';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -22,6 +24,7 @@ import { InMemoryDataService } from './data/in-memory-data.service';
     BrowserModule,
     ReactiveFormsModule,
     HttpClientModule,
+   
      // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
     // and returns simulated server responses.
     // Remove it when a real server is ready to receive requests.
@@ -39,7 +42,7 @@ import { InMemoryDataService } from './data/in-memory-data.service';
 
     ])
   ],
-  
+  providers:[ AccountService ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

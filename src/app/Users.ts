@@ -6,6 +6,7 @@ export class User {
       public lastName = '',
       public email = '',
       public password = '',
+      public jwtToken?: string
       ) { }
   }
   
