@@ -4,8 +4,10 @@
   <ul>
     <li><a [routerLink]="['/home']" style="color:red;">Ascend</a></li>
     <li><a [routerLink]="['/home']">Home</a></li>
+    <div *ngIf="!loggedInUser">
     <li><a [routerLink]="['/login']">Login</a></li>
     <li><a [routerLink]="['/sign-up']">Sign-Up</a></li>
+   </div>
     <li><a [routerLink]="['/kb']">Knowledge-Base</a></li>
   </ul>
 </div>

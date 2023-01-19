@@ -28,6 +28,7 @@ export class InMemoryDataService implements InMemoryDbService {
     ]
   }
   }
+   db = this.createDb();
   // HTTP POST interceptor
   post(reqInfo: any) {
     //
@@ -57,17 +58,15 @@ logout(reqInfo: RequestInfo) {
   // mocking authentication happens here
     // HTTP POST interceptor handler
     private authenticate(reqInfo: any) {
-      const db = this.createDb();
+      
       const requestBody = reqInfo["req"]["body"]; 
       // return an Observable response
       return reqInfo.utils.createResponse$(() => {
           console.log('HTTP POST api/authentication override')
           const { headers, url } = reqInfo.utils.getJsonBody(reqInfo.req);
           const email = requestBody['email'];
-          console.log('email=' + email)
           const password = requestBody["password"]; 
-          const user = db.users.find(u => u.email === email && u.password === password);
-          console.log('after db.users search')
+          const user = this.db.users.find(u => u.email === email && u.password === password);
           if (user)
               return { 
                 status: 200, 
@@ -86,8 +85,11 @@ logout(reqInfo: RequestInfo) {
             status: 401, 
             headers, 
             url, 
-            body: {error: 'Invalid Email or Password' } 
-          }
+            body: {error: 'Error 401 Invalid Email or Password' } 
+          } 
+
+
+          
       })
   }
   
@@ -95,7 +97,11 @@ logout(reqInfo: RequestInfo) {
    genId(users: User[]): number {
      return users.length > 0 ? Math.max(...users.map(user => user.id)) + 1 : 1;
    }
-
+   
+   basicDetails(user:User) {
+    const { id, email, firstName, lastName } = user;
+    return { id, email, firstName, lastName };
+}
 }
   
     
