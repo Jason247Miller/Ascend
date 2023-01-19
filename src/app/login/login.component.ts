@@ -28,14 +28,18 @@ export class LoginComponent implements OnInit {
   get email(){ return this.loginForm.get('email'); }
 
   submit(){
-    
+    //return if form is not valid
     if(this.loginForm.invalid){return;}
    
     this.accountService.login(this.email?.value, this.password?.value)  
    .subscribe({
       next: user => {
         //on success just navigate to the home page
-        this.router.navigateByUrl('/dashboard');
+        if(this.accountService.redirectUrl){
+          this.router.navigateByUrl(this.accountService.redirectUrl);
+        }
+        else{this.router.navigateByUrl('/dashboard');}
+        
         this.accountService.getCurrentUserSubject().next(user)
         console.log("Successfully logged in user:" + user.firstName)
       },

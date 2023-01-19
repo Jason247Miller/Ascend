@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, take, tap } from 'rxjs';
+import { BehaviorSubject, forkJoin, Observable, Subject, take, tap } from 'rxjs';
 import { AccountService } from './services/account.service';
 import { User } from './Users';
 
@@ -10,18 +10,20 @@ import { User } from './Users';
 })
 export class AppComponent implements OnInit {
    currentUser$!:BehaviorSubject<User | string>; 
+   localStorageUser$!: BehaviorSubject<any>;
    title = 'Ascend';
-   item: any
   constructor(private accountService: AccountService){}
 
   ngOnInit(): void {
-    //obtain changes in currentUser$ Behavior Subject to update component view
-    this.currentUser$ = this.accountService.getCurrentUserSubject();
-    
+  
+    this.localStorageUser$ = this.accountService.getlocalStorageUserSubject();
+    //emit the user in local storage if there is one, otherwise default value
+    if(localStorage.getItem('currentUser')){
+      this.localStorageUser$.next(localStorage.getItem('currentUser'))
+    }
+    console.log("local storeage user = ", localStorage.getItem('currentUser'))
   }
 
   logOut():void{this.accountService.logOut();}
-  
 
-  
 }

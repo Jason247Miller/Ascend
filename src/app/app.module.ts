@@ -12,6 +12,7 @@ import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { InMemoryDataService } from './services/in-memory-data.service';
 import { AccountService } from './services/account.service';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { AuthGuard } from './guards/auth.guard';
 
 @NgModule({
   declarations: [
@@ -34,12 +35,11 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     InMemoryDataService, { dataEncapsulation: false }
 ), 
     RouterModule.forRoot([
-     //moved all the routes here and deleted the unneeded modules 
       {path: 'kb', component:KnowledgeBaseComponent},
       {path: 'login', component:LoginComponent},
       {path: 'sign-up', component:SignUpComponent},
       {path: 'Home', component:HomeComponent},
-      {path: 'dashboard', component:DashboardComponent},
+      {path: 'dashboard', canActivate:[AuthGuard], component:DashboardComponent},
       {path: '', redirectTo: 'Home', pathMatch: 'full'},
       {path: '**', redirectTo: 'Home', pathMatch: 'full'},
 

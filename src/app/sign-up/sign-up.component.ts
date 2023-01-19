@@ -55,6 +55,7 @@ submit(){
     this.router.navigate(['./login']);
   },
   error: error => {
+    //will be adding alert service 
    console.log("Error: ", error);
   }
  })

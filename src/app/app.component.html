@@ -5,12 +5,12 @@
     <li><a [routerLink]="['/home']" style="color:red;">Ascend</a></li>
     <li><a [routerLink]="['/home']">Home</a></li>
     
-    <div *ngIf="currentUser$ | async as currentUser">
-      <div *ngIf="currentUser === 'default' ">
+    <div *ngIf="localStorageUser$ | async as localStorageUser">
+      <div *ngIf="localStorageUser === 'default'">
           <li><a [routerLink]="['/login']">Login</a></li>
           <li><a [routerLink]="['/sign-up']">Sign-Up</a></li>
         </div>
-      <div *ngIf="currentUser !== 'default'">
+      <div *ngIf="localStorageUser !== 'default'">
           <li><a (click)= logOut()>Logout</a></li>
       </div>
    </div>
