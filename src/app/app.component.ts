@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BehaviorSubject, take, tap } from 'rxjs';
 import { AccountService } from './services/account.service';
 import { User } from './Users';
 
@@ -8,18 +9,19 @@ import { User } from './Users';
   styleUrls: ['./app.component.less']
 })
 export class AppComponent implements OnInit {
-   loggedInUser:any; 
+   currentUser$!:BehaviorSubject<User | string>; 
+   title = 'Ascend';
+   item: any
   constructor(private accountService: AccountService){}
+
   ngOnInit(): void {
-    this.accountService.currentUserSubject.subscribe(
-      user => {
-        if(user === null){ this.loggedInUser = null; }
-        else{ this.loggedInUser = user}
-        console.log("user=", JSON.stringify(this.loggedInUser))
-      }
-    )
+    //obtain changes in currentUser$ Behavior Subject to update component view
+    this.currentUser$ = this.accountService.getCurrentUserSubject();
+    
   }
+
+  logOut():void{this.accountService.logOut();}
   
-  title = 'Ascend';
+
   
 }

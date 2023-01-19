@@ -1,7 +1,8 @@
+import { HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { InMemoryDbService } from 'angular-in-memory-web-api';
 import { RequestInfo } from 'angular-in-memory-web-api';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, delay, of } from 'rxjs';
 import { User } from '../Users';
 
 @Injectable({
@@ -29,6 +30,7 @@ export class InMemoryDataService implements InMemoryDbService {
   }
   }
    db = this.createDb();
+
   // HTTP POST interceptor
   post(reqInfo: any) {
     //
@@ -39,11 +41,32 @@ export class InMemoryDataService implements InMemoryDbService {
     else if (reqInfo.collectionName === 'logout') {
       return this.logout(reqInfo);
   }
+  else if(reqInfo.collectionName === 'register'){
+    return this.register(reqInfo)
+  }
     //  otherwise default response of In-memory DB
     return undefined
 }
 
-logout(reqInfo: RequestInfo) {
+register(reqInfo:any){
+
+  const requestBody = reqInfo['req']['body']; 
+  const id:number = this.genId(this.db.users);//generate an id that does not exist
+  requestBody['id'] = id;
+
+  //return error if email is already in db 
+  if (this.db.users.find(x => x.email === requestBody['email'])) {
+    return Error('Email "' + requestBody['email'] + '" is already registered with us')
+    }
+    else{
+      this.db.users.push(requestBody); 
+    }
+
+  return of(new HttpResponse({status: 200}))
+  .pipe(delay(500)); //mimic server delay
+}
+//not currently used
+logout(reqInfo: any) {
   return reqInfo.utils.createResponse$(() => {
       console.log('HTTP POST api/logout override');
       const { headers, url } = reqInfo;
@@ -55,10 +78,9 @@ logout(reqInfo: RequestInfo) {
       };
   });
 }
+
   // mocking authentication happens here
-    // HTTP POST interceptor handler
     private authenticate(reqInfo: any) {
-      
       const requestBody = reqInfo["req"]["body"]; 
       // return an Observable response
       return reqInfo.utils.createResponse$(() => {
@@ -92,16 +114,11 @@ logout(reqInfo: RequestInfo) {
           
       })
   }
-  
   //Ensure there is never a duplicate id when adding users 
    genId(users: User[]): number {
      return users.length > 0 ? Math.max(...users.map(user => user.id)) + 1 : 1;
    }
    
-   basicDetails(user:User) {
-    const { id, email, firstName, lastName } = user;
-    return { id, email, firstName, lastName };
-}
 }
   
     

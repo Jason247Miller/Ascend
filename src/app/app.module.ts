@@ -11,6 +11,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { InMemoryDataService } from './services/in-memory-data.service';
 import { AccountService } from './services/account.service';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { AccountService } from './services/account.service';
     LoginComponent,
     HomeComponent,
     SignUpComponent,
-    KnowledgeBaseComponent
+    KnowledgeBaseComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -37,6 +39,7 @@ import { AccountService } from './services/account.service';
       {path: 'login', component:LoginComponent},
       {path: 'sign-up', component:SignUpComponent},
       {path: 'Home', component:HomeComponent},
+      {path: 'dashboard', component:DashboardComponent},
       {path: '', redirectTo: 'Home', pathMatch: 'full'},
       {path: '**', redirectTo: 'Home', pathMatch: 'full'},
 

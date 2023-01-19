@@ -1,15 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
+import { Router } from '@angular/router';
+import { first } from 'rxjs';
 import { MustMatch } from '../helpers/mustmatch';
-/*
-The password regular expression enforces the following rules for the password:
-Must contain at least one uppercase letter
-Must contain at least one special character (!@#$%^&*)
-Must contain at least one digit
-Must contain at least one lowercase letter
-Must be at least 8 characters long
-*/
+import { AccountService } from '../services/account.service';
+import { User } from '../Users';
+
 
 @Component({
   selector: 'app-sign-up',
@@ -18,12 +15,15 @@ Must be at least 8 characters long
 })
 export class SignUpComponent implements OnInit {
 
-  constructor(private fb: FormBuilder){}
+  constructor(private fb: FormBuilder,
+              private accountService: AccountService,
+              private router: Router){}
 
   signUpForm!: FormGroup;
+  dataToSend!:User; 
  
 ngOnInit(): void {
-  
+    
     this.signUpForm = this.fb.group({
     firstName: ['', Validators.required],
     lastName: ['', Validators.required],
@@ -34,10 +34,33 @@ ngOnInit(): void {
     validator:MustMatch('password', 'confirmPassword')
   });
 }
-submitUser(){
- console.warn(this.signUpForm.value);
+submit(){
+  console.log("submit() called");
+
+  //use form data to make code cleaner
+  //exclude the un-needed confirmPassword field on submit
+  const formData = this.signUpForm.getRawValue();
+   this.dataToSend = {id:0, //default
+                      firstName: formData.firstName,
+                      lastName: formData.lastName,
+                      email: formData.email, 
+                      password: formData.password
+                     };
+
+ this.accountService.signUp(this.dataToSend)
+ .pipe(first()) //emit 1 item and then close the observable
+ .subscribe({
+  next: ()=> {
+    console.log("Sign-up was Successful!");
+    this.router.navigate(['./login']);
+  },
+  error: error => {
+   console.log("Error: ", error);
+  }
+ })
 }
 
+//form access getters
 get firstName(){ return this.signUpForm.get('firstName');}
 get lastName(){ return this.signUpForm.get('lastName');}
 get email(){ return this.signUpForm.get('email');}

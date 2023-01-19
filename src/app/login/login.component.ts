@@ -17,31 +17,30 @@ export class LoginComponent implements OnInit {
              private router: Router){}
  loginForm!: FormGroup;
  errorMessage?:string;
- @Output() loginEvent = new EventEmitter<boolean>;  
   ngOnInit(): void {
     this.loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required]
    })
   }
-
+  //getters for form access 
   get password(){return this.loginForm.get('password'); }
   get email(){ return this.loginForm.get('email'); }
 
   submit(){
-    //return if form is not valid
+    
     if(this.loginForm.invalid){return;}
    
     this.accountService.login(this.email?.value, this.password?.value)  
    .subscribe({
       next: user => {
         //on success just navigate to the home page
-        //this.router.navigateByUrl(returnUrl);
-        this.accountService.currentUserSubject.next(user)
+        this.router.navigateByUrl('/dashboard');
+        this.accountService.getCurrentUserSubject().next(user)
         console.log("Successfully logged in user:" + user.firstName)
       },
       error: error =>{
-        //add error message to alert service
+        //will be adding an alert service later
         this.errorMessage = error; 
         console.error(`error logging in user:   ${error} `);
       }

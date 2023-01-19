@@ -1,35 +1,46 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, map, take } from 'rxjs';
+import { BehaviorSubject, first,tap } from 'rxjs';
 import { User } from '../Users';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
-  //allow current user to default to null before log on 
-  public currentUserSubject = new BehaviorSubject<User | null>(null); 
+  //Behavior Subject to emitt any changes of current user data to all subscribers 
+  // the local storeage will be used to manage the login session, not the BehaviorSubject
+  private currentUserSubject = new BehaviorSubject<User | string>("default"); 
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
+
+  getCurrentUserSubject(): BehaviorSubject<User | string> {
+    return this.currentUserSubject; 
+  }
 
   login(email: string, password: string){
     return this.http.post<User>('api/authenticate', {email, password}).pipe(
-      map(user =>{
-       //set currentUser in local storeage to maintain session after page refresh
+      first(), //emitt 1 item and close the Observable 
+      tap(user =>{
        localStorage.setItem('currentUser', JSON.stringify(user));
-
        return user; 
-      }),
-      take(1) //limit to 1 item, then close the data stream 
+      })
     ); 
   }
-  logOut(){
-    this.currentUserSubject.next(null);
+
+  logOut():void{
+    localStorage.removeItem('currentUser');
+    this.currentUserSubject.next("default");
+    this.router.navigate(['/login']);
+  }
+
+  signUp(userData:User){
+  return this.http.post<User>('api/register', userData ) 
   }
   
   
 }
+
 
 
 
