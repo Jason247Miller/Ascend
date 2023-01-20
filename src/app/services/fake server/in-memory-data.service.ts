@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { InMemoryDbService } from 'angular-in-memory-web-api';
 import { RequestInfo } from 'angular-in-memory-web-api';
 import { BehaviorSubject, delay, of } from 'rxjs';
-import { User } from '../Users';
+import { User } from 'src/app/models/Users';
 
 @Injectable({
   providedIn: 'root',

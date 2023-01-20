@@ -3,7 +3,7 @@ import { FormGroup, Validators } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { catchError } from 'rxjs';
-import { AccountService } from '../services/account.service';
+import { AccountService } from 'src/app/services/account/account.service';
 
 @Component({
   selector: 'app-login',

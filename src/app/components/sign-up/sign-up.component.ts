@@ -3,9 +3,9 @@ import { FormGroup, Validators } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { first } from 'rxjs';
-import { MustMatch } from '../helpers/mustmatch';
-import { AccountService } from '../services/account.service';
-import { User } from '../Users';
+import { MustMatch } from '../../helpers/mustmatch';
+import { AccountService } from 'src/app/services/account/account.service';
+import { User } from '../../models/Users';
 
 
 @Component({

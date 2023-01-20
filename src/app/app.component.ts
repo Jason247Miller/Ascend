@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, forkJoin, Observable, Subject, take, tap } from 'rxjs';
-import { AccountService } from './services/account.service';
-import { User } from './Users';
+import { AccountService } from './services/account/account.service';
+import { User } from './models/Users';
 
 @Component({
   selector: 'app-root',
