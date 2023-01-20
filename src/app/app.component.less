@@ -1,10 +1,13 @@
 #flex-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  min-height: 900px;
+  text-align: center;
 }
+
 #nav-bar ul {
   list-style: none;
+  position: relative;
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -25,9 +28,12 @@
         }
      }
 }
-#footer-container footer {
+#footer-container {
   text-align: center;
   padding: 3px;
   background-color: #333;
   color: white;  
+  position: absolute;
+  width: 100%;
+  bottom: 0px;
 }

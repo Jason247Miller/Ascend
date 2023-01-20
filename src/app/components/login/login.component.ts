@@ -2,8 +2,10 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
-import { catchError } from 'rxjs';
+import { catchError, first } from 'rxjs';
+import { Alert } from 'src/app/models/alert';
 import { AccountService } from 'src/app/services/account/account.service';
+import { AlertService } from 'src/app/services/alert/alert.service';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +16,8 @@ export class LoginComponent implements OnInit {
 
  constructor(private fb : FormBuilder,
              private accountService: AccountService,
-             private router: Router){}
+             private router: Router,
+             private alertService: AlertService){}
  loginForm!: FormGroup;
  errorMessage?:string;
   ngOnInit(): void {
@@ -32,7 +35,7 @@ export class LoginComponent implements OnInit {
     if(this.loginForm.invalid){return;}
    
     this.accountService.login(this.email?.value, this.password?.value)  
-   .subscribe({
+   .pipe(first()).subscribe({
       next: user => {
         //on success just navigate to the home page
         if(this.accountService.redirectUrl){
@@ -41,12 +44,14 @@ export class LoginComponent implements OnInit {
         else{this.router.navigateByUrl('/dashboard');}
         
         this.accountService.getCurrentUserSubject().next(user)
-        console.log("Successfully logged in user:" + user.firstName)
+        this.alertService.success("Successfully logged in user:" + user.firstName);
+        console.log("Successfully logged in user:" + user.firstName);
       },
       error: error =>{
         //will be adding an alert service later
-        this.errorMessage = error; 
-        console.error(`error logging in user:   ${error} `);
+        this.errorMessage = error.body.error; 
+        this.alertService.error(JSON.stringify(this.errorMessage), {autoClose:false} )
+     
       }
     }
     )

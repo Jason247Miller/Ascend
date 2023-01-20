@@ -8,7 +8,7 @@ import { AlertService } from 'src/app/services/alert/alert.service';
 @Component({ selector: 'alert', templateUrl: 'alert.component.html' })
 export class AlertComponent implements OnInit, OnDestroy {
     @Input() id = 'default-alert';
-    @Input() fade = true;
+    @Input() fade = false;
 
     alerts: Alert[] = [];
     alertSubscription: Subscription;
@@ -86,6 +86,7 @@ export class AlertComponent implements OnInit, OnDestroy {
         classes.push(alertTypeClass[alert.type]);
 
         if (alert.fade) {
+            console.log("called alert.fade()")
             classes.push('fade');
         }
 

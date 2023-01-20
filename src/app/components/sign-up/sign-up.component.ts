@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
-import { first } from 'rxjs';
+import { catchError, first } from 'rxjs';
 import { MustMatch } from '../../helpers/mustmatch';
 import { AccountService } from 'src/app/services/account/account.service';
 import { User } from '../../models/Users';
+import { AlertService } from 'src/app/services/alert/alert.service';
 
 
 @Component({
@@ -17,10 +18,12 @@ export class SignUpComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
               private accountService: AccountService,
-              private router: Router){}
+              private router: Router,
+              private alertService: AlertService){}
 
   signUpForm!: FormGroup;
   dataToSend!:User; 
+  errorMessage:string; 
  
 ngOnInit(): void {
     
@@ -48,7 +51,12 @@ submit(){
                      };
 
  this.accountService.signUp(this.dataToSend)
- .pipe(first()) //emit 1 item and then close the observable
+ .pipe(
+  first(),
+  catchError( error => {
+    console.error(error)
+    throw "Email already exists!"})
+ )
  .subscribe({
   next: ()=> {
     console.log("Sign-up was Successful!");
@@ -56,7 +64,10 @@ submit(){
   },
   error: error => {
     //will be adding alert service 
-   console.log("Error: ", error);
+    this.errorMessage = error
+    this.errorMessage = '<h3>' + this.errorMessage + '</h3>'
+    this.alertService.error(this.errorMessage, {autoClose:false})
+    console.log("Error: ", this.errorMessage);
   }
  })
 }

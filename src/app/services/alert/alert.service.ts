@@ -21,6 +21,8 @@ export class AlertService {
     }
 
     error(message: string, options?: any) {
+        
+        console.log("error options:" + JSON.stringify(options))
         this.alert(new Alert({ ...options, type: AlertType.Error, message }));
     }
 

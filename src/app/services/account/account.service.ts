@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, first,Subject,tap } from 'rxjs';
+import { BehaviorSubject, catchError, first,of,Subject,tap, throwError } from 'rxjs';
 import { User } from 'src/app/models/Users';
 import { Router } from '@angular/router';
 
@@ -41,7 +41,11 @@ import { Router } from '@angular/router';
   }
 
   signUp(userData:User){
-  return this.http.post<User>('api/register', userData ) 
+  return this.http.post<User>('api/register', userData ).pipe(
+    catchError(throwError)
+  )
+  
+  
   }
 
   isLoggedIn():boolean{

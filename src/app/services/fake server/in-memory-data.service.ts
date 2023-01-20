@@ -2,7 +2,7 @@ import { HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { InMemoryDbService } from 'angular-in-memory-web-api';
 import { RequestInfo } from 'angular-in-memory-web-api';
-import { BehaviorSubject, delay, of } from 'rxjs';
+import { BehaviorSubject, delay, of, throwError } from 'rxjs';
 import { User } from 'src/app/models/Users';
 
 @Injectable({
@@ -53,10 +53,17 @@ register(reqInfo:any){
   const requestBody = reqInfo['req']['body']; 
   const id:number = this.genId(this.db.users);//generate an id that does not exist
   requestBody['id'] = id;
-
+  const { headers, url } = reqInfo.utils.getJsonBody(reqInfo.req);
   //return error if email is already in db 
   if (this.db.users.find(x => x.email === requestBody['email'])) {
-    return Error('Email "' + requestBody['email'] + '" is already registered with us')
+    console.log("made it to error condition")
+   // + requestBody['email'] + '
+   return { 
+    status: 401, 
+    headers, 
+    url, 
+    body: {error: 'Error 401 Invalid Email or Password' } 
+  } 
     }
     else{
       this.db.users.push(requestBody); 
