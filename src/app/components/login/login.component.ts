@@ -44,11 +44,11 @@ export class LoginComponent implements OnInit {
         else{this.router.navigateByUrl('/dashboard');}
         
         this.accountService.getCurrentUserSubject().next(user)
-        this.alertService.success("Successfully logged in user:" + user.firstName);
+        //this.alertService.success("Successfully logged in user:" + user.firstName);
         console.log("Successfully logged in user:" + user.firstName);
       },
       error: error =>{
-        //will be adding an alert service later
+        
         this.errorMessage = error.body.error; 
         this.alertService.error(JSON.stringify(this.errorMessage), {autoClose:false} )
      

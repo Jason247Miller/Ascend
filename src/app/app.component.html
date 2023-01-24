@@ -1,6 +1,6 @@
 
-
-    <div id="nav-bar">
+<div class="app-root-container">
+    <div class="nav-bar">
       <ul>
         <li><a [routerLink]="['/home']" style="color:red;">Ascend</a></li>
         <li><a [routerLink]="['/home']">Home</a></li>
@@ -14,17 +14,19 @@
               <li><a (click)= logOut()>Logout</a></li>
           </div>
       </div>
-        <li><a [routerLink]="['/kb']">Knowledge-Base</a></li>
+        <li><a [routerLink]="['/kb']">KB</a></li>
       </ul>
     </div>
-    <div id="flex-container">
-      <!--render login, sign-up, knowledge-base, and home components !-->
-    <alert></alert>
+   
+    <div class="main-container">
+      <alert></alert>
     <router-outlet></router-outlet>
+    
     </div>
-    <div id="footer-container">
-      <footer>
-        Footer
-      </footer>
-    </div>
+    <footer >
+      © 2020 Copyright:
+      <a href="https://samplefooter.com/">sampleFooterLink.com</a>
+  </footer>
+  </div>
 
+  
