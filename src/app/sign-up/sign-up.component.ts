@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { FormGroup, Validators } from "@angular/forms";
 import { FormBuilder } from "@angular/forms";
 import { Router } from "@angular/router";
-import { catchError, EMPTY, first } from "rxjs";
+import { catchError, EMPTY, take } from "rxjs";
 import { MustMatch } from "../helpers/mustmatch";
 import { AccountService } from "../services/account.service";
 import { User } from "../Users";
@@ -59,7 +59,7 @@ private fb: FormBuilder,
 
         this.accountService.signUp(this.dataToSend).
             pipe(
-                first(),
+                take(1),
                 catchError(error => this.handleError(error))
             ). 
             subscribe(() => {

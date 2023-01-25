@@ -9,22 +9,23 @@ import { User } from './Users';
     styleUrls: ['./app.component.less']
 })
 export class AppComponent implements OnInit {
-    currentUser$!:BehaviorSubject<User | string>; 
-    localStorageUser$!: BehaviorSubject<any>;
+    localStorageUser$!:Observable<User|string|null>; 
     title = 'Ascend';
     constructor(private accountService: AccountService) {}
 
     ngOnInit(): void {
   
-        this.localStorageUser$ = this.accountService.getlocalStorageUserSubject();
+        this.localStorageUser$ = this.accountService.localStorageUser$;
         //emit the user in local storage if there is one, otherwise default value
         if(localStorage.getItem('currentUser')) {
-            this.localStorageUser$.next(localStorage.getItem('currentUser'));
+            this.accountService.setLocalStoreageUserSubject(localStorage.getItem('currentUser'));
+             
         }
         console.log(
             "local storeage user = ",
             localStorage.getItem('currentUser')
         );
+        this.accountService.setLocalStoreageUserSubject('default');
     }
 
     logOut():void {

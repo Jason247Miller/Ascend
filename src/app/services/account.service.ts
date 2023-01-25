@@ -10,16 +10,19 @@ import { Router } from '@angular/router';
 export class AccountService {
     public redirectUrl?: string; 
     private currentUserSubject = new BehaviorSubject<User | string>("default"); 
+    public currentUser$ = this.currentUserSubject.asObservable(); 
     private localStorageUserSubject = new BehaviorSubject<User | string | null>("default");
+    public localStorageUser$ = this.localStorageUserSubject.asObservable(); 
     constructor(private http: HttpClient, private router: Router) {  
     }
 
-    getCurrentUserSubject(): BehaviorSubject<User | string> {
-        return this.currentUserSubject; 
-    }
-    getlocalStorageUserSubject(): BehaviorSubject<any> {
-        return this.localStorageUserSubject; 
-    }
+     setLocalStoreageUserSubject(localUser:string|null|User){
+        this.localStorageUserSubject.next(localUser);
+     }
+    
+      setCurrentUserSubject(user:User) {
+        this.currentUserSubject.next(user);
+      }
 
     login(email: string, password: string) {
         return this.http.post<User>(

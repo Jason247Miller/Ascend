@@ -61,7 +61,7 @@ private fb : FormBuilder,
             this.router.navigateByUrl('/dashboard'); 
         }
     
-        this.accountService.getCurrentUserSubject().next(user);
+        this.accountService.setCurrentUserSubject(user);
         console.log("Successfully logged in user:" + user.firstName);
     }
      
