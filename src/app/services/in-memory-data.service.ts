@@ -56,7 +56,7 @@ register(reqInfo:any){
 
   //return error if email is already in db 
   if (this.db.users.find(x => x.email === requestBody['email'])) {
-    return Error('Email "' + requestBody['email'] + '" is already registered with us')
+    throw  Error('Email "' + requestBody['email'] + '" is already registered with us')
     }
     else{
       this.db.users.push(requestBody); 

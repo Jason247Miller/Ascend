@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, first,Subject,tap } from 'rxjs';
+import { BehaviorSubject, catchError, first,tap } from 'rxjs';
 import { User } from '../Users';
 import { Router } from '@angular/router';
 
@@ -33,7 +33,10 @@ import { Router } from '@angular/router';
   }
 
   logOut():void{
-    console.log("logOut() called")
+  
+    
+
+  
     localStorage.removeItem('currentUser');
     //this.currentUserSubject.next("default");
     this.localStorageUserSubject.next('default');
@@ -41,7 +44,13 @@ import { Router } from '@angular/router';
   }
 
   signUp(userData:User){
-  return this.http.post<User>('api/register', userData ) 
+  return this.http.post<User>('api/register', userData )
+  .pipe(
+    tap(item => console.log(item)),
+    catchError(error => {
+      throw 'Email already exists in database!'
+    })
+  ) 
   }
 
   isLoggedIn():boolean{
