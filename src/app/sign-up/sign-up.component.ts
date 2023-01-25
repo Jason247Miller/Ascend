@@ -1,17 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
-import { FormBuilder } from '@angular/forms';
-import { Router } from '@angular/router';
-import { catchError, EMPTY, first } from 'rxjs';
-import { MustMatch } from '../helpers/mustmatch';
-import { AccountService } from '../services/account.service';
-import { User } from '../Users';
+import { Component, OnInit } from "@angular/core";
+import { FormGroup, Validators } from "@angular/forms";
+import { FormBuilder } from "@angular/forms";
+import { Router } from "@angular/router";
+import { catchError, EMPTY, first } from "rxjs";
+import { MustMatch } from "../helpers/mustmatch";
+import { AccountService } from "../services/account.service";
+import { User } from "../Users";
 
 
 @Component({
-    selector: 'app-sign-up',
-    templateUrl: './sign-up.component.html',
-    styleUrls: ['./sign-up.component.less']
+    selector: "app-sign-up",
+    templateUrl: "./sign-up.component.html",
+    styleUrls: ["./sign-up.component.less"]
 })
 export class SignUpComponent implements OnInit {
 
@@ -28,18 +28,18 @@ private fb: FormBuilder,
     
         this.signUpForm = this.fb.group(
             {
-                firstName: ['', Validators.required],
-                lastName: ['', Validators.required],
-                email: ['', [Validators.required, Validators.email]],
-                password: ['', [Validators.required,
-                                Validators.pattern('^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9])(?=.*[a-z]).{8,}$')]],
-                confirmPassword: ['', [Validators.required, 
-                                      Validators.pattern('^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9])(?=.*[a-z]).{8,}$')]]
+                firstName: ["", Validators.required],
+                lastName: ["", Validators.required],
+                email: ["", [Validators.required, Validators.email]],
+                password: ["", [Validators.required,
+                    Validators.pattern("^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9])(?=.*[a-z]).{8,}$")]],
+                confirmPassword: ["", [Validators.required, 
+                    Validators.pattern("^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9])(?=.*[a-z]).{8,}$")]]
             },
             {
                 validator:MustMatch(
-                    'password',
-                    'confirmPassword'
+                    "password",
+                    "confirmPassword"
                 )
             }
         );
@@ -69,19 +69,19 @@ private fb: FormBuilder,
 
     //form access getters
     get firstName() {
-        return this.signUpForm.get('firstName'); 
+        return this.signUpForm.get("firstName"); 
     }
     get lastName() {
-        return this.signUpForm.get('lastName'); 
+        return this.signUpForm.get("lastName"); 
     }
     get email() {
-        return this.signUpForm.get('email'); 
+        return this.signUpForm.get("email"); 
     }
     get password() {
-        return this.signUpForm.get('password'); 
+        return this.signUpForm.get("password"); 
     }
     get confirmPassword() {
-        return this.signUpForm.get('confirmPassword'); 
+        return this.signUpForm.get("confirmPassword"); 
     }
 
     handleError(error:string) {
@@ -93,7 +93,7 @@ private fb: FormBuilder,
     }
     handleSignUpSuccess() {
         console.log("Sign-up was Successful!");
-        this.router.navigate(['./login']);
+        this.router.navigate(["./login"]);
     }
 
 }

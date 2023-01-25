@@ -1,70 +1,78 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, first,tap } from 'rxjs';
+import { BehaviorSubject, catchError, first, tap } from 'rxjs';
 import { User } from '../Users';
 import { Router } from '@angular/router';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
- export class AccountService {
-  public redirectUrl?: string; 
-  private currentUserSubject = new BehaviorSubject<User | string>("default"); 
-  private localStorageUserSubject = new BehaviorSubject<User | string | null>("default");
-  constructor(private http: HttpClient, private router: Router) {  
-  }
+export class AccountService {
+    public redirectUrl?: string; 
+    private currentUserSubject = new BehaviorSubject<User | string>("default"); 
+    private localStorageUserSubject = new BehaviorSubject<User | string | null>("default");
+    constructor(private http: HttpClient, private router: Router) {  
+    }
 
-  getCurrentUserSubject(): BehaviorSubject<User | string> {
-    return this.currentUserSubject; 
-  }
-  getlocalStorageUserSubject(): BehaviorSubject<any> {
-   return this.localStorageUserSubject; 
-  }
+    getCurrentUserSubject(): BehaviorSubject<User | string> {
+        return this.currentUserSubject; 
+    }
+    getlocalStorageUserSubject(): BehaviorSubject<any> {
+        return this.localStorageUserSubject; 
+    }
 
-  login(email: string, password: string){
-    return this.http.post<User>('api/authenticate', {email, password}).pipe(
-      first(), //emitt 1 item and close the Observable 
-      tap(user =>{
-       localStorage.setItem('currentUser', JSON.stringify(user));
-       this.updateLocalStorageSubject(); 
-       return user; 
-      })
-    ); 
-  }
+    login(email: string, password: string) {
+        return this.http.post<User>(
+            'api/authenticate',
+            {email, password}
+        ).pipe(
+            first(), //emitt 1 item and close the Observable 
+            tap(user => {
+                localStorage.setItem(
+                    'currentUser',
+                    JSON.stringify(user)
+                );
+                this.updateLocalStorageSubject(); 
+                return user; 
+            })
+        ); 
+    }
 
-  logOut():void{
+    logOut():void {
+
   
-    
+        localStorage.removeItem('currentUser');
+        //this.currentUserSubject.next("default");
+        this.localStorageUserSubject.next('default');
+        this.router.navigate(['/login']);
+    }
 
-  
-    localStorage.removeItem('currentUser');
-    //this.currentUserSubject.next("default");
-    this.localStorageUserSubject.next('default');
-    this.router.navigate(['/login']);
-  }
+    signUp(userData:User) {
+        return this.http.post<User>(
+            'api/register',
+            userData
+        ).
+            pipe(
+                tap(item => console.log(item)),
+                catchError(error => {
+                    throw 'Email already exists in database!';
+                })
+            ); 
+    }
 
-  signUp(userData:User){
-  return this.http.post<User>('api/register', userData )
-  .pipe(
-    tap(item => console.log(item)),
-    catchError(error => {
-      throw 'Email already exists in database!'
-    })
-  ) 
-  }
-
-  isLoggedIn():boolean{
+    isLoggedIn():boolean {
     //return false if null or undefined, true otherwise!
-    console.log("local user",localStorage.getItem('currentUser') )
-     return !!localStorage.getItem('currentUser');  
-  }
+        console.log(
+            "local user",
+            localStorage.getItem('currentUser')
+        );
+        return !!localStorage.getItem('currentUser');  
+    }
   
-  updateLocalStorageSubject():void{
-    this.localStorageUserSubject.next(localStorage.getItem('currentUser'));
-  }
+    updateLocalStorageSubject():void {
+        this.localStorageUserSubject.next(localStorage.getItem('currentUser'));
+    }
   
 }
-
-
 
 
