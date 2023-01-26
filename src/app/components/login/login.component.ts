@@ -1,6 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
-import { FormBuilder } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { catchError, first } from 'rxjs';
 import { Alert } from 'src/app/models/alert';

@@ -1,25 +1,11 @@
 
   <!-- Side navigation -->
 <div class="sidenav">
-    <a href="#">Dashboard</a>
-    <a href="#">Daily Review</a>
-    <a href="#">Reports</a>
+    <a [routerLink]="['overview']">Overview</a>
+    <a [routerLink]="['daily-review']">Daily Review</a>
     <a href="#">Goals</a>
     <a href="#">Dreams</a>
   </div>
-  
   <div class="rendered-component-container">
-    <!--Rout-Outlet to various child components onclick of side-bar links !-->
-    <p>Component template rendered here <span>Component template rendered here</span></p>
-    <p>Component template rendered here</p>
-    <p>Component template rendered here</p>
-    <p>Component template rendered here</p>
-    <p>Component template rendered here</p>
-    <p>Component template rendered here</p>
-    <p>Component template rendered here</p>
-    <p>Component template rendered here</p>
-    <p>Component template rendered here</p>
-    <p>Component template rendered here</p>
-    <p>Component template rendered here</p>
-    <p>Component template rendered here</p>
-</div>
+    <router-outlet></router-outlet>
+  </div>
