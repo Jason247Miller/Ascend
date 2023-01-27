@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AccountService } from 'src/app/services/account/account.service';
 import { AlertService } from 'src/app/services/alert/alert.service';
+import { wellnessRating } from 'src/app/models/WellnessRating';
 /*
 pull wellnessRatings 
 pull HabitRatings
@@ -27,13 +28,24 @@ export class DailyReviewComponent implements OnInit {
 
     dailyReviewForm!: FormGroup; 
     sleepRating:number = 5; 
-
- 
-
+    excerciseRating:number = 5; 
+    nutritionRating:number = 5; 
+    stressRating:number = 5; 
+    wellnessRatings!:wellnessRating[]; 
+    currentDate:string; 
+     
 
   ngOnInit(): void {
-    
+  
+  let date = new Date(); 
+  let day = date.getDate();
+  let month = date.getMonth() + 1 ;
+  let year = date.getFullYear();
+  this.currentDate = `${day}-${month}-${year}`; 
+  let test = this.accountService.entryExistsForCurrentDate(this.currentDate); 
+  console.log(this.currentDate);
 
+  
     this.dailyReviewForm = this.fb.group({
 
     })
@@ -41,11 +53,33 @@ export class DailyReviewComponent implements OnInit {
 
   submit(){
     console.log("review submit called");
+
+    //check if there is a review for the current date already 
+
   }
 
 setRating(event:any){
-this.sleepRating = event.target.value; 
-console.log("sleep rating", this.sleepRating);
+
+  if(event.target){
+  if(event.target.id === 'sleepQuality'){
+  this.sleepRating = event.target.value;
+  console.log("sleep score", this.sleepRating);
+  }
+  else if(event.target.id === 'exercise'){
+  this.excerciseRating = event.target.value; 
+  console.log("excercise score", this.excerciseRating);
+  }
+  else if(event.target.id === 'nutrition'){
+  this.nutritionRating = event.target.value; 
+  console.log("nutrition score", this.nutritionRating);
+  }
+  else if(event.target.id === 'stress'){
+    this.stressRating = event.target.value; 
+  }
+}
+
+
+
 }
 
 }

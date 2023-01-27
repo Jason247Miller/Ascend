@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, first,of,Subject,tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, first,of,Subject,take,tap, throwError } from 'rxjs';
 import { User } from 'src/app/models/Users';
 import { Router } from '@angular/router';
+import { wellnessRating } from 'src/app/models/WellnessRating';
 
 @Injectable({
     providedIn: 'root'
@@ -74,6 +75,15 @@ export class AccountService {
   
     updateLocalStorageSubject():void {
         this.localStorageUserSubject.next(localStorage.getItem('currentUser'));
+    }
+
+    entryExistsForCurrentDate(currentDate:string){
+        return this.http.get<wellnessRating[]>('api/wellnessRatings').pipe(
+            tap(item => console.log(JSON.stringify(item)))
+        )
+
+        
+
     }
   
 }

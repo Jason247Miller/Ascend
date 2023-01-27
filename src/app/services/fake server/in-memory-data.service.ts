@@ -24,6 +24,32 @@ export class InMemoryDataService implements InMemoryDbService {
                     email:'john@gmail.com',
                     password:'testPass123!2' 
                 }
+            ],
+            wellnessRatings:[              
+                {   id: 1,
+                    userID: 1,
+                    date:'27-1-2023', 
+                },
+                {   id: 2,
+                    userID: 1,
+                    date:'26-1-2023', 
+                }
+            ],
+
+            ratings:[
+                {
+                id: 1,
+                wellnessID: 1, 
+                ratingName: 'sleep quality',
+                ratingScore: 8
+                },
+
+                {
+                 id: 2,
+                 wellnessID: 1, 
+                 ratingName: 'Exercise',
+                 ratingScore: 8
+                }
             ]
         };
     }
@@ -40,6 +66,7 @@ export class InMemoryDataService implements InMemoryDbService {
         } else if(reqInfo.collectionName === 'register') {
             return this.register(reqInfo);
         }
+        
         //  otherwise default response of In-memory DB
         return undefined;
     }

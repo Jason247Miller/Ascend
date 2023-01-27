@@ -11,7 +11,7 @@
               <li *ngIf="localStorageUser === 'default'"><a [routerLink]="['/sign-up']">Sign-Up</a></li>       
               <li *ngIf="localStorageUser !== 'default'"><a (click)= logOut()>Logout</a></li>
         </ng-container>
-        <li><a [routerLink]="['/kb']">Knowledge-Base</a></li>
+        <li><a [routerLink]="['/kb']">KB</a></li>
 
       </ul>
     </div>
