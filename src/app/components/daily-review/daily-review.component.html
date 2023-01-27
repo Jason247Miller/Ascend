@@ -1,9 +1,11 @@
 
-<div class="container">
+<div class="container" >
     <h2>Daily Review</h2>
 <form [formGroup] = "dailyReviewForm"(ngSubmit)="submit()">
 
-    
+    <div class="slidecontainer">
+        <input type="range"  thumbLabel (change)="setRating($event)" min="1" max="10" [value]="sleepRating" class="slider" id="myRange">
+      </div>
 </form>
 
 </div>

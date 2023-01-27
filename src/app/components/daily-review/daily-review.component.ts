@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AccountService } from 'src/app/services/account/account.service';
 import { AlertService } from 'src/app/services/alert/alert.service';
 
+
 @Component({
   selector: 'app-daily-review',
   templateUrl: './daily-review.component.html',
@@ -16,6 +17,7 @@ export class DailyReviewComponent implements OnInit {
     private alertService: AlertService){}
 
     dailyReviewForm!: FormGroup; 
+    sleepRating:number = 5; 
 
   ngOnInit(): void {
     this.dailyReviewForm = this.fb.group({
@@ -26,5 +28,10 @@ export class DailyReviewComponent implements OnInit {
   submit(){
     console.log("review submit called");
   }
+
+setRating(event:any){
+this.sleepRating = event.target.value; 
+console.log("sleep rating", this.sleepRating);
+}
 
 }
