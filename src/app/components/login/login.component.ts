@@ -18,7 +18,8 @@ export class LoginComponent implements OnInit {
     constructor(
 private fb : FormBuilder,
              private accountService: AccountService,
-             private router: Router
+             private router: Router,
+             private alertService: AlertService
     ) {}
     loginForm!: FormGroup;
     errorMessage?:string;
@@ -54,6 +55,10 @@ private fb : FormBuilder,
     handleError(error:string) {
         this.errorMessage = JSON.stringify(error); 
         console.error("error logging in " + this.errorMessage); 
+        this.alertService.error(
+            'User name or password is incorrect!',
+            {autoClose:false}
+        );
         return EMPTY; 
     }
     handleLogin(user:User) {

@@ -87,6 +87,7 @@ private fb: FormBuilder,
     }
 
     handleError(error:string) {
+        this.alertService.error("A User already exists with this email");
         console.log(
             "Error: ",
             error
