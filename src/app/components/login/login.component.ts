@@ -2,9 +2,11 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
-import { catchError, EMPTY, take } from 'rxjs';
-import { AccountService } from '../services/account.service';
-import { User } from '../Users';
+import { catchError, EMPTY, first, take } from 'rxjs';
+import { Alert } from 'src/app/models/alert';
+import { User } from 'src/app/models/Users';
+import { AccountService } from 'src/app/services/account/account.service';
+import { AlertService } from 'src/app/services/alert/alert.service';
 
 @Component({
     selector: 'app-login',
@@ -16,7 +18,8 @@ export class LoginComponent implements OnInit {
     constructor(
 private fb : FormBuilder,
              private accountService: AccountService,
-             private router: Router
+             private router: Router,
+             private alertService: AlertService
     ) {}
     loginForm!: FormGroup;
     errorMessage?:string;
@@ -52,6 +55,10 @@ private fb : FormBuilder,
     handleError(error:string) {
         this.errorMessage = JSON.stringify(error); 
         console.error("error logging in " + this.errorMessage); 
+        this.alertService.error(
+            'User name or password is incorrect!',
+            {autoClose:false}
+        );
         return EMPTY; 
     }
     handleLogin(user:User) {

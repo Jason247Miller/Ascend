@@ -1,11 +1,12 @@
-import { Component, OnInit } from "@angular/core";
-import { FormGroup, Validators } from "@angular/forms";
-import { FormBuilder } from "@angular/forms";
-import { Router } from "@angular/router";
-import { catchError, EMPTY, take } from "rxjs";
-import { MustMatch } from "../helpers/mustmatch";
-import { AccountService } from "../services/account.service";
-import { User } from "../Users";
+import { Component, OnInit } from '@angular/core';
+import { FormGroup, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
+import { Router } from '@angular/router';
+import { catchError, EMPTY, first, take } from 'rxjs';
+import { MustMatch } from '../../helpers/mustmatch';
+import { AccountService } from 'src/app/services/account/account.service';
+import { User } from '../../models/Users';
+import { AlertService } from 'src/app/services/alert/alert.service';
 
 
 @Component({
@@ -18,11 +19,12 @@ export class SignUpComponent implements OnInit {
     constructor(
 private fb: FormBuilder,
               private accountService: AccountService,
-              private router: Router
-    ) {}
+              private router: Router,
+              private alertService: AlertService){}
 
-    signUpForm!: FormGroup;
-    dataToSend!:User; 
+  signUpForm!: FormGroup;
+  dataToSend!:User; 
+  errorMessage:string; 
  
     ngOnInit(): void {
     
@@ -85,6 +87,7 @@ private fb: FormBuilder,
     }
 
     handleError(error:string) {
+        this.alertService.error("A User already exists with this email");
         console.log(
             "Error: ",
             error
