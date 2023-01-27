@@ -1,29 +1,48 @@
 <div class="container">
-    <h2>login</h2>
-    <form [formGroup] = "loginForm" (ngSubmit)="login()" >
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email"
-                   id="email"
-                   required 
-                   formControlName="email"
-                   class="form-control"
-                   placeholder="example@domain.com"  
-                   [class.field-error] = "email && email.invalid && email.touched"
-                   email/> 
-                   <div class ="alert alert-danger" *ngIf="email && email.invalid && email.touched">email is required</div>
-            <label for="password">Password</label>
-            <input type="password"
-                   id="password" 
-                   required 
-                   formControlName="password"
-                   class="form-control"
-                   [class.field-error] = "password && password.invalid && password.touched"
-                   placeholder="password"   />
-                   <div class ="alert alert-danger" *ngIf="password && password.invalid && password.touched">password is required</div>
-         </div>
-         <button class="btn btn-primary" [disabled]="loginForm.invalid"  type="submit">login</button>
-
-    </form>
-    <a href="">forgot password</a>
+  <h2>login</h2>
+  <form [formGroup]="loginForm" (ngSubmit)="submit()">
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        required
+        formControlName="email"
+        class="form-control"
+        placeholder="example@domain.com"
+        [class.field-error]="email && email.invalid && email.touched"
+        email
+      />
+      <div
+        class="alert alert-danger"
+        *ngIf="email && email.invalid && email.touched"
+      >
+        email is required
+      </div>
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        required
+        formControlName="password"
+        class="form-control"
+        [class.field-error]="password && password.invalid && password.touched"
+        placeholder="password"
+      />
+      <div
+        class="alert alert-danger"
+        *ngIf="password && password.invalid && password.touched"
+      >
+        password is required
+      </div>
+    </div>
+    <button
+      class="btn btn-primary"
+      [disabled]="loginForm.invalid"
+      type="submit"
+    >
+      login
+    </button>
+  </form>
+  <a href="">forgot password</a>
 </div>
