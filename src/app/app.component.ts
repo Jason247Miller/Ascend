@@ -4,26 +4,32 @@ import { AccountService } from './services/account/account.service';
 import { User } from './models/Users';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.less']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.less']
 })
 export class AppComponent implements OnInit {
-   currentUser$!:BehaviorSubject<User | string>; 
-   localStorageUser$!: BehaviorSubject<any>;
-   title = 'Ascend';
-  constructor(private accountService: AccountService){}
+    localStorageUser$!:Observable<User|string|null>; 
+    title = 'Ascend';
+    constructor(private accountService: AccountService) {}
 
-  ngOnInit(): void {
+    ngOnInit(): void {
   
-    this.localStorageUser$ = this.accountService.getlocalStorageUserSubject();
-    //emit the user in local storage if there is one, otherwise default value
-    if(localStorage.getItem('currentUser')){
-      this.localStorageUser$.next(localStorage.getItem('currentUser'))
+        this.localStorageUser$ = this.accountService.localStorageUser$;
+        //emit the user in local storage if there is one, otherwise default value
+        if(localStorage.getItem('currentUser')) {
+            this.accountService.setLocalStoreageUserSubject(localStorage.getItem('currentUser'));
+             
+        }
+        console.log(
+            "local storeage user = ",
+            localStorage.getItem('currentUser')
+        );
+        this.accountService.setLocalStoreageUserSubject('default');
     }
-    console.log("local storeage user = ", localStorage.getItem('currentUser'))
-  }
 
-  logOut():void{this.accountService.logOut();}
+    logOut():void {
+        this.accountService.logOut(); 
+    }
 
 }
