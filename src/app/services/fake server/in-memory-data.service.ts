@@ -3,6 +3,10 @@ import { Injectable } from '@angular/core';
 import { InMemoryDbService } from 'angular-in-memory-web-api';
 import { BehaviorSubject, delay, of } from 'rxjs';
 import { User } from 'src/app/models/Users';
+import { wellnessRating } from 'src/app/models/WellnessRating';
+import { HabitCompletionLog } from 'src/app/models/HabitCompletionLog';
+import { GuidedJournalEntry } from 'src/app/models/guidedJournalEntry';
+import { Habit } from 'src/app/models/Habit';
 
 @Injectable({
     providedIn: 'root',
@@ -12,7 +16,7 @@ export class InMemoryDataService implements InMemoryDbService {
     createDb() {
         return { 
             users: [
-                { id: 1,
+                {   id: 1,
                     firstName: 'Jason',
                     lastName:'Miller',
                     email:'jason.miller@yahoo.com',
@@ -25,30 +29,80 @@ export class InMemoryDataService implements InMemoryDbService {
                     password:'testPass123!2' 
                 }
             ],
+        
             wellnessRatings:[              
                 {   id: 1,
-                    userID: 1,
-                    date:'27-1-2023', 
+                    userId: 1,
+                    date:'30-1-2023',
+                    sleepRating:5,
+                    exerciseRating:7,
+                    nutritionRating:8,
+                    stressRating:10,
+                    sunlightRating:3,
+                    mindfulnessRating:7,
+                    productivityRating:8,
+                    moodRating:6,
+                    energyRating:9
                 },
                 {   id: 2,
-                    userID: 1,
-                    date:'26-1-2023', 
+                    userId: 1,
+                    date:'26-1-2023',
+                    sleepRating:0,
+                    exerciseRating:0,
+                    nutritionRating:0,
+                    stressRating:0,
+                    sunlightRating:0,
+                    mindfulnessRating:0,
+                    productivityRating:0,
+                    moodRating:0,
+                    energyRating:0
                 }
             ],
 
-            ratings:[
+            habitCompletionLogs:[
                 {
                 id: 1,
-                wellnessID: 1, 
-                ratingName: 'sleep quality',
-                ratingScore: 8
+                userId: 1,
+                habitId:1,
+                completed: true,
+                date:'26-1-2023'
                 },
 
                 {
-                 id: 2,
-                 wellnessID: 1, 
-                 ratingName: 'Exercise',
-                 ratingScore: 8
+                    id: 2,
+                    userId: 1,
+                    habitId: 2,
+                    completed: true,
+                    date:'26-1-2023'
+                }
+            ],
+            habits:[
+             {
+                id:1, 
+                userId: 1, 
+                habitDescription:'Play Guitar for 20 minutes a day'
+             },
+             {
+                id:2, 
+                userId: 1, 
+                habitDescription:'Cardio for 30 minutes'
+             }
+            ],
+            guidedJournalEntries:[
+                {
+                    id:1, 
+                    userId: 1, 
+                    date:'26-1-2023',
+                    didWell:'programmed for 2 hours',
+                    improveUpon: 'drink less alcohol', 
+                    learned: 'flex-box',
+                    mainAccomplishments: 'set up retirement account',
+                    challengesFaced:'getting out of bed',
+                    greatfulFor:'my moms health improving', 
+                    meaningfulInteraction: `visited my childhood best friend and
+                    talked about life`,
+                    goalsForTomorrow:'spend more time learning before coding',
+                    additional:''
                 }
             ]
         };
@@ -135,9 +189,10 @@ export class InMemoryDataService implements InMemoryDbService {
           
         });
     }
-    //Ensure there is never a duplicate id when adding users 
-    genId(users: User[]): number {
-        return users.length > 0 ? Math.max(...users.map(user => user.id)) + 1 : 1;
+
+    genId(entries: User[] | wellnessRating[] | Habit[] | GuidedJournalEntry[]|HabitCompletionLog[] ): number {
+        return entries.length > 0 ? Math.max(...entries
+            .map((entry: { id: number; }) => entry.id)) + 1 : 1;
     }
    
 }

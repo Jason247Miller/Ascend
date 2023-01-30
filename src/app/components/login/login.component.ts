@@ -67,7 +67,7 @@ private fb : FormBuilder,
             this.router.navigateByUrl('/dashboard'); 
         }
     
-        this.accountService.setCurrentUserSubject(user);
+        this.accountService.setLocalStoreageUserSubject(user);
         console.log("Successfully logged in user:" + user.firstName);
     }
      

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, forkJoin, Observable, Subject, take, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AccountService } from './services/account/account.service';
 import { User } from './models/Users';
 
@@ -9,15 +9,16 @@ import { User } from './models/Users';
     styleUrls: ['./app.component.less']
 })
 export class AppComponent implements OnInit {
-    localStorageUser$!:Observable<User|string|null>; 
+    localStorageUser$:Observable<User|string|null> =  this.accountService.getLocalStoreageUser$(); 
     title = 'Ascend';
     constructor(private accountService: AccountService) {}
 
     ngOnInit(): void {
   
-        this.localStorageUser$ = this.accountService.localStorageUser$;
-        //emit the user in local storage if there is one, otherwise default value
+       
+        //emit the user in lo$cal storage if there is one, otherwise default value
         if(localStorage.getItem('currentUser')) {
+           
             this.accountService.setLocalStoreageUserSubject(localStorage.getItem('currentUser'));
              
         }
