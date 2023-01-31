@@ -1,4 +1,4 @@
-export class wellnessRating {
+export class WellnessRating {
 
     constructor(
       public id: 0,

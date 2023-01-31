@@ -3,7 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, EMPTY, first,map,of,Subject,take,tap, throwError } from 'rxjs';
 import { User } from 'src/app/models/Users';
 import { Router } from '@angular/router';
-import { wellnessRating } from 'src/app/models/WellnessRating';
+import { WellnessRating } from 'src/app/models/wellness-rating';
+
 
 
 @Injectable({
@@ -81,7 +82,7 @@ export class AccountService {
 
     entryExistsForCurrentDate(currentDate:string){
        
-        return this.http.get<wellnessRating[]>('api/wellnessRatings')
+        return this.http.get<WellnessRating[]>('api/wellnessRatings')
         .pipe(
             
             take(1),
@@ -108,7 +109,7 @@ export class AccountService {
 }
 
 
-function typeOf(item: wellnessRating[]): any {
+function typeOf(item: WellnessRating[]): any {
     throw new Error('Function not implemented.');
 }
 

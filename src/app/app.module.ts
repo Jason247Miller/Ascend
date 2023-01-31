@@ -16,7 +16,6 @@ import { AuthGuard } from './guards/auth.guard';
 import { AlertComponent } from './components/alert/alert.component';
 import { DailyReviewComponent } from './components/daily-review/daily-review.component';
 import { OverviewComponent } from './components/overview/overview.component';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { MatSliderModule } from '@angular/material/slider';
 @NgModule(
   {
@@ -37,7 +36,6 @@ import { MatSliderModule } from '@angular/material/slider';
     ReactiveFormsModule,
     MatSliderModule, 
     HttpClientModule,
-    BrowserAnimationsModule,
     HttpClientInMemoryWebApiModule.forRoot(
     InMemoryDataService, { dataEncapsulation: false }
     

@@ -3,18 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AccountService } from 'src/app/services/account/account.service';
 import { AlertService } from 'src/app/services/alert/alert.service';
-import { wellnessRating } from 'src/app/models/WellnessRating';
+import { WellnessRating } from 'src/app/models/wellness-rating';
 import { take } from 'rxjs';
-/*
-pull wellnessRatings 
-pull HabitRatings
-pull textFields (for journal entry, anything stand out, etc.)
-1. create wellnessRatings, HabitRatings, textDescription interfaces
-2. import then in the component and initialize the data
-3. display ratings using ngFor and within their own container
-4. display textDescription properties 
-5. 
-*/
+
 
 @Component({
   selector: 'app-daily-review',
@@ -23,44 +14,35 @@ pull textFields (for journal entry, anything stand out, etc.)
 })
 export class DailyReviewComponent implements OnInit {
   constructor(private fb: FormBuilder,
-    private accountService: AccountService,
-    private router: Router,
-    private alertService: AlertService){}
+    private accountService: AccountService){
+      this.dailyReviewForm = this.fb.group({
+        sleepRating:[5, Validators.required],
+        exerciseRating:[5, Validators.required],
+        nutritionRating:[5, Validators.required],
+        stressRating:[5, Validators.required],
+        sunlightRating:[5, Validators.required],
+        mindfulnessRating:[5, Validators.required],
+        productivityRating:[5, Validators.required],
+        moodRating:[5, Validators.required],
+        energyRating:[5, Validators.required],
+    
+      }); 
+    }
 
 
-    private currentDateEntry: wellnessRating[]; 
+    private currentDateEntry: WellnessRating[]; 
     private  wellnessRatingGroup:FormGroup; 
     dailyReviewForm!: FormGroup; 
-   // sleepRating:number = 5; 
-   // excerciseRating:number = 5; 
-   // nutritionRating:number = 5; 
-    //stressRating:number = 5; 
     currentDate:string; 
    
      
 
-  ngOnInit(): void
-   {
+  ngOnInit(): void{
  
-
-  
   this.setCurrentDate(); 
-
-   this.dailyReviewForm = this.fb.group({
-    sleepRating:[5],
-    exerciseRating:[5, Validators.required],
-    nutritionRating:[5, Validators.required],
-    stressRating:[5, Validators.required],
-    sunlightRating:[5, Validators.required],
-    mindfulnessRating:[5, Validators.required],
-    productivityRating:[5, Validators.required],
-    moodRating:[5, Validators.required],
-    energyRating:[5, Validators.required],
-
-  }); 
-
-
-
+  console.log("ngOnit Daily Review")
+  
+  console.log("ngOnit Daily Review=", this.dailyReviewForm);
   this.accountService.entryExistsForCurrentDate(this.currentDate)
   .pipe(take(1)).subscribe({
      next: entry => { 
@@ -93,24 +75,6 @@ export class DailyReviewComponent implements OnInit {
 
 setRating(event:any){
 
-  /*if(event.target){
-  if(event.target.id === 'sleepQuality'){
-  this.sleepRating = event.target.value;
-  console.log("sleep score", this.sleepRating);
-  }
-  else if(event.target.id === 'exercise'){
-  this.excerciseRating = event.target.value; 
-  console.log("excercise score", this.excerciseRating);
-  }
-  else if(event.target.id === 'nutrition'){
-  this.nutritionRating = event.target.value; 
-  console.log("nutrition score", this.nutritionRating);
-  }
-  else if(event.target.id === 'stress'){
-    this.stressRating = event.target.value; 
-  }
-  */
-//}
 }
 
 setCurrentDate(): void {

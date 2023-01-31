@@ -6,9 +6,19 @@
   <div  class="wellness-container" >
       <h5 class="heading">Wellness Ratings</h5>
       <!--Hard Code the wellness ratings for now -->
-        <div class="form-group">
+        <div>
           <label for="sleepRating"><b>Sleep:</b></label>
-          <input formControlName = "sleepRating" type="range"  thumbLabel (change)="setRating($event)" min="1" max="10"  class="slider" id="sleepRating">
+          <input 
+           id="sleepRating"
+           formControlName = "sleepRating"
+           required
+           type="range"
+           thumbLabel
+           (change)="setRating($event)"
+            min="1"
+            max="10"
+            class="slider">
+        
         </div>
         <div class="form-group">
           <label for="exerciseRating"><b>Exercise:</b></label>
@@ -47,42 +57,7 @@
 
    <div class="habit-container">
     <h5 class="heading">Habit Review</h5>
-      <div>
-        <label for="sleepQuality"><b>Sleep:</b></label>
-        <input type="range"  thumbLabel (change)="setRating($event)" min="1" max="10"  class="slider" id="sleepQuality">
-      </div>
-      <div>
-        <label for="exercise"><b>Exercise:</b></label>
-        <input type="range"  thumbLabel (change)="setRating($event)" min="1" max="10"  class="slider" id="exercise">
-      </div>
-      <div>
-        <label for="nutrition"><b>Nutrition:</b></label>
-        <input type="range"  thumbLabel (change)="setRating($event)" min="1" max="10"  class="slider" id="nutrition">
-      </div>
-      <div>
-        <label for="stress"><b>Stress:</b></label>
-        <input type="range"  thumbLabel (change)="setRating($event)" min="1" max="10" class="slider" id="stress">
-      </div>
-      <div>
-        <label for="sunlight"><b>Sunlight:</b></label>
-        <input type="range"  thumbLabel (change)="setRating($event)" min="1" max="10" class="slider" id="sunlight">
-      </div>
-      <div>
-        <label for="mindfulness"><b>Mindfulness</b></label>
-        <input type="range"  thumbLabel (change)="setRating($event)" min="1" max="10"  class="slider" id="mindfulness">
-      </div>
-      <div>
-        <label for="productivity"><b>Productivity:</b></label>
-        <input type="range"  thumbLabel (change)="setRating($event)" min="1" max="10" class="slider" id="Productivity">
-      </div>
-      <div>
-        <label for="mood"><b>Mood:</b></label>
-        <input type="range"  thumbLabel (change)="setRating($event)" min="1" max="10"  class="slider" id="mood">
-      </div>
-      <div>
-        <label for="energy"><b>Energy:</b></label>
-        <input type="range"  thumbLabel (change)="setRating($event)" min="1" max="10" class="slider" id="Energy">
-      </div>
+     
  </div>
   </div>
   

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { InMemoryDbService } from 'angular-in-memory-web-api';
 import { BehaviorSubject, delay, of } from 'rxjs';
 import { User } from 'src/app/models/Users';
-import { wellnessRating } from 'src/app/models/WellnessRating';
+import { WellnessRating } from 'src/app/models/wellness-rating';
 import { HabitCompletionLog } from 'src/app/models/HabitCompletionLog';
 import { GuidedJournalEntry } from 'src/app/models/guidedJournalEntry';
 import { Habit } from 'src/app/models/Habit';
@@ -190,7 +190,7 @@ export class InMemoryDataService implements InMemoryDbService {
         });
     }
 
-    genId(entries: User[] | wellnessRating[] | Habit[] | GuidedJournalEntry[]|HabitCompletionLog[] ): number {
+    genId(entries: User[] | WellnessRating[] | Habit[] | GuidedJournalEntry[]|HabitCompletionLog[] ): number {
         return entries.length > 0 ? Math.max(...entries
             .map((entry: { id: number; }) => entry.id)) + 1 : 1;
     }
