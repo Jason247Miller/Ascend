@@ -48,7 +48,6 @@ private fb: FormBuilder,
     }
     submit() {
         console.log("submit() called");
-
         //use form data to make code cleaner
         //exclude the un-needed confirmPassword field on submit
         const formData = this.signUpForm.getRawValue();
@@ -85,7 +84,7 @@ private fb: FormBuilder,
     get confirmPassword() {
         return this.signUpForm.get("confirmPassword"); 
     }
-
+    
     handleError(error:string) {
         this.alertService.error("A User already exists with this email");
         console.log(

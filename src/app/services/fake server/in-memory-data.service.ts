@@ -33,7 +33,7 @@ export class InMemoryDataService implements InMemoryDbService {
             wellnessRatings:[              
                 {   id: 1,
                     userId: 1,
-                    date:'30-1-2023',
+                    date:'31-1-2023',
                     sleepRating:5,
                     exerciseRating:7,
                     nutritionRating:8,
@@ -120,6 +120,9 @@ export class InMemoryDataService implements InMemoryDbService {
         } else if(reqInfo.collectionName === 'register') {
             return this.register(reqInfo);
         }
+        else if(reqInfo.collectionName === 'updateWellnessData'){
+            return this.updateWellnessData(reqInfo);
+        }
         
         //  otherwise default response of In-memory DB
         return undefined;
@@ -140,6 +143,37 @@ export class InMemoryDataService implements InMemoryDbService {
 
         return of(new HttpResponse({status: 200})).
             pipe(delay(500)); //mimic server delay
+    }
+
+   
+ 
+    updateWellnessData(reqInfo:any){
+    
+    
+    const requestBody = reqInfo['req']['body']; 
+   
+    let wellnessRecordFound = this.db.wellnessRatings.find(x => x.id === requestBody['id']);
+    if (wellnessRecordFound) {
+
+     console.log("found wellness entry to update", wellnessRecordFound);
+     wellnessRecordFound.energyRating =  requestBody['energyRating'];
+     wellnessRecordFound.exerciseRating =  requestBody['exerciseRating'];
+     wellnessRecordFound.mindfulnessRating = requestBody['mindfulnessRating'];
+     wellnessRecordFound.moodRating = requestBody['moodRating']; 
+     wellnessRecordFound.nutritionRating = requestBody['nutritionRating'];
+     wellnessRecordFound.productivityRating = requestBody['productivityRating'];
+     wellnessRecordFound.sleepRating = requestBody['sleepRating']; 
+     wellnessRecordFound.stressRating = requestBody['stressRating'];
+     wellnessRecordFound.sunlightRating = requestBody['sunlightRating']; 
+     console.log("after update", wellnessRecordFound);
+
+    } 
+    else{
+        console.log("could not find wellness entry to update");
+    }
+    return   of(new HttpResponse({status: 200})).
+    pipe(delay(500)); //mimic server delay
+
     }
     //not currently used
     logout(reqInfo: any) {

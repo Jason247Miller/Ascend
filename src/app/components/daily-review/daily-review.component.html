@@ -1,8 +1,10 @@
 
 <div class="container" >
     <h2>Daily Review</h2>
-<form [formGroup]="dailyReviewForm" (ngSubmit)="submit()">
+
  <div class="flex-parent-container">
+  <form [formGroup]="wellnessRatingForm" (ngSubmit)="submit()">
+    <button class="btn btn-primary" type="submit">Submit</button>
   <div  class="wellness-container" >
       <h5 class="heading">Wellness Ratings</h5>
       <!--Hard Code the wellness ratings for now -->
@@ -54,12 +56,12 @@
           <input type="range" formControlName="energyRating"  thumbLabel (change)="setRating($event)" min="1" max="10" class="slider" id="energyRating">
         </div>
    </div>
+  </form>
+  <form [formGroup]="wellnessRatingForm" (ngSubmit)="submit()">
    <div class="habit-container">
     <h5 class="heading">Habit Review</h5>
  </div>
+ </form>
   </div>
-  
-</form>
-
 </div>
 

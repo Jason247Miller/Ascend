@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, EMPTY, first,map,of,Subject,take,tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, EMPTY, first,map,Observable,of,Subject,take,tap, throwError } from 'rxjs';
 import { User } from 'src/app/models/Users';
 import { Router } from '@angular/router';
 import { WellnessRating } from 'src/app/models/wellness-rating';
@@ -80,6 +80,19 @@ export class AccountService {
         this.localStorageUserSubject.next(localStorage.getItem('currentUser'));
     }
 
+    updateWellnessData(formData:WellnessRating):Observable<any>{
+        return this.http.put('api/wellnessRatings',formData)
+        .pipe(
+                take(1),
+                tap(rating => console.log("updated wellness rating", rating)),
+                catchError(error => {
+                    throw error;
+                })
+            ); 
+    
+    
+    }
+
     entryExistsForCurrentDate(currentDate:string){
        
         return this.http.get<WellnessRating[]>('api/wellnessRatings')
@@ -90,11 +103,11 @@ export class AccountService {
               
                 wellnessRating = wellnessRating.filter((item) => {
                     return item.date === currentDate
-                }
-                )
-            
-            return wellnessRating;
+                })
+                console.log('wellness rating=', wellnessRating);
+                return wellnessRating; 
             }
+            
             )
             ,
             tap(item => console.log(item))
@@ -109,7 +122,4 @@ export class AccountService {
 }
 
 
-function typeOf(item: WellnessRating[]): any {
-    throw new Error('Function not implemented.');
-}
 
