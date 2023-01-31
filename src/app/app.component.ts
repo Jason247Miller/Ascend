@@ -18,15 +18,13 @@ export class AppComponent implements OnInit {
        
         //emit the user in lo$cal storage if there is one, otherwise default value
         if(localStorage.getItem('currentUser')) {
-           
+            console.log("inside localStoreage if");
             this.accountService.setLocalStoreageUserSubject(localStorage.getItem('currentUser'));
              
         }
-        console.log(
-            "local storeage user = ",
-            localStorage.getItem('currentUser')
-        );
-        this.accountService.setLocalStoreageUserSubject('default');
+        else{
+            this.accountService.setLocalStoreageUserSubject('default');
+        }
     }
 
     logOut():void {

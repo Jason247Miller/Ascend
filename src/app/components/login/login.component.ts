@@ -62,13 +62,13 @@ private fb : FormBuilder,
     }
     handleLogin(user:User) {
         if(this.accountService.redirectUrl) {
-            this.router.navigateByUrl(this.accountService.redirectUrl);
+        this.accountService.setLocalStoreageUserSubject(user);
+        console.log("Successfully logged in user:" + user.firstName);
+        this.router.navigateByUrl(this.accountService.redirectUrl);
         } else{
             this.router.navigateByUrl('/dashboard'); 
         }
     
-        this.accountService.setLocalStoreageUserSubject(user);
-        console.log("Successfully logged in user:" + user.firstName);
     }
      
 }

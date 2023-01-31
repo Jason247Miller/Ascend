@@ -20,7 +20,7 @@ export class AccountService {
     }
 
      setLocalStoreageUserSubject(localUser:string|null|User){
-       
+         console.log("localUser", localUser);
         this.localStorageUserSubject.next(localUser);
      }
     getLocalStoreageUser$(){

@@ -1,8 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { AccountService } from 'src/app/services/account/account.service';
-import { AlertService } from 'src/app/services/alert/alert.service';
 import { WellnessRating } from 'src/app/models/wellness-rating';
 import { take } from 'rxjs';
 
@@ -44,25 +42,20 @@ export class DailyReviewComponent implements OnInit {
   
   console.log("ngOnit Daily Review=", this.dailyReviewForm);
   this.accountService.entryExistsForCurrentDate(this.currentDate)
-  .pipe(take(1)).subscribe({
-     next: entry => { 
+  .pipe(take(1)).subscribe(
+    
+       entry => { 
       this.currentDateEntry = entry
-    }, 
-  //  complete:
-    });
+      if(this.currentDateEntry){
+        console.log("entry already exists, would you like to edit todays entry?")
+      }
+      else{
+        console.log("currentdate entry does not exist") 
+      }
+  
+      });
    
-    if(this.currentDateEntry){
-      console.log("entry already exists, would you like to edit todays entry?")
-    }
-    else{
-      console.log("currentdate entry does not exist") 
-      this.dailyReviewForm = this.fb.group({
-        firstName: ["", Validators.required],
-        lastName: ["", Validators.required]
-      })
-
-    }
-
+   
  
   }
 

@@ -9,10 +9,10 @@
         <ng-container *ngIf="localStorageUser$ | async as localStorageUser">
               <li *ngIf="localStorageUser === 'default'"><a [routerLink]="['/login']">Login</a></li>
               <li *ngIf="localStorageUser === 'default'"><a [routerLink]="['/sign-up']">Sign-Up</a></li>       
-              <li *ngIf="localStorageUser !== 'default'"><a (click)= logOut()>Logout</a></li>
-        </ng-container>
-        <li><a [routerLink]="['/kb']">KB</a></li>
-
+             <li><a [routerLink]="['/kb']">KB</a></li>
+             <li *ngIf="localStorageUser !== 'default'"><a [routerLink]="['/dashboard']">Dashboard</a></li>
+             <li *ngIf="localStorageUser !== 'default'"><a (click)= logOut()>Logout</a></li>
+      </ng-container>
       </ul>
     </div>
    
