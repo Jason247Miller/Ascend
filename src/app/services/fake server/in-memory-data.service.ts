@@ -80,12 +80,17 @@ export class InMemoryDataService implements InMemoryDbService {
              {
                 id:1, 
                 userId: 1, 
-                habitDescription:'Play Guitar for 20 minutes a day'
+                habitName:'Play Guitar for 20 minutes a day'
              },
              {
                 id:2, 
                 userId: 1, 
-                habitDescription:'Cardio for 30 minutes'
+                habitName:'Cardio for 30 minutes'
+             },
+             {
+                id:3, 
+                userId: 1, 
+                habitName:'Meditate for 10 minutes'
              }
             ],
             guidedJournalEntries:[

@@ -58,11 +58,13 @@
   </form>
  
   <form [formGroup]="habitReviewForm" (ngSubmit)="submit()">
-    <h5 class="heading">Habit Review</h5>
-    <div *ngFor="let field of fields">
-    <input type="checkbox" [formControlName]="field">
-    <label>{{field}}</label>
-    </div>
+    <div class="habit-container">
+    <h5 class="heading">Check Habits if Completed</h5>
+  <div *ngFor="let habit of currentUserHabits" >
+    <input type="checkbox" [formControl]="$any(habitReviewForm.controls[habit])">
+    <label for="vehicle1">{{habit}}</label><br>
+  </div>
+</div>
  </form>
  </div>
 

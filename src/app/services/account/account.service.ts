@@ -5,6 +5,7 @@ import { User } from 'src/app/models/Users';
 import { Router } from '@angular/router';
 import { IWellnessRating } from 'src/app/models/wellness-rating';
 import { AlertService } from '../alert/alert.service';
+import { Habit } from 'src/app/models/Habit';
 
 
 
@@ -18,6 +19,7 @@ export class AccountService {
     private localStorageUserSubject = new BehaviorSubject<User | string | null>("default");
     public localStorageUser$ = this.localStorageUserSubject.asObservable(); 
     private wellnessRatingsUrl = 'api/wellnessRatings'; 
+    private habitsUrl = 'api/habits'; 
     constructor(private http: HttpClient, private router: Router, private alertService:AlertService) {  
     }
 
@@ -91,6 +93,21 @@ export class AccountService {
             ); 
     
     
+    }
+
+    getHabitsForCurrentUser(userId:number){
+        return this.http.get<Habit[]>(this.habitsUrl)
+        .pipe(
+            map(habits => {
+                habits = habits.filter((habit)=>{
+                return habit.userId === userId; 
+                }); 
+                return habits; 
+            }),
+            tap(habits => {
+                console.log('habits with userId passed=', habits); 
+            })
+        ); 
     }
     
     handleError(error:string, customMessage?:string ) {

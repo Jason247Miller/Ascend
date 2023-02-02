@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Form, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AccountService } from 'src/app/services/account/account.service';
 import { IWellnessRating } from 'src/app/models/wellness-rating';
 import { take } from 'rxjs';
@@ -11,7 +11,7 @@ import { Habit } from 'src/app/models/Habit';
   styleUrls: ['./daily-review.component.less']
 })
 export class DailyReviewComponent implements OnInit {
-  fields: any = [];
+ 
 
   constructor(private fb: FormBuilder,
     private accountService: AccountService,
@@ -23,6 +23,7 @@ export class DailyReviewComponent implements OnInit {
     private wellnessRecordId: number; 
     private newEntry:boolean; 
     private dataToSend!: IWellnessRating; 
+    currentUserHabits:string[] = []; 
      
     
     wellnessRatingForm!: FormGroup; 
@@ -127,11 +128,29 @@ setCurrentDate(): void {
   this.currentDate = `${day}-${month}-${year}`; 
 }
 
+
 initializeForms(){
 
-  const formGroupFields = this.getFormControlsFields();
-  this.habitReviewForm = new FormGroup(formGroupFields);
+  this.habitReviewForm = this.fb.group({});
+  this.accountService.getHabitsForCurrentUser(this.currentUserId)
+  .pipe(take(1))
+  .subscribe(  habits => {
 
+      habits.forEach(habit => {
+      console.log("habitname", habit.habitName);
+      console.log("currentUserhabits", this.currentUserHabits)
+      this.currentUserHabits.push(habit.habitName); 
+      this.habitReviewForm.addControl(habit.habitName, new FormControl(false)); 
+    })
+    
+
+ })
+
+
+ //this.habitReviewForm.addControl('ride bike', false);
+
+ //call method to get habits for current user (name and description only) as form array
+ // this.formArrayDefined.push(this.fb.control(''))
 
   this.wellnessRatingForm = this.fb.group({
     sleepRating:[0, Validators.required],
@@ -149,31 +168,7 @@ initializeForms(){
   
  
 
-  // this.habitReviewForm = this.fb.group({
-  //   sleepRating:[5, Validators.required],
-  //   userId: this.currentUserId
-  // }); 
 
-}
-
-getFormControlsFields(){
-
-  const formGroupFields:any = {};
-
-  //could get each habbit name and description from Habit table 
-  const model = {
-    name: 1,
-    lastName: '',
-    address: '',
-    age: '',
-  }
-
-  for( const field of Object.keys(model)){
-    formGroupFields[field] = new FormControl("");
-      this.fields.push(field);
-  }
-  console.log("formGroupFields", formGroupFields)
-  return formGroupFields; 
 }
 
 
