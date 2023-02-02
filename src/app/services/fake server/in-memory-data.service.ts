@@ -3,10 +3,10 @@ import { Injectable } from '@angular/core';
 import { InMemoryDbService } from 'angular-in-memory-web-api';
 import { BehaviorSubject, delay, of } from 'rxjs';
 import { User } from 'src/app/models/Users';
-import { WellnessRating } from 'src/app/models/wellness-rating';
 import { HabitCompletionLog } from 'src/app/models/HabitCompletionLog';
 import { GuidedJournalEntry } from 'src/app/models/guidedJournalEntry';
 import { Habit } from 'src/app/models/Habit';
+import { IWellnessRating } from 'src/app/models/wellness-rating';
 
 @Injectable({
     providedIn: 'root',
@@ -33,7 +33,7 @@ export class InMemoryDataService implements InMemoryDbService {
             wellnessRatings:[              
                 {   id: 1,
                     userId: 1,
-                    date:'31-1-2023',
+                    date:'1-2-2022',
                     sleepRating:5,
                     exerciseRating:7,
                     nutritionRating:8,
@@ -47,7 +47,7 @@ export class InMemoryDataService implements InMemoryDbService {
                 {   id: 2,
                     userId: 1,
                     date:'26-1-2023',
-                    sleepRating:0,
+                    sleepRating:5,
                     exerciseRating:0,
                     nutritionRating:0,
                     stressRating:0,
@@ -120,14 +120,19 @@ export class InMemoryDataService implements InMemoryDbService {
         } else if(reqInfo.collectionName === 'register') {
             return this.register(reqInfo);
         }
-        else if(reqInfo.collectionName === 'updateWellnessData'){
-            return this.updateWellnessData(reqInfo);
-        }
-        
-        //  otherwise default response of In-memory DB
+      
         return undefined;
     }
-
+   
+    addWellnessEntry(reqInfo:any) {
+        const requestBody = reqInfo['req']['body']; 
+        const id:number = this.genId(this.db.wellnessRatings);//generate an id that does not exist
+        requestBody['id'] = id;
+        console.log('entry before push', requestBody)
+        this.db.wellnessRatings.push(requestBody);
+        return of(new HttpResponse({status: 200})).
+            pipe(delay(500)); //mimic server delay
+    }
     register(reqInfo:any) {
 
         const requestBody = reqInfo['req']['body']; 
@@ -147,34 +152,6 @@ export class InMemoryDataService implements InMemoryDbService {
 
    
  
-    updateWellnessData(reqInfo:any){
-    
-    
-    const requestBody = reqInfo['req']['body']; 
-   
-    let wellnessRecordFound = this.db.wellnessRatings.find(x => x.id === requestBody['id']);
-    if (wellnessRecordFound) {
-
-     console.log("found wellness entry to update", wellnessRecordFound);
-     wellnessRecordFound.energyRating =  requestBody['energyRating'];
-     wellnessRecordFound.exerciseRating =  requestBody['exerciseRating'];
-     wellnessRecordFound.mindfulnessRating = requestBody['mindfulnessRating'];
-     wellnessRecordFound.moodRating = requestBody['moodRating']; 
-     wellnessRecordFound.nutritionRating = requestBody['nutritionRating'];
-     wellnessRecordFound.productivityRating = requestBody['productivityRating'];
-     wellnessRecordFound.sleepRating = requestBody['sleepRating']; 
-     wellnessRecordFound.stressRating = requestBody['stressRating'];
-     wellnessRecordFound.sunlightRating = requestBody['sunlightRating']; 
-     console.log("after update", wellnessRecordFound);
-
-    } 
-    else{
-        console.log("could not find wellness entry to update");
-    }
-    return   of(new HttpResponse({status: 200})).
-    pipe(delay(500)); //mimic server delay
-
-    }
     //not currently used
     logout(reqInfo: any) {
         return reqInfo.utils.createResponse$(() => {
@@ -224,7 +201,7 @@ export class InMemoryDataService implements InMemoryDbService {
         });
     }
 
-    genId(entries: User[] | WellnessRating[] | Habit[] | GuidedJournalEntry[]|HabitCompletionLog[] ): number {
+    genId(entries: User[] | IWellnessRating[] | Habit[] | GuidedJournalEntry[]|HabitCompletionLog[] ): number {
         return entries.length > 0 ? Math.max(...entries
             .map((entry: { id: number; }) => entry.id)) + 1 : 1;
     }

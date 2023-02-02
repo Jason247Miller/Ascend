@@ -60,8 +60,7 @@ private fb: FormBuilder,
 
         this.accountService.signUp(this.dataToSend).
             pipe(
-                take(1),
-                catchError(error => this.handleError(error))
+                take(1)
             ). 
             subscribe(() => {
                 this.handleSignUpSuccess(); 
@@ -84,15 +83,7 @@ private fb: FormBuilder,
     get confirmPassword() {
         return this.signUpForm.get("confirmPassword"); 
     }
-    
-    handleError(error:string) {
-        this.alertService.error("A User already exists with this email");
-        console.log(
-            "Error: ",
-            error
-        );
-        return EMPTY;
-    }
+
     handleSignUpSuccess() {
         console.log("Sign-up was Successful!");
         this.router.navigate(["./login"]);

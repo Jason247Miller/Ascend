@@ -45,21 +45,11 @@ private fb : FormBuilder,
             this.password?.value
         ).
             pipe(
-                take(1), 
-                catchError(error => this.handleError(error))
+                take(1)
             ). 
             subscribe(user => this.handleLogin(user));
     }
 
-    handleError(error:string) {
-        this.errorMessage = JSON.stringify(error); 
-        console.error("error logging in " + this.errorMessage); 
-        this.alertService.error(
-            'User name or password is incorrect!',
-            {autoClose:false}
-        );
-        return EMPTY; 
-    }
     handleLogin(user:User) {
         if(this.accountService.redirectUrl) {
         this.accountService.setLocalStoreageUserSubject(user);

@@ -3,7 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, EMPTY, first,map,Observable,of,Subject,take,tap, throwError } from 'rxjs';
 import { User } from 'src/app/models/Users';
 import { Router } from '@angular/router';
-import { WellnessRating } from 'src/app/models/wellness-rating';
+import { IWellnessRating } from 'src/app/models/wellness-rating';
+import { AlertService } from '../alert/alert.service';
 
 
 
@@ -16,7 +17,8 @@ export class AccountService {
     public currentUser$ = this.currentUserSubject.asObservable(); 
     private localStorageUserSubject = new BehaviorSubject<User | string | null>("default");
     public localStorageUser$ = this.localStorageUserSubject.asObservable(); 
-    constructor(private http: HttpClient, private router: Router) {  
+    private wellnessRatingsUrl = 'api/wellnessRatings'; 
+    constructor(private http: HttpClient, private router: Router, private alertService:AlertService) {  
     }
 
      setLocalStoreageUserSubject(localUser:string|null|User){
@@ -33,7 +35,6 @@ export class AccountService {
             'api/authenticate',
             {email, password}
         ).pipe(
-            first(), //emitt 1 item and close the Observable 
             tap(user => {
                 localStorage.setItem(
                     'currentUser',
@@ -41,13 +42,13 @@ export class AccountService {
                 );
                 this.updateLocalStorageSubject(); 
                 return user; 
-            })
+            }),
+            catchError(error => this.handleError(error, 'User name or password is incorrect!'))
         ); 
     }
 
     logOut():void {
 
-  
         localStorage.removeItem('currentUser');
         //this.currentUserSubject.next("default");
         this.localStorageUserSubject.next('default');
@@ -62,7 +63,7 @@ export class AccountService {
             pipe(
                 tap(item => console.log(item)),
                 catchError(error => {
-                    throw 'Email already exists in database!';
+                   return this.handleError(error,'Email already exists in database!' );   
                 })
             ); 
     }
@@ -80,32 +81,53 @@ export class AccountService {
         this.localStorageUserSubject.next(localStorage.getItem('currentUser'));
     }
 
-    updateWellnessData(formData:WellnessRating):Observable<any>{
-        return this.http.put('api/wellnessRatings',formData)
+    updateWellnessData(formData:IWellnessRating):Observable<any>{
+        return this.http.put(this.wellnessRatingsUrl,formData)
         .pipe(
-                take(1),
                 tap(rating => console.log("updated wellness rating", rating)),
                 catchError(error => {
-                    throw error;
+                   return  this.handleError(error, 'Error:Failed to Update wellness entry');
                 })
             ); 
     
     
     }
+    
+    handleError(error:string, customMessage?:string ) {
+       if(customMessage){
+        this.alertService.error(customMessage);
+        console.log(customMessage);
+       }
+       else{
+        this.alertService.error(error);
+       }
+       console.error(error);
+        return EMPTY;
+    }
 
-    entryExistsForCurrentDate(currentDate:string){
+    addWellnessRatingEntry(wellnessEntry: IWellnessRating){
+        console.log('inside wellness rating add')
+     return this.http.post<IWellnessRating>(this.wellnessRatingsUrl, wellnessEntry)
+     .pipe(
+        tap(wellnessRating => console.log("added new wellness rating: ", wellnessRating)),
+        catchError(error => this.handleError(error, 'Error:Failed to add wellnessRating'))
+     )
+
+    }
+
+    entryExistsForCurrentDate(currentDate:string, userId:number){
        
-        return this.http.get<WellnessRating[]>('api/wellnessRatings')
+        return this.http.get<IWellnessRating[]>('api/wellnessRatings')
         .pipe(
             
             take(1),
-            map((wellnessRating) => {
+            map((rating) => {
               
-                wellnessRating = wellnessRating.filter((item) => {
-                    return item.date === currentDate
+                rating = rating.filter((entry) => {
+                    return ((entry.date === currentDate) && (entry.userId === userId))
                 })
-                console.log('wellness rating=', wellnessRating);
-                return wellnessRating; 
+                console.log('current date entry=', rating);
+                return rating; 
             }
             
             )
