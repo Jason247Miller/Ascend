@@ -4,6 +4,7 @@
       <ul>
        
         <li><a [routerLink]="['/home']" style="color:red;">Ascend</a></li>
+        <li class="menu-link" (click)="hideMenu()"><a>Menu</a></li>
         <li><a [routerLink]="['/home']">Home</a></li>
         
         <ng-container *ngIf="localStorageUser$ | async as localStorageUser">
@@ -15,14 +16,16 @@
       </ng-container>
       </ul>
     </div>
-    
+  
     <div class="main-container">
       <app-alert></app-alert>
     <router-outlet></router-outlet>
-    <footer >
+    <div class="footer-container">
+    <footer id="app-footer">
       © 2020 Copyright:
       <a href="https://samplefooter.com/">sampleFooterLink.com</a>
    </footer>
+  </div>
     </div>
   
   </div>

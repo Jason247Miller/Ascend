@@ -30,5 +30,8 @@ export class AppComponent implements OnInit {
     logOut():void {
         this.accountService.logOut(); 
     }
+    hideMenu(){
+        
+    }
 
 }

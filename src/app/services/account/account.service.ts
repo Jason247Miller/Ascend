@@ -1,18 +1,19 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, EMPTY, first,map,Observable,of,Subject,take,tap, throwError } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, catchError, EMPTY, first, map, Observable, of, Subject, take, tap, throwError } from 'rxjs';
 import { User } from 'src/app/models/Users';
 import { Router } from '@angular/router';
 import { IWellnessRating } from 'src/app/models/wellness-rating';
 import { AlertService } from '../alert/alert.service';
 import { Habit } from 'src/app/models/Habit';
-
+import { IHabitCompletionLog } from 'src/app/models/HabitCompletionLog';
 
 
 @Injectable({
     providedIn: 'root'
 })
 export class AccountService {
+   
     public redirectUrl?: string; 
     private currentUserSubject = new BehaviorSubject<User | string>("default"); 
     public currentUser$ = this.currentUserSubject.asObservable(); 
@@ -20,14 +21,18 @@ export class AccountService {
     public localStorageUser$ = this.localStorageUserSubject.asObservable(); 
     private wellnessRatingsUrl = 'api/wellnessRatings'; 
     private habitsUrl = 'api/habits'; 
+    private habitCompletionLogsUrl = 'api/habitCompletionLogs';
     constructor(private http: HttpClient, private router: Router, private alertService:AlertService) {  
     }
 
-     setLocalStoreageUserSubject(localUser:string|null|User){
-         console.log("localUser", localUser);
+    setLocalStoreageUserSubject(localUser:string|null|User) {
+        console.log(
+            "localUser",
+            localUser
+        );
         this.localStorageUserSubject.next(localUser);
-     }
-    getLocalStoreageUser$(){
+    }
+    getLocalStoreageUser$() {
         return this.localStorageUserSubject.asObservable(); 
     }
       
@@ -45,7 +50,10 @@ export class AccountService {
                 this.updateLocalStorageSubject(); 
                 return user; 
             }),
-            catchError(error => this.handleError(error, 'User name or password is incorrect!'))
+            catchError(error => this.handleError(
+                error,
+                'User name or password is incorrect!'
+            ))
         ); 
     }
 
@@ -65,7 +73,10 @@ export class AccountService {
             pipe(
                 tap(item => console.log(item)),
                 catchError(error => {
-                   return this.handleError(error,'Email already exists in database!' );   
+                    return this.handleError(
+                        error,
+                        'Email already exists in database!' 
+                    );   
                 })
             ); 
     }
@@ -83,82 +94,134 @@ export class AccountService {
         this.localStorageUserSubject.next(localStorage.getItem('currentUser'));
     }
 
-    updateWellnessData(formData:IWellnessRating):Observable<any>{
-        return this.http.put(this.wellnessRatingsUrl,formData)
-        .pipe(
-                tap(rating => console.log("updated wellness rating", rating)),
+    updateWellnessData(formData:IWellnessRating):Observable<any> {
+        return this.http.put(
+            this.wellnessRatingsUrl,
+            formData
+        ).
+            pipe(
+                tap(rating => console.log(
+                    "updated wellness rating",
+                    rating
+                )),
                 catchError(error => {
-                   return  this.handleError(error, 'Error:Failed to Update wellness entry');
+                    return this.handleError(
+                        error,
+                        'Error:Failed to Update wellness entry'
+                    );
                 })
             ); 
     
     
     }
 
-    getHabitsForCurrentUser(userId:number){
-        return this.http.get<Habit[]>(this.habitsUrl)
-        .pipe(
-            map(habits => {
-                habits = habits.filter((habit)=>{
-                return habit.userId === userId; 
-                }); 
-                return habits; 
-            }),
-            tap(habits => {
-                console.log('habits with userId passed=', habits); 
-            })
-        ); 
+    getHabitsForCurrentUser(userId:number) {
+        return this.http.get<Habit[]>(this.habitsUrl).
+            pipe(
+                map(habits => {
+                    habits = habits.filter((habit) => {
+                        return habit.userId === userId; 
+                    }); 
+                    return habits; 
+                }),
+                tap(habits => {
+                    console.log(
+                        'habits with userId passed=',
+                        habits
+                    ); 
+                })
+            ); 
     }
     
     handleError(error:string, customMessage?:string ) {
-       if(customMessage){
-        this.alertService.error(customMessage);
-        console.log(customMessage);
-       }
-       else{
-        this.alertService.error(error);
-       }
-       console.error(error);
+        if(customMessage) {
+            this.alertService.error(customMessage);
+            console.log(customMessage);
+        } else{
+            this.alertService.error(error);
+        }
+        console.error(error);
         return EMPTY;
     }
 
-    addWellnessRatingEntry(wellnessEntry: IWellnessRating){
-        console.log('inside wellness rating add')
-     return this.http.post<IWellnessRating>(this.wellnessRatingsUrl, wellnessEntry)
-     .pipe(
-        tap(wellnessRating => console.log("added new wellness rating: ", wellnessRating)),
-        catchError(error => this.handleError(error, 'Error:Failed to add wellnessRating'))
-     )
-
+    addWellnessRatingEntry(wellnessEntry: IWellnessRating) {
+        console.log('inside wellness rating add');
+        return this.http.post<IWellnessRating>(
+            this.wellnessRatingsUrl,
+            wellnessEntry
+        ).
+            pipe(
+                tap(wellnessRating => console.log(
+                    "added new wellness rating: ",
+                    wellnessRating
+                )),
+                catchError(error => this.handleError(
+                    error,
+                    'Error:Failed to add wellnessRating'
+                ))
+            ); 
     }
 
-    entryExistsForCurrentDate(currentDate:string, userId:number){
+    addHabitCompletionLogs(habitCompletionLogs: IHabitCompletionLog[]) {
+        habitCompletionLogs.forEach(log => {
+            console.log('addHabitCompletionLogs called'); 
+            this.http.post<IHabitCompletionLog>(
+                this.habitCompletionLogsUrl,
+                log
+            ).
+                pipe(
+                    take(1),
+                    catchError(error => {
+                        return this.handleError(
+                            error,
+                            'Error: Failed to submit 1 or more habit logs'
+                        ); 
+                    })
+                ).
+                subscribe(); 
+        }); 
+        
+        
+    }
+
+    viewHabitCompletionEntries() {
+        console.log("view habit logs");
+        return this.http.get<IHabitCompletionLog[]>(this.habitCompletionLogsUrl).
+            pipe(tap(logs => {
+                console.log(
+                    'habit logs=',
+                    logs
+                );
+            })); 
+
+      
+    }
+    wellnessEntryExistsForCurrentDate(currentDate:string, userId:number) {
        
-        return this.http.get<IWellnessRating[]>('api/wellnessRatings')
-        .pipe(
-            
-            take(1),
-            map((rating) => {
+        return this.http.get<IWellnessRating[]>(this.wellnessRatingsUrl).
+            pipe(
+                map((rating) => {
               
-                rating = rating.filter((entry) => {
-                    return ((entry.date === currentDate) && (entry.userId === userId))
+                    rating = rating.filter((entry) => {
+                        return entry.date === currentDate && entry.userId === userId;
+                    });
+                    console.log(
+                        'current date entry=',
+                        rating
+                    );
+                    return rating; 
                 })
-                console.log('current date entry=', rating);
-                return rating; 
-            }
-            
-            )
-            ,
-            tap(item => console.log(item))
+                ,
+                tap(item => console.log(item)),
+
+                catchError(error => {
+                    return this.handleError(error ,  "Error occured in wellness rating exists query"); 
+                })
            
             
-        )
-
-        
-
-    }
-  
+            );
+       }
+     
 }
-
 
 

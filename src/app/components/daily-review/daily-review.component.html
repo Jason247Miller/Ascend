@@ -52,21 +52,22 @@
           <label for="energyRating"><b>Energy:</b></label>
           <input type="range" formControlName="energyRating"  thumbLabel min="1" max="10" class="slider" id="energyRating">
         </div>
-        <button class="btn btn-primary" type="submit">Submit</button>
    </div>
  
   </form>
  
-  <form [formGroup]="habitReviewForm" (ngSubmit)="submit()">
+  <form [formGroup]="habitReviewForm">
     <div class="habit-container">
     <h5 class="heading">Check Habits if Completed</h5>
   <div *ngFor="let habit of currentUserHabits" >
-    <input type="checkbox" [formControl]="$any(habitReviewForm.controls[habit])">
-    <label for="vehicle1">{{habit}}</label><br>
+   
+    <input type="checkbox" [formControl]="$any(habitReviewForm.controls[habit.id])"> 
+    <label for={{habit.id}}>{{habit.habitName}}</label><br>
   </div>
 </div>
  </form>
+ 
  </div>
-
+ <button class="btn btn-primary" (click)="submit()">Submit</button>
 </div>
 
