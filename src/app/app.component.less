@@ -1,42 +1,41 @@
 
-.menu-link{
-  display: none;
-}
+
 //holds the entire app comp contents
 .app-root-container{
   position: relative;
   min-height: 900px;
   width: 100%;
-  .main-container {
-    position: absolute;
-    width: 100%;
-    height: 900px;
-    top:73px;
-    
-    }
-  
 }
+.menu-link{display:none;}
 
-footer {
-  
-  position: fixed;
+.app-root-container footer {
   text-align: center;
-  height: 30px;
+  margin: 0;
+  padding: 0;
+  height: 78px;
+  //margin-left:39px ;
   background-color: #333;
   color: white;  
-  bottom: 0;
+  position: absolute;
+  bottom: -5;
   width: 100%;
   z-index: 2;
   background-color: #333;
 }
 
 //holds alert, and routed dashboard component
-
+.main-container {
+position: relative;
+width: 100%;
+min-height: 900px;
+top:73px;
+}
 
 .nav-bar ul {
   list-style: none;
   position: fixed;
   width: 100%;
+  height: auto;
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -57,17 +56,10 @@ footer {
           }
         }
      }
-
-     @media (max-width: 650px) {
-       .menu-link{
-        display: block;
-       }
-       .footer-container{
-        display: none;
-       }
-     }
 }
 
 
-
-
+@media screen and (max-width: 650px) {
+ .app-root-container footer{width: 100%;}
+ .menu-link{display:inline-block;}
+}

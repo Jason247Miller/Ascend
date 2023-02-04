@@ -7,182 +7,240 @@ import { AlertService } from 'src/app/services/alert/alert.service';
 import { Habit } from 'src/app/models/Habit';
 import { IHabitCompletionLog } from 'src/app/models/HabitCompletionLog';
 @Component({
-    selector: 'app-daily-review',
-    templateUrl: './daily-review.component.html',
-    styleUrls: ['./daily-review.component.less']
+  selector: 'app-daily-review',
+  templateUrl: './daily-review.component.html',
+  styleUrls: ['./daily-review.component.less']
 })
 export class DailyReviewComponent implements OnInit {
 
 
-    constructor(
-private fb: FormBuilder,
+  constructor(
+    private fb: FormBuilder,
     private accountService: AccountService,
     private alertService: AlertService
-    ) {
-    }
+  ) { }
 
-    private currentDateWellnessEntry: IWellnessRating; 
-    private currentDateHabitCompletionLogs: IHabitCompletionLog; 
-    private currentUserId: number;
-    private wellnessRecordId: number; 
-    private newEntry:boolean; 
-    
-    
-    currentUserHabits:Habit[] = []; 
-    wellnessRatingForm!: FormGroup; 
-    habitReviewForm!: FormGroup; 
-    currentDate:string; 
-  
-    
-    ngOnInit(): void {
-  
-        this.currentUserId = JSON.parse(localStorage.getItem('currentUser') || '{}').id; 
-        this.setCurrentDate(); 
-        this.initializeForms(); 
+  private currentDateHabitLogs: IHabitCompletionLog[];
+  private currentUserId: number;
+  private wellnessRecordId: number;
+  private newWellnessEntry: boolean;
+  private newHabitLogEntry: boolean;
+  noHabits: boolean;
+  displayDate = new Date(); 
+  currentUserHabits: Habit[] = [];
+  wellnessRatingForm!: FormGroup;
+  habitReviewForm!: FormGroup;
+  currentDate: string;
 
-  
-        this.accountService.wellnessEntryExistsForCurrentDate(
-            this.currentDate,
-            this.currentUserId)
-            .pipe(take(1)).
-            subscribe(entry => { 
-                this.currentDateWellnessEntry = entry[0];
-                 
-                //entry exists for current date, pull existing values
-                if(entry.length !== 0) {
-                    this.newEntry = false; 
-                    this.wellnessRecordId = this.currentDateWellnessEntry.id; 
-                    console.log("entry already exist");
-                    this.wellnessRatingForm.patchValue(this.currentDateWellnessEntry); 
-                } else{ 
-                    this.newEntry = true; 
-                    console.log("currentdate entry does not exist"); 
-                }
-            });
-   
-    }//end ngOnit
 
-    submit() {
-        console.log("review submit called");
-        this.submitWellnessRatingForm(); 
-        this.submitHabitReviewForm();
+  ngOnInit(): void {
 
-  
-    }
+    this.currentUserId = JSON.parse(localStorage.getItem('currentUser') || '{}').id;
+    this.noHabits = false;
+    this.setCurrentDate();
+    this.initializeForms();
+    this.checkIfRatingsExist();
+    this.checkIfHabitLogsExist();
+  }
 
-    setCurrentDate(): void {
-        let date = new Date(); 
-        let day = date.getDate();
-        let month = date.getMonth() + 1 ;
-        let year = date.getFullYear();
-        this.currentDate = `${day}-${month}-${year}`; 
-    }
-     submitHabitReviewForm() {
-        let habitLogs: IHabitCompletionLog[] = []; 
-  
-        Object.keys(this.habitReviewForm.controls).forEach(key => {
-            console.log(
-                "keys =",
-                key,
-                this.habitReviewForm.controls[key].value
-            ); 
-            habitLogs.push({
-                id: 0,
-                userId: this.currentUserId,
-                habitId: Number(key),
-                completed: this.habitReviewForm.controls[key].value,
-                date:this.currentDate
-            });
-        }); 
-        //loops through the array of logs and posts them seperately
-        this.accountService.addHabitCompletionLogs(habitLogs); 
-        this.accountService.viewHabitCompletionEntries().subscribe();
-  
-    }
-
-    submitWellnessRatingForm() {
-        const formData = this.wellnessRatingForm.getRawValue();
-        let dataToSend: IWellnessRating; 
-        dataToSend = {
-            id: 0,
-            userId: formData.userId,
-            date: formData.date, 
-            sleepRating: formData.sleepRating,
-            exerciseRating:formData.exerciseRating, 
-            nutritionRating:formData.nutritionRating,
-            stressRating:formData.stressRating, 
-            sunlightRating:formData.sunlightRating, 
-            mindfulnessRating:formData.mindfulnessRating, 
-            productivityRating:formData.productivityRating, 
-            moodRating:formData.moodRating, 
-            energyRating:formData.energyRating
-        };
-
-        //if not a new entry
-        if(this.newEntry === true) {
-
-            this.newEntry = false; 
-  
-            this.accountService.addWellnessRatingEntry(dataToSend).
-                subscribe(() => {
-                    this.alertService.success('Wellness Rating has been submitted successfully');
-                });
-        } else if(this.newEntry === false) {
-            console.log("new entry false");
-
-            this.accountService.wellnessEntryExistsForCurrentDate(
-                this.currentDate,
-                this.currentUserId
-            ).
-                pipe(take(1)).
-                subscribe(entry => {
-    
-                    if(entry.length !== 0) {
-
-                        this.wellnessRecordId = entry[0].id;
-                        dataToSend.id = this.wellnessRecordId; 
-                        this.accountService.updateWellnessData(dataToSend).
-                            pipe(take(1)).
-                            subscribe(() => {
-                                console.log("form update success");
-                                this.alertService.success('Wellness Entry Successfully Updated');
-                            });
-  
-                    }
-                });//end subscribe
+  setCurrentDate(): void {
+    let date = new Date();
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+    this.currentDate = `${day}-${month}-${year}`;
+  }
+  checkIfRatingsExist() {
+    this.accountService.getCurrentDateWellnessEntry(
+      this.currentDate,
+      this.currentUserId).
+      pipe(take(1)).
+      subscribe(ratingEntry => {
+        //if rating entries exist for current date
+        if (ratingEntry.length !== 0) {
+          this.newWellnessEntry = false;
+          this.wellnessRecordId = ratingEntry[0].id;
+          console.log("entry already exist");
+          this.wellnessRatingForm.patchValue(ratingEntry[0]);
+        } else {
+          this.newWellnessEntry = true;
+          console.log("currentdate entry does not exist");
         }
+      });
+
+  }
+  checkIfHabitLogsExist() {
+
+    this.accountService.getCurrentDateHabitLogEntries(
+      this.currentDate,
+      this.currentUserId).
+      pipe(take(1)).
+      subscribe(logs => {
+        //save logs for later http call
+        this.currentDateHabitLogs = logs;
+
+        if (logs.length !== 0) {
+          //if logs exist for currentDate, loop through the FormControls and add the existing log values to the form
+          for (let i = 0; i < logs.length; i++) {
+            let habitId = logs[i].habitId;
+            let currentControl = this.habitReviewForm.get(habitId.toString());
+            currentControl?.setValue(logs[i].completed);
+          }
+
+          this.newHabitLogEntry = false;
+          console.log("habit entry already exist");
+
+        } else {
+          this.newHabitLogEntry = true;
+          console.log("habit logs do not exist for current date - using default values");
+        }
+      });
+
+  }
+  submit() {
+    console.log("review submit called");
+    this.submitWellnessRatingForm();
+    this.submitHabitReviewForm();
+  }
+
+  submitHabitReviewForm() {
+    let habitLogs: IHabitCompletionLog[] = [];
+
+    if (this.newHabitLogEntry === true) {
+      Object.keys(this.habitReviewForm.controls).forEach(key => {
+        console.log(
+          "keys =",
+          key,
+          this.habitReviewForm.controls[key].value
+        );
+        habitLogs.push({
+          id: 0,
+          userId: this.currentUserId,
+          habitId: Number(key),
+          completed: this.habitReviewForm.controls[key].value,
+          date: this.currentDate
+        });
+      });
+
+      this.accountService.addHabitCompletionLogs(habitLogs);
+
+    } else if (this.newHabitLogEntry === false) {
+      console.log("form before controls = ", this.currentDateHabitLogs);
+      Object.keys(this.habitReviewForm.controls).forEach(key => {
+        this.currentDateHabitLogs.forEach((log) => {
+          if (key === log.habitId.toString()) {
+            log.completed = this.habitReviewForm.controls[key].value;
+          }
+        });
+        console.log("keys =", key, this.habitReviewForm.controls[key].value);
+
+      });
     }
+    this.accountService.updateHabitCompletionLogs(this.currentDateHabitLogs);
 
-    initializeForms() {
-  
-        this.habitReviewForm = this.fb.group({});
-        this.accountService.getHabitsForCurrentUser(this.currentUserId).
-            pipe(take(1)).
-            subscribe(habits => {
-                habits.forEach(habit => {
-                    this.currentUserHabits.push(habit); 
-                    this.habitReviewForm.addControl(
-                        habit.id.toString(),
-                        new FormControl(false)
-                    );
-                });
-            });
+  }
 
-        this.wellnessRatingForm = this.fb.group({
+  submitWellnessRatingForm() {
+    const wellnessFormData: IWellnessRating = this.wellnessRatingForm.getRawValue();
+    //if not a new entry
+    if (this.newWellnessEntry === true) {
 
-            sleepRating:[0, Validators.required],
-            exerciseRating:[0, Validators.required],
-            nutritionRating:[0, Validators.required],
-            stressRating:[0, Validators.required],
-            sunlightRating:[0, Validators.required],
-            mindfulnessRating:[0, Validators.required],
-            productivityRating:[0, Validators.required],
-            moodRating:[0, Validators.required],
-            energyRating:[0, Validators.required],
-            userId:this.currentUserId,
-            date:this.currentDate
-        }); 
+      this.newWellnessEntry = false;
+
+      this.accountService.addWellnessRatingEntry(wellnessFormData).
+        subscribe(() => {
+          this.alertService.success('Wellness Rating has been submitted successfully');
+        });
+    } else if (this.newWellnessEntry === false) {
+      console.log("new entry false");
+
+      this.accountService.getCurrentDateWellnessEntry(
+        this.currentDate,
+        this.currentUserId
+      ).
+        pipe(take(1)).
+        subscribe(entry => {
+
+          if (entry.length !== 0) {
+
+            this.wellnessRecordId = entry[0].id;
+            wellnessFormData.id = this.wellnessRecordId;
+            this.accountService.updateWellnessData(wellnessFormData).
+              pipe(take(1)).
+              subscribe(() => {
+                console.log("form update success");
+                this.alertService.success('Wellness Entry Successfully Updated');
+              });
+
+          }
+        });//end subscribe
     }
+  }
+
+  initializeForms() {
+
+    this.habitReviewForm = this.fb.group({});
+
+    //Initialize the habit form with the users saved habits, and generate a control for each
+    this.accountService.getHabitsForCurrentUser(this.currentUserId).
+      pipe(take(1)).
+      subscribe(habits => {
+        if (habits.length !== 0) {
+          habits.forEach(habit => {
+            this.currentUserHabits.push(habit);
+            this.habitReviewForm.addControl(habit.id.toString(), new FormControl(false));
+          });
+        }
+        else {
+          this.noHabits = true;
+        }
+      });
+
+    this.wellnessRatingForm = this.fb.group({
+      id: 0,
+      sleepRating: [1, Validators.required],
+      exerciseRating: [1, Validators.required],
+      nutritionRating: [1, Validators.required],
+      stressRating: [1, Validators.required],
+      sunlightRating: [1, Validators.required],
+      mindfulnessRating: [1, Validators.required],
+      productivityRating: [1, Validators.required],
+      moodRating: [1, Validators.required],
+      energyRating: [1, Validators.required],
+      userId: this.currentUserId,
+      date: this.currentDate
+    });
+  }
+
+  //wellness form getters for template access 
+  get exerciseRating() {
+    return this.wellnessRatingForm.get('exerciseRating')?.value
+  }
+  get sunlightRating() {
+    return this.wellnessRatingForm.get("sunlightRating")?.value;
+  }
+  get sleepRating() {
+    return this.wellnessRatingForm.get("sleepRating")?.value;
+  }
+  get nutritionRating() {
+    return this.wellnessRatingForm.get("nutritionRating")?.value;
+  }
+  get stressRating() {
+    return this.wellnessRatingForm.get("stressRating")?.value;
+  }
+  get mindfulnessRating() {
+    return this.wellnessRatingForm.get("mindfulnessRating")?.value;
+  }
+  get productivityRating() {
+    return this.wellnessRatingForm.get("productivityRating")?.value;
+  }
+  get moodRating() {
+    return this.wellnessRatingForm.get("moodRating")?.value;
+  }
+  get energyRating() {
+    return this.wellnessRatingForm.get("energyRating")?.value;
+  }
+
 
 }
 

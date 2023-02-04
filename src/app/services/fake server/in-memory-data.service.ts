@@ -64,14 +64,21 @@ export class InMemoryDataService implements InMemoryDbService {
                     userId: 1,
                     habitId:1,
                     completed: true,
-                    date:'26-1-2023'
+                    date:'3-2-2023'
                 },
                 {
                     id: 2,
                     userId: 1,
                     habitId: 2,
                     completed: true,
-                    date:'26-1-2023'
+                    date:'3-2-2023'
+                },
+                {
+                    id: 3,
+                    userId: 1,
+                    habitId: 3,
+                    completed: true,
+                    date:'3-2-2023'
                 }
             ],
             habits:[

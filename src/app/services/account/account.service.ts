@@ -94,7 +94,31 @@ export class AccountService {
         this.localStorageUserSubject.next(localStorage.getItem('currentUser'));
     }
 
+    updateHabitCompletionLogs(habitCompletionLogs:IHabitCompletionLog[]) {
+        habitCompletionLogs.forEach(log => {
+          
+            this.http.put<IHabitCompletionLog>(
+                this.habitCompletionLogsUrl,
+                log
+            ).
+                pipe(
+                    take(1),
+                    catchError(error => {
+                        return this.handleError(
+                            error,
+                            'Error: Failed to submit 1 or more habit logs'
+                        ); 
+                    })
+                ).
+                subscribe(
+                ); 
+        });
+
+       
+    }
+
     updateWellnessData(formData:IWellnessRating):Observable<any> {
+
         return this.http.put(
             this.wellnessRatingsUrl,
             formData
@@ -196,7 +220,33 @@ export class AccountService {
 
       
     }
-    wellnessEntryExistsForCurrentDate(currentDate:string, userId:number) {
+
+    getCurrentDateHabitLogEntries(currentDate:string, userId:number) {
+        return this.http.get<IHabitCompletionLog[]>(this.habitCompletionLogsUrl).
+            pipe(
+                map((habitLogs) => {
+          
+                    habitLogs = habitLogs.filter((habitLog) => {
+                        return habitLog.date === currentDate && habitLog.userId === userId;
+                    });
+                    console.log(
+                        'current date entry=',
+                        habitLogs
+                    );
+                    return habitLogs; 
+                })
+                ,
+                tap(logs => console.log("current habit logs", logs)),
+
+                catchError(error => {
+                    return this.handleError(error, "Error occured querying current Habit Logs"); 
+                })
+       
+        
+            );
+    }
+    
+    getCurrentDateWellnessEntry(currentDate:string, userId:number) {
        
         return this.http.get<IWellnessRating[]>(this.wellnessRatingsUrl).
             pipe(
@@ -215,12 +265,12 @@ export class AccountService {
                 tap(item => console.log(item)),
 
                 catchError(error => {
-                    return this.handleError(error ,  "Error occured in wellness rating exists query"); 
+                    return this.handleError(error, "Error occured in wellness rating exists query"); 
                 })
            
             
             );
-       }
+    }
      
 }
 
