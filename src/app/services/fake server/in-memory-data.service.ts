@@ -41,7 +41,8 @@ export class InMemoryDataService implements InMemoryDbService {
                     mindfulnessRating:7,
                     productivityRating:8,
                     moodRating:6,
-                    energyRating:9
+                    energyRating:9,
+                    overallDayRating:7
                 },
                 { id: 2,
                     userId: 1,
@@ -54,7 +55,8 @@ export class InMemoryDataService implements InMemoryDbService {
                     mindfulnessRating:0,
                     productivityRating:0,
                     moodRating:0,
-                    energyRating:0
+                    energyRating:0,
+                    overallDayRating:7
                 }
             ],
 

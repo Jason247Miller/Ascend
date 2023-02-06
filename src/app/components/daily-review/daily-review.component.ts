@@ -285,6 +285,7 @@ export class DailyReviewComponent implements OnInit {
       productivityRating: [1, Validators.required],
       moodRating: [1, Validators.required],
       energyRating: [1, Validators.required],
+      overallDayRating: [1, Validators.required],
       userId: this.currentUserId,
       date: this.currentDate
     });
@@ -330,6 +331,9 @@ export class DailyReviewComponent implements OnInit {
   }
   get energyRating() {
     return this.wellnessRatingForm.get("energyRating")?.value;
+  }
+  get overallDayRating(){
+    return this.wellnessRatingForm.get("overallDayRating")?.value;
   }
 
 

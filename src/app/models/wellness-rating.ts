@@ -11,5 +11,6 @@ export interface IWellnessRating {
        productivityRating:number;
        moodRating:number;
        energyRating:number;
+       overallDayRating:number; 
    
   }
