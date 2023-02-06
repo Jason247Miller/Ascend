@@ -1,17 +1,13 @@
-export class GuidedJournalEntry {
+export class IGuidedJournalEntry {
 
     constructor(
-public id: 0, 
-public userId: 0, 
-public date:'',
-public didWell:'',
-public improveUpon: '', 
-public learned: '',
-public mainAccomplishments: '',
-public challengesFaced:'',
-public greatfulFor:'', 
-public meaningfulInteraction: '',
-public goalsForTomorrow:'',
-public additional:''
+public id: number, 
+public userId: number, 
+public date:string,
+public gratitudeEntry:string,
+public highlightEntry: string, 
+public learnedEntry: string,
+public contributeEntry: string,
+public generalEntry:string,
 ) { }
 }

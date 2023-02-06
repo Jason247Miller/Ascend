@@ -6,6 +6,7 @@ import { take } from 'rxjs';
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { Habit } from 'src/app/models/Habit';
 import { IHabitCompletionLog } from 'src/app/models/HabitCompletionLog';
+import { IGuidedJournalEntry } from 'src/app/models/GuidedJournalEntry';
 @Component({
   selector: 'app-daily-review',
   templateUrl: './daily-review.component.html',
@@ -23,12 +24,16 @@ export class DailyReviewComponent implements OnInit {
   private currentDateHabitLogs: IHabitCompletionLog[];
   private currentUserId: number;
   private wellnessRecordId: number;
+  private journalRecordId: number; 
   private newWellnessEntry: boolean;
+  private newJournalEntry: boolean; 
   private newHabitLogEntry: boolean;
+
   noHabits: boolean;
   displayDate = new Date(); 
   currentUserHabits: Habit[] = [];
   wellnessRatingForm!: FormGroup;
+  guidedJournalForm!: FormGroup; 
   habitReviewForm!: FormGroup;
   currentDate: string;
 
@@ -41,6 +46,7 @@ export class DailyReviewComponent implements OnInit {
     this.initializeForms();
     this.checkIfRatingsExist();
     this.checkIfHabitLogsExist();
+    this.checkIfGuidedJournalExist(); 
   }
 
   setCurrentDate(): void {
@@ -97,16 +103,73 @@ export class DailyReviewComponent implements OnInit {
       });
 
   }
+  checkIfGuidedJournalExist(){
+    this.accountService.getCurrentDateJournalEntry(
+      this.currentDate,
+      this.currentUserId).
+      pipe(take(1)).
+      subscribe(journalEntry => {
+        //if rating entries exist for current date
+        if (journalEntry.length !== 0) {
+          this.newJournalEntry = false;
+          this.journalRecordId = journalEntry[0].id;
+          console.log("journal entry already exist", journalEntry[0]);
+          this.guidedJournalForm.patchValue(journalEntry[0]);
+      
+        } else {
+          this.newJournalEntry = true;
+          console.log("currentdate entry does not exist");
+        }
+      });
+  }
   submit() {
     console.log("review submit called");
     this.submitWellnessRatingForm();
     this.submitHabitReviewForm();
-  }
+    this.submitGuidedJournalForm();
 
+  }
+  submitGuidedJournalForm(){
+    let guidedJournalFormData: IGuidedJournalEntry = this.guidedJournalForm.getRawValue(); 
+    
+    if (this.newJournalEntry === true) {
+
+      this.newJournalEntry = false;
+
+      this.accountService.addJournalRecordEntry(guidedJournalFormData)
+      .pipe(take(1))
+      .subscribe();
+    } else if (this.newWellnessEntry === false) {
+      console.log("new entry false");
+
+      this.accountService.getCurrentDateWellnessEntry(
+        this.currentDate,
+        this.currentUserId
+      ).
+        pipe(take(1)).
+        subscribe(guidedJournalEntry => {
+
+          if (guidedJournalEntry.length !== 0) {
+            //update the existing currentDate wellness entry with the Forms data
+            this.journalRecordId = guidedJournalEntry[0].id;
+            guidedJournalFormData.id = this.journalRecordId;
+            this.accountService.updateGuidedjournalData(guidedJournalFormData).
+              pipe(take(1)).
+              subscribe(() => {
+                console.log("jounral form update success");
+                this.alertService.success('Journal Entry Successfully Updated');
+              });
+
+          }
+        });//end subscribe
+    }
+
+  }
   submitHabitReviewForm() {
     let habitLogs: IHabitCompletionLog[] = [];
-
+  
     if (this.newHabitLogEntry === true) {
+      
       Object.keys(this.habitReviewForm.controls).forEach(key => {
         console.log(
           "keys =",
@@ -121,10 +184,11 @@ export class DailyReviewComponent implements OnInit {
           date: this.currentDate
         });
       });
-
+      
       this.accountService.addHabitCompletionLogs(habitLogs);
 
     } else if (this.newHabitLogEntry === false) {
+     
       console.log("form before controls = ", this.currentDateHabitLogs);
       Object.keys(this.habitReviewForm.controls).forEach(key => {
         this.currentDateHabitLogs.forEach((log) => {
@@ -142,15 +206,14 @@ export class DailyReviewComponent implements OnInit {
 
   submitWellnessRatingForm() {
     const wellnessFormData: IWellnessRating = this.wellnessRatingForm.getRawValue();
-    //if not a new entry
+
     if (this.newWellnessEntry === true) {
 
       this.newWellnessEntry = false;
 
-      this.accountService.addWellnessRatingEntry(wellnessFormData).
-        subscribe(() => {
-          this.alertService.success('Wellness Rating has been submitted successfully');
-        });
+      this.accountService.addWellnessRatingEntry(wellnessFormData)
+      .pipe(take(1))
+      .subscribe();
     } else if (this.newWellnessEntry === false) {
       console.log("new entry false");
 
@@ -159,11 +222,11 @@ export class DailyReviewComponent implements OnInit {
         this.currentUserId
       ).
         pipe(take(1)).
-        subscribe(entry => {
+        subscribe(wellnessEntry => {
 
-          if (entry.length !== 0) {
-
-            this.wellnessRecordId = entry[0].id;
+          if (wellnessEntry.length !== 0) {
+            //update the existing currentDate wellness entry with the Forms data
+            this.wellnessRecordId = wellnessEntry[0].id;
             wellnessFormData.id = this.wellnessRecordId;
             this.accountService.updateWellnessData(wellnessFormData).
               pipe(take(1)).
@@ -210,6 +273,34 @@ export class DailyReviewComponent implements OnInit {
       userId: this.currentUserId,
       date: this.currentDate
     });
+
+    this.wellnessRatingForm = this.fb.group({
+      id: 0,
+      sleepRating: [1, Validators.required],
+      exerciseRating: [1, Validators.required],
+      nutritionRating: [1, Validators.required],
+      stressRating: [1, Validators.required],
+      sunlightRating: [1, Validators.required],
+      mindfulnessRating: [1, Validators.required],
+      productivityRating: [1, Validators.required],
+      moodRating: [1, Validators.required],
+      energyRating: [1, Validators.required],
+      userId: this.currentUserId,
+      date: this.currentDate
+    });
+
+    this.guidedJournalForm = this.fb.group({
+      id: 0,
+      userId: this.currentUserId,
+      date: this.currentDate, 
+      gratitudeEntry: ['', Validators.required],
+      highlightEntry: ['', Validators.required],
+      learnedEntry: ['', Validators.required],
+      contributeEntry: ['', Validators.required],
+      generalEntry: ['', Validators.required],
+    
+    }); 
+
   }
 
   //wellness form getters for template access 

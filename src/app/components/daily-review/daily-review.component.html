@@ -2,7 +2,6 @@
     <h2>Daily Review {{displayDate | date: 'MM-dd-yyyy'}}</h2>
     <div class="flex-parent-container">
       <form [formGroup]="wellnessRatingForm" (ngSubmit)="submit()">
-
         <div class="wellness-container">
           <h5 class="heading">Wellness Ratings</h5>
           <!--Hard Code the wellness ratings for now -->
@@ -11,41 +10,41 @@
             <input id="sleepRating" formControlName="sleepRating" required type="range" thumbLabel min="1" max="10"
               class="slider">
           </div>
-          <div class="form-group">
+          <div>
             <label for="exerciseRating"><b>Exercise:<span class="rating-text">{{exerciseRating}}</span></b></label>
             <input type="range" formControlName="exerciseRating" thumbLabel min="1" max="10" class="slider"
               id="exerciseRating">
           </div>
-          <div class="form-group">
+          <div>
             <label for="nutritionRating"><b>Nutrition:<span class="rating-text">{{nutritionRating}}</span></b></label>
             <input type="range" formControlName="nutritionRating" thumbLabel min="1" max="10" class="slider"
               id="nutritionRating">
           </div>
-          <div class="form-group">
+          <div>
             <label for="stressRating"><b>Stress:<span class="rating-text">{{stressRating}}</span></b></label>
             <input type="range" formControlName="stressRating" thumbLabel min="1" max="10" class="slider"
               id="stressRating">
           </div>
-          <div class="form-group">
+          <div>
             <label for="sunlightRating"><b>Sunlight:<span class="rating-text">{{sunlightRating}}</span></b></label>
             <input type="range" formControlName="sunlightRating" thumbLabel min="1" max="10" class="slider"
               id="sunlightRating">
           </div>
-          <div class="form-group">
+          <div>
             <label for="mindfulnessRating"><b>Mindfulness:<span class="rating-text">{{mindfulnessRating}}</span></b></label>
             <input type="range" formControlName="mindfulnessRating" thumbLabel min="1" max="10" class="slider"
               id="mindfulnessRating">
           </div>
-          <div class="form-group">
+          <div>
             <label for="productivityRating"><b>Productivity:<span class="rating-text">{{productivityRating}}</span></b></label>
             <input type="range" formControlName="productivityRating" thumbLabel min="1" max="10" class="slider"
               id="ProductivityRating">
           </div>
-          <div class="form-group">
+          <div>
             <label for="moodRating"><b>Mood:<span class="rating-text">{{moodRating}}</span></b></label>
             <input type="range" formControlName="moodRating" thumbLabel min="1" max="10" class="slider" id="moodRating">
           </div>
-          <div class="form-group">
+          <div>
             <label for="energyRating"><b>Energy:<span class="rating-text">{{energyRating}}</span></b></label>
             <input type="range" formControlName="energyRating" thumbLabel min="1" max="10" class="slider"
               id="energyRating">
@@ -67,55 +66,25 @@
           </ng-container>
         </div>
       </form>
-      <div class="wellness-container">
-          <h5 class="heading">Wellness Ratings</h5>
-          <!--Hard Code the wellness ratings for now -->
-          <div>
-            <label for="sleepRating"><b>Sleep:<span class="rating-text">{{sleepRating}}</span></b></label>
-            <input id="sleepRating" formControlName="sleepRating" required type="range" thumbLabel min="1" max="10"
-              class="slider">
-          </div>
-          <div class="form-group">
-            <label for="exerciseRating"><b>Exercise:<span class="rating-text">{{exerciseRating}}</span></b></label>
-            <input type="range" formControlName="exerciseRating" thumbLabel min="1" max="10" class="slider"
-              id="exerciseRating">
-          </div>
-          <div class="form-group">
-            <label for="nutritionRating"><b>Nutrition:<span class="rating-text">{{nutritionRating}}</span></b></label>
-            <input type="range" formControlName="nutritionRating" thumbLabel min="1" max="10" class="slider"
-              id="nutritionRating">
-          </div>
-          <div class="form-group">
-            <label for="stressRating"><b>Stress:<span class="rating-text">{{stressRating}}</span></b></label>
-            <input type="range" formControlName="stressRating" thumbLabel min="1" max="10" class="slider"
-              id="stressRating">
-          </div>
-          <div class="form-group">
-            <label for="sunlightRating"><b>Sunlight:<span class="rating-text">{{sunlightRating}}</span></b></label>
-            <input type="range" formControlName="sunlightRating" thumbLabel min="1" max="10" class="slider"
-              id="sunlightRating">
-          </div>
-          <div class="form-group">
-            <label for="mindfulnessRating"><b>Mindfulness:<span class="rating-text">{{mindfulnessRating}}</span></b></label>
-            <input type="range" formControlName="mindfulnessRating" thumbLabel min="1" max="10" class="slider"
-              id="mindfulnessRating">
-          </div>
-          <div class="form-group">
-            <label for="productivityRating"><b>Productivity:<span class="rating-text">{{productivityRating}}</span></b></label>
-            <input type="range" formControlName="productivityRating" thumbLabel min="1" max="10" class="slider"
-              id="ProductivityRating">
-          </div>
-          <div class="form-group">
-            <label for="moodRating"><b>Mood:<span class="rating-text">{{moodRating}}</span></b></label>
-            <input type="range" formControlName="moodRating" thumbLabel min="1" max="10" class="slider" id="moodRating">
-          </div>
-          <div class="form-group">
-            <label for="energyRating"><b>Energy:<span class="rating-text">{{energyRating}}</span></b></label>
-            <input type="range" formControlName="energyRating" thumbLabel min="1" max="10" class="slider"
-              id="energyRating">
-          </div>
-        </div>
 
+
+      <form [formGroup]="guidedJournalForm">
+      <div class="journal-container">
+        <h5 class="heading">Guided Journal</h5>
+      <label for="gratitudeEntry">What are you grateful for today?</label>
+      <textarea id="gratitudeEntry" formControlName="gratitudeEntry" rows="4" cols="50"></textarea>
+      <label for="highlightEntry">What was the highlight of your day</label>
+      <textarea id="highlightEntry" formControlName="highlightEntry" rows="4" cols="50"></textarea>
+      <label for="learnedEntry">What did you learn today?</label>
+      <textarea id="learnedEntry" formControlName="learnedEntry" rows="4" cols="50"></textarea>
+      <label for="contributeEntry">What did you do to help someone else, expecting nothing in return?</label>
+      <textarea id="contributeEntry" formControlName="contributeEntry" rows="4" cols="50"></textarea>
+      <label for="generalEntry">Generalized Journal Entry</label>
+      <textarea id="generalEntry" formControlName="generalEntry"rows="8" cols="50"></textarea>
+      </div>
+      </form>
+  
+        
     </div>
     <button class="btn btn-primary" (click)="submit()">Submit</button>
   </div>

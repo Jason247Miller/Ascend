@@ -3,9 +3,10 @@
   <ul>
 
     <li><a [routerLink]="['/home']" style="color:red;">Ascend</a></li>
-    <li class="menu-link" (click)="hideMenu()"><a>Menu</a></li>
+    <ng-container>
+    <li class="menu-link" (click)="sideBarMenuDisplay()"><a>Menu</a></li>
+   </ng-container>
     <li><a [routerLink]="['/home']">Home</a></li>
-
     <ng-container *ngIf="localStorageUser$ | async as localStorageUser">
       <li *ngIf="localStorageUser === 'default'"><a [routerLink]="['/login']">Login</a></li>
       <li *ngIf="localStorageUser === 'default'"><a [routerLink]="['/sign-up']">Sign-Up</a></li>

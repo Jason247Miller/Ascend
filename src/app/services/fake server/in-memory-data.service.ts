@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { InMemoryDbService } from 'angular-in-memory-web-api';
 import { BehaviorSubject, delay, of } from 'rxjs';
 import { User } from 'src/app/models/Users';
-import { GuidedJournalEntry } from 'src/app/models/guidedJournalEntry';
+import { IGuidedJournalEntry } from 'src/app/models/GuidedJournalEntry';
 import { Habit } from 'src/app/models/Habit';
 import { IWellnessRating } from 'src/app/models/wellness-rating';
 import { IHabitCompletionLog } from 'src/app/models/HabitCompletionLog';
@@ -32,7 +32,7 @@ export class InMemoryDataService implements InMemoryDbService {
             wellnessRatings:[              
                 { id: 1,
                     userId: 1,
-                    date:'1-2-2022',
+                    date:'6-2-2023',
                     sleepRating:5,
                     exerciseRating:7,
                     nutritionRating:8,
@@ -45,7 +45,7 @@ export class InMemoryDataService implements InMemoryDbService {
                 },
                 { id: 2,
                     userId: 1,
-                    date:'26-1-2023',
+                    date:'6-1-2023',
                     sleepRating:5,
                     exerciseRating:0,
                     nutritionRating:0,
@@ -64,21 +64,21 @@ export class InMemoryDataService implements InMemoryDbService {
                     userId: 1,
                     habitId:1,
                     completed: true,
-                    date:'3-2-2023'
+                    date:'6-2-2023'
                 },
                 {
                     id: 2,
                     userId: 1,
                     habitId: 2,
-                    completed: true,
-                    date:'3-2-2023'
+                    completed: false,
+                    date:'6-2-2023'
                 },
                 {
                     id: 3,
                     userId: 1,
                     habitId: 3,
                     completed: true,
-                    date:'3-2-2023'
+                    date:'6-2-2023'
                 }
             ],
             habits:[
@@ -102,17 +102,22 @@ export class InMemoryDataService implements InMemoryDbService {
                 {
                     id:1, 
                     userId: 1, 
-                    date:'26-1-2023',
-                    didWell:'programmed for 2 hours',
-                    improveUpon: 'drink less alcohol', 
-                    learned: 'flex-box',
-                    mainAccomplishments: 'set up retirement account',
-                    challengesFaced:'getting out of bed',
-                    greatfulFor:'my moms health improving', 
-                    meaningfulInteraction: `visited my childhood best friend and
-                    talked about life`,
-                    goalsForTomorrow:'spend more time learning before coding',
-                    additional:''
+                    date:'6-2-2023',
+                    gratitudeEntry: 'my job, my gf, my family',
+                    highlightEntry: 'maintained focus throughout the day',
+                    learnedEntry: 'learned about RouteActiveLink',
+                    contributeEntry: 'made dinner for my gf',
+                    generalEntry: 'nothing much else to add'
+                },
+                {
+                    id:2, 
+                    userId: 2, 
+                    date:'6-2-2023',
+                    gratitudeEntry: 'test',
+                    highlightEntry: 'test',
+                    learnedEntry: 'test',
+                    contributeEntry: 'test',
+                    generalEntry: 'test'
                 }
             ]
         };
@@ -137,18 +142,7 @@ export class InMemoryDataService implements InMemoryDbService {
         return undefined;
     }
    
-    addWellnessEntry(reqInfo:any) {
-        const requestBody = reqInfo['req']['body']; 
-        const id:number = this.genId(this.db.wellnessRatings);//generate an id that does not exist
-        requestBody['id'] = id;
-        console.log(
-            'entry before push',
-            requestBody
-        ); 
-        this.db.wellnessRatings.push(requestBody);
-        return of(new HttpResponse({status: 200})).
-            pipe(delay(500)); //mimic server delay
-    }
+   
 
     addHabitCompletionLogs(reqInfo:any) {
       
@@ -223,7 +217,7 @@ export class InMemoryDataService implements InMemoryDbService {
         });
     }
 
-    genId(entries: User[] | IWellnessRating[] | Habit[] | GuidedJournalEntry[]|IHabitCompletionLog[] ): number {
+    genId(entries: User[] | IWellnessRating[] | Habit[] | IGuidedJournalEntry[]|IHabitCompletionLog[] ): number {
         return entries.length > 0 ? Math.max(...entries.
             map((entry: { id: number; }) => entry.id)) + 1 : 1;
     }

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import {  Observable, take } from 'rxjs';
 import { AccountService } from './services/account/account.service';
 import { User } from './models/Users';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-root',
@@ -11,12 +12,22 @@ import { User } from './models/Users';
 export class AppComponent implements OnInit {
     localStorageUser$:Observable<User|string|null> =  this.accountService.getLocalStoreageUser$(); 
     title = 'Ascend';
-    constructor(private accountService: AccountService) {}
-
+    hideSidebar:boolean; 
+    currentRoute:string; 
+    constructor(private accountService: AccountService, private route:ActivatedRoute) { console.log('MyComponent: ActivatedRoute:', this.route);}
     ngOnInit(): void {
-  
-       
-        //emit the user in lo$cal storage if there is one, otherwise default value
+
+
+        this.route.url.subscribe(url => {
+            this.currentRoute = url.join('');
+            console.log('Current URL:', this.currentRoute);
+          });
+        
+    
+        
+        
+       this.hideSidebar = false; 
+        
         if(localStorage.getItem('currentUser')) {
             console.log("inside localStoreage if");
             this.accountService.setLocalStoreageUserSubject(localStorage.getItem('currentUser'));
@@ -30,8 +41,15 @@ export class AppComponent implements OnInit {
     logOut():void {
         this.accountService.logOut(); 
     }
-    hideMenu(){
-        
+
+   
+    sideBarMenuDisplay(){
+      
+       this.accountService.hideSideBar$.pipe(take(1)).subscribe(value =>{
+        this.hideSidebar = value; 
+        console.log(this.hideSidebar)
+       })
+       this.accountService.setSidebarValue(!this.hideSidebar);
     }
 
 
