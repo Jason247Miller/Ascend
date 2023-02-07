@@ -17,6 +17,7 @@ import { AlertComponent } from './components/alert/alert.component';
 import { DailyReviewComponent } from './components/daily-review/daily-review.component';
 import { OverviewComponent } from './components/overview/overview.component';
 import { MatSliderModule } from '@angular/material/slider';
+import { ReportsComponent } from './components/reports/reports.component';
 @NgModule(
   {
   declarations: [
@@ -28,7 +29,8 @@ import { MatSliderModule } from '@angular/material/slider';
     DashboardComponent,
     AlertComponent,
     DailyReviewComponent,
-    OverviewComponent
+    OverviewComponent,
+    ReportsComponent
    
   ],
   imports: [
@@ -53,7 +55,8 @@ import { MatSliderModule } from '@angular/material/slider';
        children:  [
         {path: '', redirectTo: 'overview', pathMatch:'full'},
         {path: 'overview', component: OverviewComponent},
-        {path: 'daily-review', component: DailyReviewComponent }
+        {path: 'daily-review', component: DailyReviewComponent },
+        {path: 'reports', component: ReportsComponent}
        ]},
       {path: '', redirectTo: 'Home', pathMatch: 'full'},
       {path: '**', redirectTo: 'Home', pathMatch: 'full'},
