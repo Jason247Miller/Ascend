@@ -1,0 +1,15 @@
+<form [formGroup]="guidedJournalForm">
+    <div class="review-form">
+      <h5 class="heading">Guided Journal</h5>
+    <label for="gratitudeEntry">What are you grateful for today?</label>
+    <textarea id="gratitudeEntry" [readOnly]="previousDailyReview" formControlName="gratitudeEntry" rows="4" cols="50"></textarea>
+    <label for="highlightEntry">What was the highlight of your day</label>
+    <textarea id="highlightEntry"[readOnly]="previousDailyReview" formControlName="highlightEntry" rows="4" cols="50"></textarea>
+    <label for="learnedEntry">What did you learn today?</label>
+    <textarea id="learnedEntry" [readOnly]="previousDailyReview" formControlName="learnedEntry" rows="4" cols="50"></textarea>
+    <label for="contributeEntry">What did you do to help someone else, expecting nothing in return?</label>
+    <textarea id="contributeEntry" [readOnly]="previousDailyReview"formControlName="contributeEntry" rows="4" cols="50"></textarea>
+    <label for="generalEntry">Generalized Journal Entry</label>
+    <textarea id="generalEntry" [readOnly]="previousDailyReview" formControlName="generalEntry"rows="8" cols="50"></textarea>
+    </div>
+    </form>

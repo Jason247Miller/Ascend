@@ -17,6 +17,8 @@ import { AlertComponent } from './components/alert/alert.component';
 import { DailyReviewComponent } from './components/daily-review/daily-review.component';
 import { OverviewComponent } from './components/overview/overview.component';
 import { MatSliderModule } from '@angular/material/slider';
+
+import { HabitReviewFormComponent } from './components/habit-review-form/habit-review-form.component';
 @NgModule(
   {
   declarations: [
@@ -28,7 +30,8 @@ import { MatSliderModule } from '@angular/material/slider';
     DashboardComponent,
     AlertComponent,
     DailyReviewComponent,
-    OverviewComponent
+    OverviewComponent,
+    HabitReviewFormComponent
    
   ],
   imports: [

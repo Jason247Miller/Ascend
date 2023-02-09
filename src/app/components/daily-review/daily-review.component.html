@@ -1,93 +1,24 @@
   <div class="container">
     <h2>Daily Review {{displayDate | date: 'MM-dd-yyyy'}}</h2>
     <div class="flex-parent-container">
-      <form [formGroup]="wellnessRatingForm" (ngSubmit)="submit()">
-        <div class="wellness-container">
-          <h5 class="heading">Wellness Ratings</h5>
-          <!--Hard Code the wellness ratings for now -->
-          <div>
-            <label for="sleepRating"><b>Sleep:<span class="rating-text">{{sleepRating}}</span></b></label>
-            <input id="sleepRating" formControlName="sleepRating" required type="range" thumbLabel min="1" max="10"
-              class="slider">
-          </div>
-          <div>
-            <label for="exerciseRating"><b>Exercise:<span class="rating-text">{{exerciseRating}}</span></b></label>
-            <input type="range" formControlName="exerciseRating" thumbLabel min="1" max="10" class="slider"
-              id="exerciseRating">
-          </div>
-          <div>
-            <label for="nutritionRating"><b>Nutrition:<span class="rating-text">{{nutritionRating}}</span></b></label>
-            <input type="range" formControlName="nutritionRating" thumbLabel min="1" max="10" class="slider"
-              id="nutritionRating">
-          </div>
-          <div>
-            <label for="stressRating"><b>Stress:<span class="rating-text">{{stressRating}}</span></b></label>
-            <input type="range" formControlName="stressRating" thumbLabel min="1" max="10" class="slider"
-              id="stressRating">
-          </div>
-          <div>
-            <label for="sunlightRating"><b>Sunlight:<span class="rating-text">{{sunlightRating}}</span></b></label>
-            <input type="range" formControlName="sunlightRating" thumbLabel min="1" max="10" class="slider"
-              id="sunlightRating">
-          </div>
-          <div>
-            <label for="mindfulnessRating"><b>Mindfulness:<span class="rating-text">{{mindfulnessRating}}</span></b></label>
-            <input type="range" formControlName="mindfulnessRating" thumbLabel min="1" max="10" class="slider"
-              id="mindfulnessRating">
-          </div>
-          <div>
-            <label for="productivityRating"><b>Productivity:<span class="rating-text">{{productivityRating}}</span></b></label>
-            <input type="range" formControlName="productivityRating" thumbLabel min="1" max="10" class="slider"
-              id="ProductivityRating">
-          </div>
-          <div>
-            <label for="moodRating"><b>Mood:<span class="rating-text">{{moodRating}}</span></b></label>
-            <input type="range" formControlName="moodRating" thumbLabel min="1" max="10" class="slider" id="moodRating">
-          </div>
-          <div>
-            <label for="energyRating"><b>Energy:<span class="rating-text">{{energyRating}}</span></b></label>
-            <input type="range" formControlName="energyRating" thumbLabel min="1" max="10" class="slider"
-              id="energyRating">
-          </div>
-          <div>
-            <label for="overallDayRating"><b>Overall:<span class="rating-text">{{overallDayRating}}</span></b></label>
-            <input type="range" formControlName="overallDayRating" thumbLabel min="1" max="10" class="slider"
-              id="overallDayRating">
-          </div>
-        </div>
-      </form>
 
-      <form [formGroup]="habitReviewForm">
-        <div class="habit-container">
-          <ng-container *ngIf="!noHabits">
-            <h5 class="heading">Check Habits if Completed</h5>
-            <div *ngFor="let habit of currentUserHabits">
-              <input type="checkbox" [formControl]="$any(habitReviewForm.controls[habit.id])">
-              <label for={{habit.id}}>{{habit.habitName}}</label><br>
-            </div>
-          </ng-container>
-          <ng-container *ngIf="noHabits">
-            <h5 class="heading">There are no habits created to Display</h5>
-          </ng-container>
-        </div>
-      </form>
+      <app-wellness-rating-form
+      [wellnessRatingForm]="wellnessRatingForm"
+      [previousDailyReview]="previousDailyReview">
+      </app-wellness-rating-form>
+     
 
+      <app-habit-review-form 
+        [habitReviewForm]="habitReviewForm"
+        [noHabits]="noHabits"
+        [currentUserHabits]="currentUserHabits">
+      </app-habit-review-form>
 
-      <form [formGroup]="guidedJournalForm">
-      <div class="journal-container">
-        <h5 class="heading">Guided Journal</h5>
-      <label for="gratitudeEntry">What are you grateful for today?</label>
-      <textarea id="gratitudeEntry" formControlName="gratitudeEntry" rows="4" cols="50"></textarea>
-      <label for="highlightEntry">What was the highlight of your day</label>
-      <textarea id="highlightEntry" formControlName="highlightEntry" rows="4" cols="50"></textarea>
-      <label for="learnedEntry">What did you learn today?</label>
-      <textarea id="learnedEntry" formControlName="learnedEntry" rows="4" cols="50"></textarea>
-      <label for="contributeEntry">What did you do to help someone else, expecting nothing in return?</label>
-      <textarea id="contributeEntry" formControlName="contributeEntry" rows="4" cols="50"></textarea>
-      <label for="generalEntry">Generalized Journal Entry</label>
-      <textarea id="generalEntry" formControlName="generalEntry"rows="8" cols="50"></textarea>
-      </div>
-      </form>
+      <app-guided-journal-form
+      [guidedJournalForm]="guidedJournalForm"
+      [previousDailyReview]="previousDailyReview">
+      </app-guided-journal-form>
+  
   
         
     </div>
