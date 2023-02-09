@@ -256,7 +256,7 @@ export class AccountService {
                 subscribe(() => {
                     completed++;
                     if (completed === habitCompletionLogs.length) {
-                        this.alertService.success('habit logs have been added successfully');
+                       console.log("habit logs have been added successfully")
                     }
                 });
         });
@@ -327,14 +327,14 @@ export class AccountService {
             );
     }
 
-    getCurrentDateWellnessEntry(currentDate: string, userId: number) {
+    getWellnessEntryByDate(date: string, userId: number) {
 
         return this.http.get<IWellnessRating[]>(this.wellnessRatingsUrl).
             pipe(
                 map((rating) => {
 
                     rating = rating.filter((entry) => {
-                        return entry.date === currentDate && entry.userId === userId;
+                        return entry.date === date && entry.userId === userId;
                     });
                     console.log(
                         'current date entry=',

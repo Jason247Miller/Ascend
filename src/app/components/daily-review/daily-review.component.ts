@@ -7,6 +7,8 @@ import { AlertService } from 'src/app/services/alert/alert.service';
 import { Habit } from 'src/app/models/Habit';
 import { IHabitCompletionLog } from 'src/app/models/HabitCompletionLog';
 import { IGuidedJournalEntry } from 'src/app/models/GuidedJournalEntry';
+import { ActivatedRoute } from '@angular/router';
+
 @Component({
   selector: 'app-daily-review',
   templateUrl: './daily-review.component.html',
@@ -18,47 +20,62 @@ export class DailyReviewComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private accountService: AccountService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private activatedRoute: ActivatedRoute
   ) { }
 
   private currentDateHabitLogs: IHabitCompletionLog[];
   private currentUserId: number;
   private wellnessRecordId: number;
-  private journalRecordId: number; 
+  private journalRecordId: number;
   private newWellnessEntry: boolean;
-  private newJournalEntry: boolean; 
+  private newJournalEntry: boolean;
   private newHabitLogEntry: boolean;
+  previousDailyReview: boolean;
 
+  dateParam: string | null;
   noHabits: boolean;
-  displayDate = new Date(); 
   currentUserHabits: Habit[] = [];
   wellnessRatingForm!: FormGroup;
-  guidedJournalForm!: FormGroup; 
+  guidedJournalForm!: FormGroup;
   habitReviewForm!: FormGroup;
   currentDate: string;
 
 
   ngOnInit(): void {
 
+    this.dateParam = this.activatedRoute.snapshot.paramMap.get('date');
     this.currentUserId = JSON.parse(localStorage.getItem('currentUser') || '{}').id;
     this.noHabits = false;
-    this.setCurrentDate();
+    this.setDate();
     this.initializeForms();
-    this.checkIfRatingsExist();
+    this.checkIfRatingsExist(this.currentDate);
     this.checkIfHabitLogsExist();
-    this.checkIfGuidedJournalExist(); 
+    this.checkIfGuidedJournalExist();
+    
   }
 
-  setCurrentDate(): void {
-    let date = new Date();
-    let day = date.getDate();
-    let month = date.getMonth() + 1;
-    let year = date.getFullYear();
-    this.currentDate = `${day}-${month}-${year}`;
+  setDate(): void {
+    if (this.dateParam) {
+      this.previousDailyReview = true;
+      this.currentDate = this.dateParam;
+    }
+    else {
+      this.previousDailyReview = false;
+      let date = new Date();
+     this.currentDate =  date.toLocaleDateString("en-US", {
+        month: "2-digit",
+        day: "2-digit",
+        year:"numeric"
+      });
+      this.currentDate = this.currentDate.replace(/(\d+)\/(\d+)\/(\d+)/, "$1-$2-$3"); 
+      console.log('current date', this.currentDate)
+    }
   }
-  checkIfRatingsExist() {
-    this.accountService.getCurrentDateWellnessEntry(
-      this.currentDate,
+  checkIfRatingsExist(date: string) {
+
+    this.accountService.getWellnessEntryByDate(
+      date,
       this.currentUserId).
       pipe(take(1)).
       subscribe(ratingEntry => {
@@ -103,7 +120,7 @@ export class DailyReviewComponent implements OnInit {
       });
 
   }
-  checkIfGuidedJournalExist(){
+  checkIfGuidedJournalExist() {
     this.accountService.getCurrentDateJournalEntry(
       this.currentDate,
       this.currentUserId).
@@ -115,7 +132,7 @@ export class DailyReviewComponent implements OnInit {
           this.journalRecordId = journalEntry[0].id;
           console.log("journal entry already exist", journalEntry[0]);
           this.guidedJournalForm.patchValue(journalEntry[0]);
-      
+
         } else {
           this.newJournalEntry = true;
           console.log("currentdate entry does not exist");
@@ -129,20 +146,20 @@ export class DailyReviewComponent implements OnInit {
     this.submitGuidedJournalForm();
 
   }
-  submitGuidedJournalForm(){
-    let guidedJournalFormData: IGuidedJournalEntry = this.guidedJournalForm.getRawValue(); 
-    
+  submitGuidedJournalForm() {
+    let guidedJournalFormData: IGuidedJournalEntry = this.guidedJournalForm.getRawValue();
+
     if (this.newJournalEntry === true) {
 
       this.newJournalEntry = false;
 
       this.accountService.addJournalRecordEntry(guidedJournalFormData)
-      .pipe(take(1))
-      .subscribe();
+        .pipe(take(1))
+        .subscribe();
     } else if (this.newWellnessEntry === false) {
       console.log("new entry false");
 
-      this.accountService.getCurrentDateWellnessEntry(
+      this.accountService.getWellnessEntryByDate(
         this.currentDate,
         this.currentUserId
       ).
@@ -157,7 +174,7 @@ export class DailyReviewComponent implements OnInit {
               pipe(take(1)).
               subscribe(() => {
                 console.log("jounral form update success");
-                this.alertService.success('Journal Entry Successfully Updated');
+
               });
 
           }
@@ -167,9 +184,9 @@ export class DailyReviewComponent implements OnInit {
   }
   submitHabitReviewForm() {
     let habitLogs: IHabitCompletionLog[] = [];
-  
+
     if (this.newHabitLogEntry === true) {
-      
+
       Object.keys(this.habitReviewForm.controls).forEach(key => {
         console.log(
           "keys =",
@@ -184,11 +201,11 @@ export class DailyReviewComponent implements OnInit {
           date: this.currentDate
         });
       });
-      
+
       this.accountService.addHabitCompletionLogs(habitLogs);
 
     } else if (this.newHabitLogEntry === false) {
-     
+
       console.log("form before controls = ", this.currentDateHabitLogs);
       Object.keys(this.habitReviewForm.controls).forEach(key => {
         this.currentDateHabitLogs.forEach((log) => {
@@ -212,12 +229,12 @@ export class DailyReviewComponent implements OnInit {
       this.newWellnessEntry = false;
 
       this.accountService.addWellnessRatingEntry(wellnessFormData)
-      .pipe(take(1))
-      .subscribe();
+        .pipe(take(1))
+        .subscribe();
     } else if (this.newWellnessEntry === false) {
       console.log("new entry false");
 
-      this.accountService.getCurrentDateWellnessEntry(
+      this.accountService.getWellnessEntryByDate(
         this.currentDate,
         this.currentUserId
       ).
@@ -232,7 +249,7 @@ export class DailyReviewComponent implements OnInit {
               pipe(take(1)).
               subscribe(() => {
                 console.log("form update success");
-                this.alertService.success('Wellness Entry Successfully Updated');
+             
               });
 
           }
@@ -293,14 +310,14 @@ export class DailyReviewComponent implements OnInit {
     this.guidedJournalForm = this.fb.group({
       id: 0,
       userId: this.currentUserId,
-      date: this.currentDate, 
+      date: this.currentDate,
       gratitudeEntry: ['', Validators.required],
       highlightEntry: ['', Validators.required],
       learnedEntry: ['', Validators.required],
       contributeEntry: ['', Validators.required],
       generalEntry: ['', Validators.required],
-    
-    }); 
+
+    });
 
   }
 
@@ -332,8 +349,25 @@ export class DailyReviewComponent implements OnInit {
   get energyRating() {
     return this.wellnessRatingForm.get("energyRating")?.value;
   }
-  get overallDayRating(){
+  get overallDayRating() {
     return this.wellnessRatingForm.get("overallDayRating")?.value;
+  }
+
+  setDisabled() {
+    for (const controlName in this.wellnessRatingForm.controls) {
+      if (this.wellnessRatingForm.controls.hasOwnProperty(controlName)) {
+        const control = this.wellnessRatingForm.controls[controlName];
+        control.disable();
+        //console.log(control);
+      }
+    }
+    for (const controlName in this.guidedJournalForm.controls) {
+      if (this.guidedJournalForm.controls.hasOwnProperty(controlName)) {
+        const control = this.guidedJournalForm.controls[controlName];
+        control.disable();
+        //console.log(control);
+      }
+    }
   }
 
 

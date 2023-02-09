@@ -1,6 +1,6 @@
 
   <!-- Side navigation -->
-<div  [ngClass]= "{'removeSidebar':hideSidebar, 'sidenav' :!hideSidebar}">
+<div class="sidenav" [ngClass]= "{'removeSidebar':hideSidebar, 'sidenav' :!hideSidebar}">
     <a [routerLink]="['overview']">Overview</a>
     <a [routerLink]="['daily-review']">Daily Review</a>
     <a [routerLink]="['reports']">Reports</a>

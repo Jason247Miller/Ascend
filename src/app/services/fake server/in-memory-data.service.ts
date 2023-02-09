@@ -32,7 +32,7 @@ export class InMemoryDataService implements InMemoryDbService {
             wellnessRatings:[              
                 { id: 1,
                     userId: 1,
-                    date:'6-2-2023',
+                    date:'02-06-2023',
                     sleepRating:5,
                     exerciseRating:7,
                     nutritionRating:8,
@@ -46,7 +46,7 @@ export class InMemoryDataService implements InMemoryDbService {
                 },
                 { id: 2,
                     userId: 1,
-                    date:'6-1-2023',
+                    date:'01-06-2023',
                     sleepRating:5,
                     exerciseRating:0,
                     nutritionRating:0,
@@ -66,45 +66,48 @@ export class InMemoryDataService implements InMemoryDbService {
                     userId: 1,
                     habitId:1,
                     completed: true,
-                    date:'6-2-2023'
+                    date:'02-06-2023'
                 },
                 {
                     id: 2,
                     userId: 1,
                     habitId: 2,
                     completed: false,
-                    date:'6-2-2023'
+                    date:'02-06-2023'
                 },
                 {
                     id: 3,
                     userId: 1,
                     habitId: 3,
                     completed: true,
-                    date:'6-2-2023'
+                    date:'02-06-2023'
                 }
             ],
             habits:[
                 {
                     id:1, 
                     userId: 1, 
-                    habitName:'Play Guitar for 20 minutes a day'
+                    habitName:'Play Guitar for 20 minutes a day',
+                    deleted: false
                 },
                 {
                     id:2, 
                     userId: 1, 
-                    habitName:'Cardio for 30 minutes'
+                    habitName:'Cardio for 30 minutes',
+                    deleted:false
                 },
                 {
                     id:3, 
                     userId: 1, 
-                    habitName:'Meditate for 10 minutes'
+                    habitName:'Meditate for 10 minutes',
+                    deleted:true
                 }
             ],
             guidedJournalEntries:[
                 {
                     id:1, 
                     userId: 1, 
-                    date:'6-2-2023',
+                    date:'02-06-2023',
                     gratitudeEntry: 'my job, my gf, my family',
                     highlightEntry: 'maintained focus throughout the day',
                     learnedEntry: 'learned about RouteActiveLink',
@@ -114,7 +117,7 @@ export class InMemoryDataService implements InMemoryDbService {
                 {
                     id:2, 
                     userId: 2, 
-                    date:'6-2-2023',
+                    date:'02-06-2023',
                     gratitudeEntry: 'test',
                     highlightEntry: 'test',
                     learnedEntry: 'test',

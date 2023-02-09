@@ -18,6 +18,7 @@ import { DailyReviewComponent } from './components/daily-review/daily-review.com
 import { OverviewComponent } from './components/overview/overview.component';
 import { MatSliderModule } from '@angular/material/slider';
 import { ReportsComponent } from './components/reports/reports.component';
+import { HabitReviewFormComponent } from './components/habit-review-form/habit-review-form.component';
 @NgModule(
   {
   declarations: [
@@ -30,7 +31,8 @@ import { ReportsComponent } from './components/reports/reports.component';
     AlertComponent,
     DailyReviewComponent,
     OverviewComponent,
-    ReportsComponent
+    ReportsComponent,
+    HabitReviewFormComponent
    
   ],
   imports: [
@@ -56,6 +58,7 @@ import { ReportsComponent } from './components/reports/reports.component';
         {path: '', redirectTo: 'overview', pathMatch:'full'},
         {path: 'overview', component: OverviewComponent},
         {path: 'daily-review', component: DailyReviewComponent },
+        {path: 'daily-review/:date', component: DailyReviewComponent },
         {path: 'reports', component: ReportsComponent}
        ]},
       {path: '', redirectTo: 'Home', pathMatch: 'full'},

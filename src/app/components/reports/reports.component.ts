@@ -1,6 +1,8 @@
-import { HttpClientXsrfModule } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
+import { pipe, take } from 'rxjs';
+import { AccountService } from 'src/app/services/account/account.service';
 
 Chart.register(...registerables);
 @Component({
@@ -9,24 +11,38 @@ Chart.register(...registerables);
   styleUrls: ['./reports.component.less']
 })
 export class ReportsComponent implements OnInit {
+
+  constructor(private router: Router, private accountService: AccountService) { }
   @ViewChild('chartCanvas', { static: true }) canvasRef: ElementRef;
   ctx!: CanvasRenderingContext2D;
   canvas!: HTMLCanvasElement;
   myChart!: Chart;
-  labelsLink!:string[]; 
+
+  dates!: string[];
+  startIndex: number = 0;
+  yearTracker:number = 0; 
+  private queryDatesArray:string[] = []; 
+
+  
+  private currentUserId!:number; 
   ngOnInit(): void {
+
+    
+    this.currentUserId = JSON.parse(localStorage.getItem('currentUser') || '{}').id;
+    this.dates = this.updateDays();
+    console.log('dates', this.dates);
+
+
     this.canvas = this.canvasRef.nativeElement;
     const ctx = this.canvas.getContext('2d');
-    this.labelsLink =  ['https://www.google.com/', 'https://www.google.com/', 'https://www.google.com/',
-     'https://www.google.com/', 'https://www.google.com/', 'https://www.google.com/', 'https://www.google.com/'];
 
     if (ctx) {
       this.myChart = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: ['2/3', '2/4', '2/5', '2/6', '2/7', '2/8', '2/9'],
+          labels: this.dates,
           datasets: [{
-            label: 'sleep rating',
+            label: 'overall',
             data: [10, 9, 3, 5, 2, 3],
             backgroundColor: [
               'rgba(255, 99, 132, 0.2)',
@@ -47,7 +63,7 @@ export class ReportsComponent implements OnInit {
             borderWidth: 1
           },
           {
-            label: 'overall rating',
+            label: 'sleep rating',
             data: [2, 9, 7, 5, 2, 10],
             backgroundColor: [
               'rgba(255, 99, 132, 0.2)',
@@ -90,43 +106,112 @@ export class ReportsComponent implements OnInit {
 
       this.canvas.addEventListener('click', (e: MouseEvent) => {
         let resetCoordinates = this.canvas.getBoundingClientRect();
-        //console.log('reset', resetCoordinates)
         this.clickableScales(e, resetCoordinates);
+
       });
     }
 
   }
 
   clickableScales(click: MouseEvent, resetCoordinates: any) {
-    console.log('canvas', this.canvas)
-    console.log('click', click)
-    const height = this.myChart.scales['x'].height;
+   
     const top = this.myChart.scales['x'].top;
     const bottom = this.myChart.scales['x'].bottom;
     const left = this.myChart.scales['x'].left;
-    const right = this.myChart.scales['x'].maxWidth / this.myChart.scales['x'].ticks.length;
-    
+    const right = this.myChart.scales['x'].maxWidth / this.myChart.scales['x'].ticks.length + 1.5 ;
     const x = click.clientX - resetCoordinates.left;
     const y = click.clientY - resetCoordinates.top;
-    //console.log('x', x);
-    //console.log('y', y);
-    //console.log('right', right)
-    //console.log('scales x' , myChart.scales['x'].top)
-    for(let i = 0; i < this.myChart.scales['x'].ticks.length; i++){
-  if(x >= left + (right * i) && x <= right + (right * i) && y>= top && y <= bottom){
-    if(this.myChart.data.labels){
-    console.log('clicked label', this.myChart.data.labels[i]);
+
+    for (let i = 0; i < this.myChart.scales['x'].ticks.length; i++) {
+      if (x >= left + (right * i) && x <= right + (right * i) && y >= top && y <= bottom) {
+        if (this.myChart.data.labels) {
+          //let reversedDateArray = this.queryDatesArray.reverse();
+          console.log('i', i); 
+         console.log('reversed array', this.queryDatesArray[i]);
+         console.log('labels array', this.myChart.data.labels[i])
+       
+          this.accountService.getWellnessEntryByDate( this.queryDatesArray[i], this.currentUserId,)
+          .pipe(take(1))
+          .subscribe(entriesForDate => {
+            //if rating entries exist for current date
+            if (entriesForDate.length !== 0) {
+              this.router.navigate(['dashboard/daily-review', this.queryDatesArray[i]])
+              console.log("entry already exist");
+             
+            } else {
+              console.log("currentdate entry does not exist");
+
+            }
+          });
+         
+         
+          //in the backend, use the date to query the form entries for that date. 
+          //make the form inputs read only 
+
+        }
+
+
+
+      }
     }
 
-    
-    
-  }
-}
-
   }
 
 
+  updateDays(): string[] {
 
+     let displayDateArray = [];
+     this.queryDatesArray = []; 
+
+    for (let i = this.startIndex; i < this.startIndex + 7; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const chartDateString = date.toLocaleDateString("en-US", {
+        month: "2-digit",
+        day: "2-digit"
+
+      });
+        let queryDateString = date.toLocaleDateString("en-US", {
+        month: "2-digit",
+        day: "2-digit",
+        year:"numeric"
+      });
+      queryDateString = queryDateString.replace(/(\d+)\/(\d+)\/(\d+)/, "$1-$2-$3"); 
+      
+      this.queryDatesArray.push(queryDateString);
+   
+      console.log('query string', this.queryDatesArray);
+      displayDateArray.push(chartDateString);
+    }
+    this.queryDatesArray.reverse(); 
+    return displayDateArray.reverse();
+  };
+
+  nextWeek() {
+
+    if (this.startIndex > 0) {
+    this.startIndex = this.startIndex - 7;
+    this.myChart.data.labels = [];
+    this.myChart.data.labels = this.updateDays(); 
+    this.myChart.update(); 
+    console.log('NEXT dates', this.dates);
+    }
+    else if (this.startIndex === 0) {
+      console.log('current date');
+      return;
+    }
+
+
+  }
+
+  previousWeek() {
+
+    this.startIndex = this.startIndex + 7;
+    this.myChart.data.labels = [];
+    this.myChart.data.labels = this.updateDays();
+    this.myChart.update(); 
+    console.log('next dates', this.dates);
+  }
 
 }
 

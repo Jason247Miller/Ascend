@@ -1,7 +1,26 @@
 
 .line-chart-container{
-    display: block;
+    position:relative;
     border-style:solid; 
-    margin-top:50px; 
-    height: 500px; 
+    border-color: grey;
+    margin: 50px auto ;
+    width:90%;
+    padding: 20px;
 }
+.container{
+    position: relative;
+    //background-color: lightgray;
+    width:80%;
+    height:100%;
+    margin-left:105px; 
+}
+@media screen and (max-width: 650px) {
+    .container{
+        margin: auto;
+        width: 100%;
+    }
+    .line-chart-container{
+        width:100%; 
+    }
+    
+   }
