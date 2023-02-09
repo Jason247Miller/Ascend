@@ -28,6 +28,7 @@ export class DailyReviewComponent implements OnInit {
   private newWellnessEntry: boolean;
   private newJournalEntry: boolean; 
   private newHabitLogEntry: boolean;
+  previousDailyReview:boolean; 
 
   noHabits: boolean;
   displayDate = new Date(); 

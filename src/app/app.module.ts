@@ -17,12 +17,15 @@ import { AlertComponent } from './components/alert/alert.component';
 import { DailyReviewComponent } from './components/daily-review/daily-review.component';
 import { OverviewComponent } from './components/overview/overview.component';
 import { MatSliderModule } from '@angular/material/slider';
-
+import { WellnessRatingFormComponent } from './components/wellness-rating-form/wellness-rating-form.component';
 import { HabitReviewFormComponent } from './components/habit-review-form/habit-review-form.component';
+import { GuidedJournalFormComponent } from './components/guided-journal-form/guided-journal-form.component';
 @NgModule(
   {
   declarations: [
     AppComponent,
+    WellnessRatingFormComponent,
+    GuidedJournalFormComponent,
     LoginComponent,
     HomeComponent,
     SignUpComponent,
