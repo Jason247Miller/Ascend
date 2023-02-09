@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { Habit } from 'src/app/models/Habit';
 
 @Component({
   selector: 'app-habit-review-form',
@@ -6,5 +8,8 @@ import { Component } from '@angular/core';
   styleUrls: ['./habit-review-form.component.less']
 })
 export class HabitReviewFormComponent {
+@Input() habitReviewForm:FormGroup; 
+@Input() noHabits:boolean; 
+@Input() currentUserHabits: Habit[] = [];
 
 }
