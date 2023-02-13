@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
-import { pipe, take } from 'rxjs';
+import { take } from 'rxjs';
 import { AccountService } from 'src/app/services/account/account.service';
 
 Chart.register(...registerables);
