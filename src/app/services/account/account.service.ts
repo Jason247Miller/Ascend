@@ -8,6 +8,7 @@ import { AlertService } from '../alert/alert.service';
 import { Habit } from 'src/app/models/Habit';
 import { IHabitCompletionLog } from 'src/app/models/HabitCompletionLog';
 import { IGuidedJournalEntry } from 'src/app/models/GuidedJournalEntry';
+import { IGuidedJournalLog } from 'src/app/models/GuidedJournalLog';
 
 
 @Injectable({
@@ -25,6 +26,7 @@ export class AccountService {
     private wellnessRatingsUrl = 'api/wellnessRatings';
     private habitsUrl = 'api/habits';
     private guidedJournalUrl = 'api/guidedJournalEntries';
+    private guidedJournalLogsUrl = 'api/guidedJournalLogs';
     private habitCompletionLogsUrl = 'api/habitCompletionLogs';
     constructor(private http: HttpClient, private router: Router, private alertService: AlertService) {
     }
@@ -102,6 +104,7 @@ export class AccountService {
 
     updateHabitCompletionLogs(habitCompletionLogs: IHabitCompletionLog[]) {
         let completed: number = 0;
+        console.log("habit logs length", habitCompletionLogs.length)
         habitCompletionLogs.forEach(log => {
 
             this.http.put<IHabitCompletionLog>(
@@ -118,10 +121,11 @@ export class AccountService {
                     })
                 ).
                 subscribe(() => {
-
                     completed++;
+                    console.log("completed=" , completed)
+                    console.log("habitCompletionLogs.length=" , habitCompletionLogs.length)
                     if (completed === habitCompletionLogs.length) {
-                        this.alertService.success('habit logs have been updated successfully');
+                        this.alertService.success('Updated Habit Logs Successfully');
                     }
                 }
 
@@ -172,12 +176,12 @@ export class AccountService {
 
     }
 
-    getHabitsForCurrentUser(userId: number) {
+    getHabits(userId: number) {
         return this.http.get<Habit[]>(this.habitsUrl).
             pipe(
                 map(habits => {
                     habits = habits.filter((habit) => {
-                        return habit.userId === userId;
+                        return habit.userId === userId && habit.deleted === false;
                     });
                     return habits;
                 }),
@@ -256,7 +260,8 @@ export class AccountService {
                 subscribe(() => {
                     completed++;
                     if (completed === habitCompletionLogs.length) {
-                       console.log("habit logs have been added successfully")
+                       console.log("habit logs have been added successfully");
+                       this.alertService.success("Added Habit Review Logs Successfully");
                     }
                 });
         });
@@ -277,7 +282,7 @@ export class AccountService {
 
     }
 
-    getCurrentDateHabitLogEntries(currentDate: string, userId: number) {
+    getHabitLogEntries(currentDate: string, userId: number) {
         return this.http.get<IHabitCompletionLog[]>(this.habitCompletionLogsUrl).
             pipe(
                 map((habitLogs) => {
@@ -302,16 +307,41 @@ export class AccountService {
             );
     }
 
-    getCurrentDateJournalEntry(currentDate: string, userId: number) {
+    getJournalLogEntries(currentDate: string, userId: number){
+        return this.http.get<IGuidedJournalLog[]>(this.guidedJournalLogsUrl).
+        pipe(
+            map((journalLogs) => {
+
+                journalLogs = journalLogs.filter((journalLog) => {
+                    return journalLog.date === currentDate && journalLog.userId === userId;
+                });
+                console.log(
+                    'current date jounral log entry=',
+                    journalLogs
+                );
+                return journalLogs;
+            })
+            ,
+            tap(logs => console.log("current jounral logs", logs)),
+
+            catchError(error => {
+                return this.handleError(error, "Error occured querying current Jounral Logs");
+            })
+
+        );
+    }
+
+    getJournalEntry(datePassed: string, userId: number) {
         return this.http.get<IGuidedJournalEntry[]>(this.guidedJournalUrl).
             pipe(
                 map((entries) => {
 
                     entries = entries.filter((entry) => {
-                        return entry.date === currentDate && entry.userId === userId;
+                        return entry.userId === userId &&
+                              !entry.deleted;
                     });
                     console.log(
-                        'current date entry=',
+                        'current journal date entry=',
                         entries
                     );
                     return entries;
@@ -347,6 +377,29 @@ export class AccountService {
 
                 catchError(error => {
                     return this.handleError(error, "Error occured in wellness rating exists query");
+                })
+
+
+            );
+    }
+
+    getWellnessEntriesInDateRange(oldestDate: Date, latestDate: Date, userId: number) {
+        return this.http.get<IWellnessRating[]>(this.wellnessRatingsUrl).
+            pipe(
+                map((wellnessRatings) => {
+
+                    wellnessRatings = wellnessRatings.filter((entry) => {
+                        let entryDate = new Date(entry.date);
+                        return (entryDate >= oldestDate) && (entryDate <= latestDate);
+                    });
+
+                    return wellnessRatings;
+                })
+                ,
+                tap(wellnessRatings => console.log('Wellness Ratings in Range', wellnessRatings)),
+
+                catchError(error => {
+                    return this.handleError(error, "Error occured in Wellness Entries Date Range");
                 })
 
 

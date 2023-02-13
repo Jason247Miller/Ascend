@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { IGuidedJournalEntry } from 'src/app/models/GuidedJournalEntry';
 
 @Component({
   selector: 'app-guided-journal-form',
@@ -9,4 +10,5 @@ import { FormGroup } from '@angular/forms';
 export class GuidedJournalFormComponent {
 @Input() guidedJournalForm:FormGroup; 
 @Input() previousDailyReview:boolean; 
+@Input() journalEntries:IGuidedJournalEntry[]; 
 }

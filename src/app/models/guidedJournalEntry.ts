@@ -4,10 +4,9 @@ export class IGuidedJournalEntry {
 public id: number, 
 public userId: number, 
 public date:string,
-public gratitudeEntry:string,
-public highlightEntry: string, 
-public learnedEntry: string,
-public contributeEntry: string,
-public generalEntry:string,
+public entryName:string,
+public entryValue: string, 
+public deleted: false
+
 ) { }
 }
