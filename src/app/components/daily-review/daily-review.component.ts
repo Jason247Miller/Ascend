@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AccountService } from 'src/app/services/account/account.service';
 import { IWellnessRating } from 'src/app/models/wellness-rating';
-import { take } from 'rxjs';
+import { catchError, take } from 'rxjs';
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { Habit } from 'src/app/models/Habit';
 import { IHabitCompletionLog } from 'src/app/models/HabitCompletionLog';
@@ -41,7 +41,8 @@ export class DailyReviewComponent implements OnInit {
 
 
   ngOnInit(): void {
-
+    this.currentUserId = JSON.parse(localStorage.getItem('currentUser') || '{}').id;
+    this.initializeForms();
     this.wellnessEntry = null;
     this.accountService.getCurrentDateWellnessEntry(
       this.currentDate,
@@ -49,15 +50,15 @@ export class DailyReviewComponent implements OnInit {
     )
       .pipe(take(1))
       .subscribe(wellnessEntry => {
-
+        
         if (wellnessEntry.length !== 0) {
           //  this.wellnessRecordId = wellnessEntry[0].id;
           this.wellnessEntry = wellnessEntry;
         }
-        this.currentUserId = JSON.parse(localStorage.getItem('currentUser') || '{}').id;
+        
         this.noHabits = false;
         this.setCurrentDate();
-        this.initializeForms();
+       
         this.checkIfRatingsExist();
         this.checkIfHabitLogsExist();
         this.checkIfGuidedJournalExist();
@@ -186,6 +187,8 @@ export class DailyReviewComponent implements OnInit {
           date: this.currentDate
         });
       });
+      this.currentDateHabitLogs = habitLogs; 
+      this.newHabitLogEntry = false;
       this.accountService.addHabitCompletionLogs(habitLogs);
     }
     else if (this.newHabitLogEntry === false) {
@@ -199,8 +202,12 @@ export class DailyReviewComponent implements OnInit {
         console.log("keys =", key, this.habitReviewForm.controls[key].value);
 
       });
+      this.accountService.updateHabitCompletionLogs(this.currentDateHabitLogs);
     }
-    this.accountService.updateHabitCompletionLogs(this.currentDateHabitLogs);
+  
+    
+   
+
   }
 
   submitWellnessRatingForm() {
@@ -238,6 +245,7 @@ export class DailyReviewComponent implements OnInit {
       productivityRating: [1, Validators.required],
       moodRating: [1, Validators.required],
       energyRating: [1, Validators.required],
+      overallDayRating:[1, Validators.required],
       userId: this.currentUserId,
       date: this.currentDate
     });
@@ -253,7 +261,7 @@ export class DailyReviewComponent implements OnInit {
       generalEntry: ['', Validators.required],
 
     });
-    
+
     this.habitReviewForm = this.fb.group({});
     //Initialize the habit form with the users saved habits, and generate a control for each
     this.accountService.getHabitsForCurrentUser(this.currentUserId).

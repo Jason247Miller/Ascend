@@ -1,7 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { InMemoryDbService } from 'angular-in-memory-web-api';
-import { BehaviorSubject, delay, of } from 'rxjs';
+import { BehaviorSubject, delay, of, throwError } from 'rxjs';
 import { User } from 'src/app/models/Users';
 import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
 import { Habit } from 'src/app/models/Habit';
@@ -142,6 +142,14 @@ export class InMemoryDataService implements InMemoryDbService {
         
       
         return undefined;
+    }
+
+   // enable this for testing error handling
+    put(reqInfo:any){
+        if(reqInfo.collectionName === 'habitCompletionLogs'){
+            return throwError(() => new Error('Error occurred'))
+        }
+        return ''
     }
    
    

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, catchError, combineLatest, EMPTY, first, map, Observable, of, Subject, switchMap, take, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, EMPTY, first, from, map, Observable, of, Subject, switchAll, switchMap, take, tap, throwError } from 'rxjs';
 import { User } from 'src/app/models/Users';
 import { Router } from '@angular/router';
 import { IWellnessRating } from 'src/app/models/wellness-rating';
@@ -102,62 +102,24 @@ export class AccountService {
 
     updateHabitCompletionLogs(habitCompletionLogs: IHabitCompletionLog[]) {
 
-
-        // combineLatest(habitCompletionLogs.map(log => of({})
-        //     .pipe(
-        //         switchMap(() => {
-
-        //             return this.http.put<IHabitCompletionLog>(
-        //                 this.habitCompletionLogsUrl,
-        //                 log
-        //             )
-        //             .pipe(
-        //                 catchError(error => {
-        //                     return this.handleError(
-        //                         error,
-        //                         'Error: Failed to update habit log with Id:' + log.id
-        //                     );
-        //                 })
-        //             );
-
-        //         }),
-        //         catchError(error => {
-        //             return this.handleError(
-        //                 error,
-        //                 'Error: Failed to update habit logs:'
-        //             );
-        //         })
-        //     )
-        // ));
-
-
-        let completed: number = 0;
-        habitCompletionLogs.forEach(log => {
-
-            this.http.put<IHabitCompletionLog>(
-                this.habitCompletionLogsUrl,
-                log
-            ).
-                pipe(
-                    take(1),
+        combineLatest(habitCompletionLogs.map(
+            log => this.http.put<IHabitCompletionLog>(this.habitCompletionLogsUrl, log)
+                .pipe(
                     catchError(error => {
-                        return this.handleError(
-                            error,
-                            'Error: Failed to submit 1 or more habit logs'
-                        );
+                        this.alertService.error('Error updating habit log:' + log.id);
+                        console.error('Error updating habit log:'+ log.id);
+                        return throwError(() => new Error(error))
                     })
-                ).
-                subscribe(() => {
+                )
+        ))
+            .pipe(
+                tap(log => console.log("log", log)),
+                catchError(error => this.handleError(error, 'Error: failed to update habit logs!:')),
+            )
 
-                    completed++;
-                    if (completed === habitCompletionLogs.length) {
-                        this.alertService.success('habit logs have been updated successfully');
-                    }
-                }
-
-                );
-        });
-
+            .subscribe(() => {
+                this.alertService.success("Habits have been successfully Updated")
+            });
 
     }
 
@@ -267,39 +229,32 @@ export class AccountService {
     }
 
     addHabitCompletionLogs(habitCompletionLogs: IHabitCompletionLog[]) {
-        let completed: number = 0;
-        habitCompletionLogs.forEach(log => {
-            console.log('addHabitCompletionLogs called');
-            this.http.post<IHabitCompletionLog>(
-                this.habitCompletionLogsUrl,
-                log
-            ).
-                pipe(
-                    take(1),
+
+        combineLatest(habitCompletionLogs.map(
+            log => this.http.post<IHabitCompletionLog>(this.habitCompletionLogsUrl, log)
+                .pipe(
                     catchError(error => {
-                        return this.handleError(
-                            error,
-                            'Error: Failed to submit 1 or more habit logs'
-                        );
+                        this.alertService.error('Error submitting habit log:' + log.id);
+                        console.error('Error submitting habit log:'+ log.id);
+                        return throwError(() => new Error(error))
                     })
-                ).
-                subscribe(() => {
-                    completed++;
-                    if (completed === habitCompletionLogs.length) {
-                        this.alertService.success('habit logs have been added successfully');
-                    }
-                });
-        });
+                )
+        ))
+            .pipe(
+                tap(log => console.log("log", log)),
+                catchError(error => this.handleError(error, 'Error: failed to submit habit logs!:')),
+            )
 
-
+            .subscribe(() => {
+                this.alertService.success("Habits have been successfully submitted");
+            });
     }
 
     viewHabitCompletionEntries() {
-        console.log("view habit logs");
         return this.http.get<IHabitCompletionLog[]>(this.habitCompletionLogsUrl).
             pipe(tap(logs => {
                 console.log(
-                    'habit logs=',
+                    'habit logs=====',
                     logs
                 );
             }));
