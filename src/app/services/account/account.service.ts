@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, catchError, EMPTY, first, map, Observable, of, Subject, take, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, EMPTY, first, map, Observable, of, Subject, switchMap, take, tap, throwError } from 'rxjs';
 import { User } from 'src/app/models/Users';
 import { Router } from '@angular/router';
 import { IWellnessRating } from 'src/app/models/wellness-rating';
 import { AlertService } from '../alert/alert.service';
 import { Habit } from 'src/app/models/Habit';
 import { IHabitCompletionLog } from 'src/app/models/HabitCompletionLog';
-import { IGuidedJournalEntry } from 'src/app/models/GuidedJournalEntry';
+import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
 
 
 @Injectable({
@@ -101,6 +101,36 @@ export class AccountService {
     }
 
     updateHabitCompletionLogs(habitCompletionLogs: IHabitCompletionLog[]) {
+
+
+        // combineLatest(habitCompletionLogs.map(log => of({})
+        //     .pipe(
+        //         switchMap(() => {
+
+        //             return this.http.put<IHabitCompletionLog>(
+        //                 this.habitCompletionLogsUrl,
+        //                 log
+        //             )
+        //             .pipe(
+        //                 catchError(error => {
+        //                     return this.handleError(
+        //                         error,
+        //                         'Error: Failed to update habit log with Id:' + log.id
+        //                     );
+        //                 })
+        //             );
+
+        //         }),
+        //         catchError(error => {
+        //             return this.handleError(
+        //                 error,
+        //                 'Error: Failed to update habit logs:'
+        //             );
+        //         })
+        //     )
+        // ));
+
+
         let completed: number = 0;
         habitCompletionLogs.forEach(log => {
 
@@ -227,7 +257,7 @@ export class AccountService {
         ).
             pipe(
                 tap(wellnessRating => {
-                     console.log('added new wellness rating: ',wellnessRating);
+                    console.log('added new wellness rating: ', wellnessRating);
                 }),
                 catchError(error => this.handleError(
                     error,
@@ -326,6 +356,7 @@ export class AccountService {
 
             );
     }
+
 
     getCurrentDateWellnessEntry(currentDate: string, userId: number) {
 

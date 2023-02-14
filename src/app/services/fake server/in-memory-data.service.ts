@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { InMemoryDbService } from 'angular-in-memory-web-api';
 import { BehaviorSubject, delay, of } from 'rxjs';
 import { User } from 'src/app/models/Users';
-import { IGuidedJournalEntry } from 'src/app/models/GuidedJournalEntry';
+import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
 import { Habit } from 'src/app/models/Habit';
 import { IWellnessRating } from 'src/app/models/wellness-rating';
 import { IHabitCompletionLog } from 'src/app/models/HabitCompletionLog';
