@@ -115,6 +115,7 @@ export class AccountService {
             .pipe(
                 tap(log => console.log("log", log)),
                 catchError(error => this.handleError(error, 'Error: failed to update habit logs!:')),
+                take(1)
             )
 
             .subscribe(() => {
@@ -243,6 +244,7 @@ export class AccountService {
             .pipe(
                 tap(log => console.log("log", log)),
                 catchError(error => this.handleError(error, 'Error: failed to submit habit logs!:')),
+                take(1)
             )
 
             .subscribe(() => {
