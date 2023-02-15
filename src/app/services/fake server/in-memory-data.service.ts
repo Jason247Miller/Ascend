@@ -3,11 +3,11 @@ import { Injectable } from '@angular/core';
 import { InMemoryDbService } from 'angular-in-memory-web-api';
 import { BehaviorSubject, delay, of } from 'rxjs';
 import { User } from 'src/app/models/Users';
-import { IGuidedJournalLog } from 'src/app/models/GuidedJournalLog';
-import { IGuidedJournalEntry } from 'src/app/models/GuidedJournalEntry';
+import { IGuidedJournalLog } from 'src/app/models/IGuidedJournalLog';
+import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
 import { Habit } from 'src/app/models/Habit';
-import { IWellnessRating } from 'src/app/models/wellness-rating';
-import { IHabitCompletionLog } from 'src/app/models/HabitCompletionLog';
+import { IWellnessRating } from 'src/app/models/IWellnessRating';
+import { IHabitCompletionLog } from 'src/app/models/IHabitCompletionLog';
 @Injectable({
     providedIn: 'root',
 })
@@ -111,6 +111,27 @@ export class InMemoryDataService implements InMemoryDbService {
                     habitId: 3,
                     completed: true,
                     date:'02-11-2023'
+                },
+                {
+                    id: 4,
+                    userId: 1,
+                    habitId:1,
+                    completed: true,
+                    date:'02-13-2023'
+                },
+                {
+                    id: 5,
+                    userId: 1,
+                    habitId: 2,
+                    completed: false,
+                    date:'02-13-2023'
+                },
+                {
+                    id: 6,
+                    userId: 1,
+                    habitId: 3,
+                    completed: true,
+                    date:'02-13-2023'
                 }
             ],
             habits:[

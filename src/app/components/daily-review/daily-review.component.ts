@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AccountService } from 'src/app/services/account/account.service';
-import { IWellnessRating } from 'src/app/models/wellness-rating';
+import { IWellnessRating } from 'src/app/models/IWellnessRating';
 import { take } from 'rxjs';
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { Habit } from 'src/app/models/Habit';
-import { IHabitCompletionLog } from 'src/app/models/HabitCompletionLog';
-import { IGuidedJournalEntry } from 'src/app/models/GuidedJournalEntry';
+import { IHabitCompletionLog } from 'src/app/models/IHabitCompletionLog';
+import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
 import { ActivatedRoute } from '@angular/router';
-import { IGuidedJournalLog } from 'src/app/models/GuidedJournalLog';
+import { IGuidedJournalLog } from 'src/app/models/IGuidedJournalLog';
 
 @Component({
   selector: 'app-daily-review',

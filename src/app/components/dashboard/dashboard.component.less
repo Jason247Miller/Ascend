@@ -1,9 +1,9 @@
 .rendered-component-container{
- // position: absolute;
-  width: 98%;
-  
-  text-align: center;
-  padding: 0px 10px;
+  position: relative;
+  width: calc(100% - 110px) ;
+  left:110px;
+ // text-align: center;
+
 }
 .removeSidebar{
   display:block;
@@ -45,7 +45,7 @@
 
  @media screen and (max-width: 650px) {
   .sidenav {display: none;}
-   .rendered-component-container{margin: auto;}
+   .rendered-component-container{margin:0; width:100%;left:auto;}
   
  }
  

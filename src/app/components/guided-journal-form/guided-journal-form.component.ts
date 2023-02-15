@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { IGuidedJournalEntry } from 'src/app/models/GuidedJournalEntry';
+import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
 
 @Component({
   selector: 'app-guided-journal-form',
