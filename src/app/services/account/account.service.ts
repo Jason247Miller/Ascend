@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, catchError, EMPTY, first, map, Observable, of, Subject, take, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, EMPTY, first, map, Observable, of, Subject, take, tap, throwError } from 'rxjs';
 import { User } from 'src/app/models/Users';
 import { Router } from '@angular/router';
-import { IWellnessRating } from 'src/app/models/wellness-rating';
+import { IWellnessRating } from 'src/app/models/IWellnessRating';
 import { AlertService } from '../alert/alert.service';
 import { Habit } from 'src/app/models/Habit';
-import { IHabitCompletionLog } from 'src/app/models/HabitCompletionLog';
-import { IGuidedJournalEntry } from 'src/app/models/GuidedJournalEntry';
+import { IHabitCompletionLog } from 'src/app/models/IHabitCompletionLog';
+import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
+import { IGuidedJournalLog } from 'src/app/models/IGuidedJournalLog';
 
 
 @Injectable({
@@ -25,6 +26,7 @@ export class AccountService {
     private wellnessRatingsUrl = 'api/wellnessRatings';
     private habitsUrl = 'api/habits';
     private guidedJournalUrl = 'api/guidedJournalEntries';
+    private guidedJournalLogsUrl = 'api/guidedJournalLogs';
     private habitCompletionLogsUrl = 'api/habitCompletionLogs';
     constructor(private http: HttpClient, private router: Router, private alertService: AlertService) {
     }
@@ -101,36 +103,28 @@ export class AccountService {
     }
 
     updateHabitCompletionLogs(habitCompletionLogs: IHabitCompletionLog[]) {
-        let completed: number = 0;
-        habitCompletionLogs.forEach(log => {
 
-            this.http.put<IHabitCompletionLog>(
-                this.habitCompletionLogsUrl,
-                log
-            ).
-                pipe(
-                    take(1),
+        combineLatest(habitCompletionLogs.map(
+            log =>  this.http.put<IHabitCompletionLog>(this.habitCompletionLogsUrl, log) 
+                .pipe(
                     catchError(error => {
-                        return this.handleError(
-                            error,
-                            'Error: Failed to submit 1 or more habit logs'
-                        );
+                        this.alertService.error('Error updating habit log:' + log.id);
+                        console.error('Error updating habit log:'+ log.id);
+                        return throwError(() => new Error(error))
                     })
-                ).
-                subscribe(() => {
+                )
+        ))
+            .pipe(
+                tap(log => console.log("log", log)),
+                catchError(error => this.handleError(error, 'Error: failed to update habit logs!:')),
+                
+            )
 
-                    completed++;
-                    if (completed === habitCompletionLogs.length) {
-                        this.alertService.success('habit logs have been updated successfully');
-                    }
-                }
-
-                );
-        });
-
+            .subscribe(() => {
+                this.alertService.success("Habits have been successfully Updated")
+            });
 
     }
-
     updateGuidedjournalData(formData: IGuidedJournalEntry) {
         return this.http.put(
             this.guidedJournalUrl,
@@ -172,12 +166,12 @@ export class AccountService {
 
     }
 
-    getHabitsForCurrentUser(userId: number) {
+    getHabits(userId: number) {
         return this.http.get<Habit[]>(this.habitsUrl).
             pipe(
                 map(habits => {
                     habits = habits.filter((habit) => {
-                        return habit.userId === userId;
+                        return habit.userId === userId && habit.deleted === false;
                     });
                     return habits;
                 }),
@@ -237,32 +231,30 @@ export class AccountService {
     }
 
     addHabitCompletionLogs(habitCompletionLogs: IHabitCompletionLog[]) {
-        let completed: number = 0;
-        habitCompletionLogs.forEach(log => {
-            console.log('addHabitCompletionLogs called');
-            this.http.post<IHabitCompletionLog>(
-                this.habitCompletionLogsUrl,
-                log
-            ).
-                pipe(
-                    take(1),
+
+        combineLatest(habitCompletionLogs.map(
+            log => this.http.post<IHabitCompletionLog>(this.habitCompletionLogsUrl, log)
+                .pipe(
                     catchError(error => {
-                        return this.handleError(
-                            error,
-                            'Error: Failed to submit 1 or more habit logs'
-                        );
+                        this.alertService.error('Error submitting habit log:' + log.id);
+                        console.error('Error submitting habit log:'+ log.id);
+                        return throwError(() => new Error(error))
                     })
-                ).
-                subscribe(() => {
-                    completed++;
-                    if (completed === habitCompletionLogs.length) {
-                       console.log("habit logs have been added successfully")
-                    }
-                });
-        });
+                )
+        ))
+            .pipe(
+                tap(log => console.log("log", log)),
+                catchError(error => this.handleError(error, 'Error: failed to submit habit logs!:')),
+                take(1)
+            )
 
-
+            .subscribe(() => {
+                this.alertService.success("Habits have been successfully submitted");
+            });
     }
+
+
+    
 
     viewHabitCompletionEntries() {
         console.log("view habit logs");
@@ -277,7 +269,7 @@ export class AccountService {
 
     }
 
-    getCurrentDateHabitLogEntries(currentDate: string, userId: number) {
+    getHabitLogEntries(currentDate: string, userId: number) {
         return this.http.get<IHabitCompletionLog[]>(this.habitCompletionLogsUrl).
             pipe(
                 map((habitLogs) => {
@@ -302,16 +294,41 @@ export class AccountService {
             );
     }
 
-    getCurrentDateJournalEntry(currentDate: string, userId: number) {
+    getJournalLogEntries(currentDate: string, userId: number){
+        return this.http.get<IGuidedJournalLog[]>(this.guidedJournalLogsUrl).
+        pipe(
+            map((journalLogs) => {
+
+                journalLogs = journalLogs.filter((journalLog) => {
+                    return journalLog.date === currentDate && journalLog.userId === userId;
+                });
+                console.log(
+                    'current date jounral log entry=',
+                    journalLogs
+                );
+                return journalLogs;
+            })
+            ,
+            tap(logs => console.log("current jounral logs", logs)),
+
+            catchError(error => {
+                return this.handleError(error, "Error occured querying current Jounral Logs");
+            })
+
+        );
+    }
+
+    getJournalEntry(datePassed: string, userId: number) {
         return this.http.get<IGuidedJournalEntry[]>(this.guidedJournalUrl).
             pipe(
                 map((entries) => {
 
                     entries = entries.filter((entry) => {
-                        return entry.date === currentDate && entry.userId === userId;
+                        return entry.userId === userId &&
+                              !entry.deleted;
                     });
                     console.log(
-                        'current date entry=',
+                        'current journal date entry=',
                         entries
                     );
                     return entries;
@@ -347,6 +364,29 @@ export class AccountService {
 
                 catchError(error => {
                     return this.handleError(error, "Error occured in wellness rating exists query");
+                })
+
+
+            );
+    }
+
+    getWellnessEntriesInDateRange(oldestDate: Date, latestDate: Date, userId: number) {
+        return this.http.get<IWellnessRating[]>(this.wellnessRatingsUrl).
+            pipe(
+                map((wellnessRatings) => {
+
+                    wellnessRatings = wellnessRatings.filter((entry) => {
+                        let entryDate = new Date(entry.date);
+                        return (entryDate >= oldestDate) && (entryDate <= latestDate);
+                    });
+
+                    return wellnessRatings;
+                })
+                ,
+                tap(wellnessRatings => console.log('Wellness Ratings in Range', wellnessRatings)),
+
+                catchError(error => {
+                    return this.handleError(error, "Error occured in Wellness Entries Date Range");
                 })
 
 

@@ -3,15 +3,17 @@ import { Injectable } from '@angular/core';
 import { InMemoryDbService } from 'angular-in-memory-web-api';
 import { BehaviorSubject, delay, of } from 'rxjs';
 import { User } from 'src/app/models/Users';
-import { IGuidedJournalEntry } from 'src/app/models/GuidedJournalEntry';
+import { IGuidedJournalLog } from 'src/app/models/IGuidedJournalLog';
+import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
 import { Habit } from 'src/app/models/Habit';
-import { IWellnessRating } from 'src/app/models/wellness-rating';
-import { IHabitCompletionLog } from 'src/app/models/HabitCompletionLog';
+import { IWellnessRating } from 'src/app/models/IWellnessRating';
+import { IHabitCompletionLog } from 'src/app/models/IHabitCompletionLog';
 @Injectable({
     providedIn: 'root',
 })
 export class InMemoryDataService implements InMemoryDbService {
     private userSubject!: BehaviorSubject<User>;
+    guidedJournalLogs : IGuidedJournalLog[];
     createDb() {
         return { 
             users: [
@@ -32,7 +34,7 @@ export class InMemoryDataService implements InMemoryDbService {
             wellnessRatings:[              
                 { id: 1,
                     userId: 1,
-                    date:'02-06-2023',
+                    date:'02-11-2023',
                     sleepRating:5,
                     exerciseRating:7,
                     nutritionRating:8,
@@ -42,6 +44,34 @@ export class InMemoryDataService implements InMemoryDbService {
                     productivityRating:8,
                     moodRating:6,
                     energyRating:9,
+                    overallDayRating:7
+                },
+                { id: 1,
+                    userId: 1,
+                    date:'02-07-2023',
+                    sleepRating:5,
+                    exerciseRating:7,
+                    nutritionRating:3,
+                    stressRating:6,
+                    sunlightRating:3,
+                    mindfulnessRating:7,
+                    productivityRating:2,
+                    moodRating:6,
+                    energyRating:9,
+                    overallDayRating:7
+                },
+                { id: 1,
+                    userId: 1,
+                    date:'02-13-2023',
+                    sleepRating:5,
+                    exerciseRating:2,
+                    nutritionRating:3,
+                    stressRating:5,
+                    sunlightRating:3,
+                    mindfulnessRating:7,
+                    productivityRating:1,
+                    moodRating:6,
+                    energyRating:3,
                     overallDayRating:7
                 },
                 { id: 2,
@@ -66,21 +96,42 @@ export class InMemoryDataService implements InMemoryDbService {
                     userId: 1,
                     habitId:1,
                     completed: true,
-                    date:'02-06-2023'
+                    date:'02-11-2023'
                 },
                 {
                     id: 2,
                     userId: 1,
                     habitId: 2,
                     completed: false,
-                    date:'02-06-2023'
+                    date:'02-11-2023'
                 },
                 {
                     id: 3,
                     userId: 1,
                     habitId: 3,
                     completed: true,
-                    date:'02-06-2023'
+                    date:'02-11-2023'
+                },
+                {
+                    id: 4,
+                    userId: 1,
+                    habitId:1,
+                    completed: true,
+                    date:'02-13-2023'
+                },
+                {
+                    id: 5,
+                    userId: 1,
+                    habitId: 2,
+                    completed: false,
+                    date:'02-13-2023'
+                },
+                {
+                    id: 6,
+                    userId: 1,
+                    habitId: 3,
+                    completed: true,
+                    date:'02-13-2023'
                 }
             ],
             habits:[
@@ -107,22 +158,37 @@ export class InMemoryDataService implements InMemoryDbService {
                 {
                     id:1, 
                     userId: 1, 
-                    date:'02-06-2023',
-                    gratitudeEntry: 'my job, my gf, my family',
-                    highlightEntry: 'maintained focus throughout the day',
-                    learnedEntry: 'learned about RouteActiveLink',
-                    contributeEntry: 'made dinner for my gf',
-                    generalEntry: 'nothing much else to add'
+                    date:'02-11-2023',
+                    entryName: 'What are you most greatful for?',
+                    deleted:false
+                   
                 },
                 {
+                                    
                     id:2, 
-                    userId: 2, 
-                    date:'02-06-2023',
-                    gratitudeEntry: 'test',
-                    highlightEntry: 'test',
-                    learnedEntry: 'test',
-                    contributeEntry: 'test',
-                    generalEntry: 'test'
+                    userId: 1, 
+                    date:'02-11-2023',
+                    entryName: 'what did you learn today?',
+                    deleted:false
+                 
+                }
+            ], 
+            guidedJournalLogs :  [
+                {
+                    id:1, 
+                    userId:1, 
+                    entryId:1,
+                    entryTextValue:'my health',
+                    date:'02-11-2023'
+                                                       
+                },
+           
+                {
+                    id:2, 
+                    userId:1, 
+                    entryId:2,
+                    entryTextValue:'how to enjoy the moment',
+                    date:'02-11-2023'
                 }
             ]
         };

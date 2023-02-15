@@ -1,26 +1,39 @@
-
 .line-chart-container{
     position:relative;
-    border-style:solid; 
-    border-color: grey;
-    margin: 50px auto ;
-    width:90%;
+    margin:  auto   ;
+    min-height:70vh;
+    width:100%;
     padding: 20px;
+
+   
+}
+
+.arrow-button-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
 }
 .container{
+    button{
+        width:50px; 
+    }
     position: relative;
-    //background-color: lightgray;
-    width:80%;
-    height:100%;
-    margin-left:105px; 
+   .center{
+    text-align: center;
+   }
+  
 }
+
+
 @media screen and (max-width: 650px) {
     .container{
         margin: auto;
         width: 100%;
     }
     .line-chart-container{
-        width:100%; 
+        position: relative;
+        max-width:100%;
+        max-height: 1000px;
     }
     
-   }
+}

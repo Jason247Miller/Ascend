@@ -1,16 +1,14 @@
-<form [formGroup]="habitReviewForm" >
-    <div class="review-form">
-      <ng-container *ngIf="!noHabits">
-        <h5 class="heading">Check Habits if Completed</h5>
-        <div *ngFor="let habit of currentUserHabits">
-          <ng-container *ngIf="habit.deleted === false">
-          <input type="checkbox" [formControl]="$any(habitReviewForm.controls[habit.id])">
+<form [formGroup]="habitReviewForm">
+  <div class="review-form">
+    <ng-container *ngIf="habits.length > 0">
+      <h5 class="heading">Check Habits if Completed</h5>
+      <div *ngFor="let habit of habits">
+          <input type="checkbox" formControlName ="{{habit.id}}">
           <label for={{habit.id}}>{{habit.habitName}}</label><br>
-         </ng-container>
-        </div>
-      </ng-container>
-      <ng-container *ngIf="noHabits">
-        <h5 class="heading">There are no habits created to Display</h5>
-      </ng-container>
-    </div>
-  </form>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="habits.length === 0">
+      <h5 class="heading">There are no habits created to Display</h5>
+    </ng-container>
+  </div>
+</form>

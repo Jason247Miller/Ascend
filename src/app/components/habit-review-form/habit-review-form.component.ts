@@ -8,8 +8,9 @@ import { Habit } from 'src/app/models/Habit';
   styleUrls: ['./habit-review-form.component.less']
 })
 export class HabitReviewFormComponent {
+
 @Input() habitReviewForm:FormGroup; 
 @Input() noHabits:boolean; 
-@Input() currentUserHabits: Habit[] = [];
+@Input() habits: Habit[] = [];
 
 }

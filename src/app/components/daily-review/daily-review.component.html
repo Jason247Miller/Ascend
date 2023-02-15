@@ -1,5 +1,5 @@
   <div class="container">
-    <h2>Daily Review {{this.currentDate}}</h2>
+    <h2>Daily Review {{this.entryDate}}</h2>
     <div class="flex-parent-container">
 
       <app-wellness-rating-form
@@ -11,16 +11,20 @@
       <app-habit-review-form 
         [habitReviewForm]="habitReviewForm"
         [noHabits]="noHabits"
-        [currentUserHabits]="currentUserHabits">
+        [habits]="habits">
       </app-habit-review-form>
 
       <app-guided-journal-form
       [guidedJournalForm]="guidedJournalForm"
-      [previousDailyReview]="previousDailyReview">
+      [previousDailyReview]="previousDailyReview"
+      [journalEntries]="journalEntries"
+      >
       </app-guided-journal-form>
   
   
-        
+      
     </div>
     <button class="btn btn-primary" (click)="submit()" [hidden]="previousDailyReview">Submit</button>
+    
+    
   </div>
