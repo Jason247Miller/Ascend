@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AccountService } from 'src/app/services/account/account.service';
 import { IWellnessRating } from 'src/app/models/IWellnessRating';
@@ -9,6 +9,8 @@ import { IHabitCompletionLog } from 'src/app/models/IHabitCompletionLog';
 import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
 import { ActivatedRoute } from '@angular/router';
 import { IGuidedJournalLog } from 'src/app/models/IGuidedJournalLog';
+
+
 
 @Component({
   selector: 'app-daily-review',
@@ -29,7 +31,6 @@ export class DailyReviewComponent implements OnInit {
   private newJournalLogEntry: boolean; 
   private newJournalEntry: boolean;
   private newHabitLogEntry: boolean;
- 
   isFormDisabled: boolean = false;
   previousDailyReview: boolean;
   dateParam: string | null;
@@ -43,7 +44,7 @@ export class DailyReviewComponent implements OnInit {
 
 
   ngOnInit(): void {
-
+   
     this.dateParam = this.activatedRoute.snapshot.paramMap.get('date');
     this.currentUserId = JSON.parse(localStorage.getItem('currentUser') || '{}').id;
     this.noHabits = false;
@@ -299,6 +300,8 @@ export class DailyReviewComponent implements OnInit {
       datePassed.getMonth() === today.getMonth() &&
       datePassed.getFullYear() === today.getFullYear())
   }
+
+
 
 }
 
