@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, catchError, combineLatest, EMPTY, first, map, Observable, of, Subject, take, tap, throwError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, catchError, combineLatest, EMPTY, map,take, tap, throwError } from 'rxjs';
 import { User } from 'src/app/models/Users';
 import { Router } from '@angular/router';
 import { IWellnessRating } from 'src/app/models/IWellnessRating';
@@ -9,7 +9,6 @@ import { Habit } from 'src/app/models/Habit';
 import { IHabitCompletionLog } from 'src/app/models/IHabitCompletionLog';
 import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
 import { IGuidedJournalLog } from 'src/app/models/IGuidedJournalLog';
-
 
 @Injectable({
     providedIn: 'root'
@@ -163,7 +162,6 @@ export class AccountService {
                 })
             );
 
-
     }
 
     getHabits(userId: number) {
@@ -252,10 +250,6 @@ export class AccountService {
                 this.alertService.success("Habits have been successfully submitted");
             });
     }
-
-
-    
-
     viewHabitCompletionEntries() {
         console.log("view habit logs");
         return this.http.get<IHabitCompletionLog[]>(this.habitCompletionLogsUrl).
@@ -265,8 +259,6 @@ export class AccountService {
                     logs
                 );
             }));
-
-
     }
 
     getHabitLogEntries(currentDate: string, userId: number) {
@@ -277,10 +269,7 @@ export class AccountService {
                     habitLogs = habitLogs.filter((habitLog) => {
                         return habitLog.date === currentDate && habitLog.userId === userId;
                     });
-                    console.log(
-                        'current date entry=',
-                        habitLogs
-                    );
+
                     return habitLogs;
                 })
                 ,
@@ -307,9 +296,7 @@ export class AccountService {
                     journalLogs
                 );
                 return journalLogs;
-            })
-            ,
-            tap(logs => console.log("current jounral logs", logs)),
+            }),
 
             catchError(error => {
                 return this.handleError(error, "Error occured querying current Jounral Logs");
@@ -332,14 +319,10 @@ export class AccountService {
                         entries
                     );
                     return entries;
-                })
-                ,
-                tap(entries => console.log("journal entry array retrieved", entries)),
-
+                }),
                 catchError(error => {
                     return this.handleError(error, "Error occured in journal entry exists query");
                 })
-
 
             );
     }
@@ -353,10 +336,7 @@ export class AccountService {
                     rating = rating.filter((entry) => {
                         return entry.date === date && entry.userId === userId;
                     });
-                    console.log(
-                        'current date entry=',
-                        rating
-                    );
+
                     return rating;
                 })
                 ,
@@ -365,7 +345,6 @@ export class AccountService {
                 catchError(error => {
                     return this.handleError(error, "Error occured in wellness rating exists query");
                 })
-
 
             );
     }
@@ -383,8 +362,6 @@ export class AccountService {
                     return wellnessRatings;
                 })
                 ,
-                tap(wellnessRatings => console.log('Wellness Ratings in Range', wellnessRatings)),
-
                 catchError(error => {
                     return this.handleError(error, "Error occured in Wellness Entries Date Range");
                 })

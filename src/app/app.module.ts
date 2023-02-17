@@ -16,7 +16,6 @@ import { AuthGuard } from './guards/auth.guard';
 import { AlertComponent } from './components/alert/alert.component';
 import { DailyReviewComponent } from './components/daily-review/daily-review.component';
 import { OverviewComponent } from './components/overview/overview.component';
-import { MatSliderModule } from '@angular/material/slider';
 import { ReportsComponent } from './components/reports/reports.component';
 import { HabitReviewFormComponent } from './components/habit-review-form/habit-review-form.component';
 import { WellnessRatingFormComponent } from './components/wellness-rating-form/wellness-rating-form.component';
@@ -37,21 +36,14 @@ import { GuidedJournalFormComponent } from './components/guided-journal-form/gui
     HabitReviewFormComponent,
     WellnessRatingFormComponent,
     GuidedJournalFormComponent
-   
   ],
   imports: [
     BrowserModule,
     ReactiveFormsModule,
-    MatSliderModule, 
     HttpClientModule,
     HttpClientInMemoryWebApiModule.forRoot(
     InMemoryDataService, { dataEncapsulation: false }
-    
     ),
-   
-
-    
-    
     RouterModule.forRoot([
       {path: 'kb', component:KnowledgeBaseComponent},
       {path: 'login', component:LoginComponent},

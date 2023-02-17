@@ -22,14 +22,13 @@ export class DailyReviewComponent implements OnInit {
     private alertService: AlertService,
     private activatedRoute: ActivatedRoute
   ) { }
-  private entryDateJournalLogs: IGuidedJournalLog[]; 
   private entryDateHabitLogs: IHabitCompletionLog[];
   private currentUserId: number;
-  private newWellnessEntry: boolean; 
-  private newJournalLogEntry: boolean; 
+  private newWellnessEntry: boolean;
+  private newJournalLogEntry: boolean;
   private newJournalEntry: boolean;
   private newHabitLogEntry: boolean;
- 
+
   isFormDisabled: boolean = false;
   previousDailyReview: boolean;
   dateParam: string | null;
@@ -176,14 +175,12 @@ export class DailyReviewComponent implements OnInit {
             this.habitReviewForm.addControl(habit.id.toString(), new FormControl(false));
           });
         }
-        else { 
+        else {
           console.log("no habits is true")
-          this.noHabits = true; }
+          this.noHabits = true;
+        }
       });
 
-      
-
-   
     this.wellnessRatingForm = this.fb.group({
       id: 0,
       sleepRating: [1, Validators.required],
@@ -201,7 +198,7 @@ export class DailyReviewComponent implements OnInit {
     });
 
     this.guidedJournalForm = this.fb.group({});
-    this.accountService.getJournalEntry( this.entryDate,this.currentUserId).
+    this.accountService.getJournalEntry(this.entryDate, this.currentUserId).
       pipe(take(1)).
       subscribe(entry => {
         if (entry.length !== 0) {
@@ -212,8 +209,6 @@ export class DailyReviewComponent implements OnInit {
         }
         else { console.log("no guided journals") }
       });
-
-
   }
 
   setFormInputValues() {
@@ -228,7 +223,6 @@ export class DailyReviewComponent implements OnInit {
       this.currentUserId).
       pipe(take(1)).
       subscribe(journalLogs => {
-        this.entryDateJournalLogs = journalLogs;
 
         if (journalLogs.length !== 0) {
 
@@ -245,7 +239,7 @@ export class DailyReviewComponent implements OnInit {
         }
         else { this.newJournalLogEntry = true; }
       });
-    
+
   }
 
   setWellnessRatingFormValues() {
