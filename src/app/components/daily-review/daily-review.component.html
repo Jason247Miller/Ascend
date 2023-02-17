@@ -1,31 +1,86 @@
-  <div class="container">
-    <h2>Daily Review {{this.entryDate}}</h2>
-    <div class="flex-parent-container">
+<div class="container">
+  <h2>Daily Review {{this.entryDate}}</h2>
+  <!--Actions Modal -->
+  <div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display':displayStyle}">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Actions</h4>
+        </div>
+        <div class="modal-body">
+          <div class="container-lg">
+            <div class="table-responsive">
+              <div class="table-wrapper">
+                <div class="table-title">
+                  <div class="row">
+                    <div class="col-sm-8">
+                      <h2></h2>
+                    </div>
+                    <div class="col-sm-4">
 
-      <app-wellness-rating-form
-      [wellnessRatingForm]="wellnessRatingForm"
-      [previousDailyReview]="previousDailyReview">
-      </app-wellness-rating-form>
-     
+                    </div>
+                  </div>
+                </div>
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        John Doe
+                      </td>
+                      <td>
+                        <a class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
+                        <a class="delete" title="Delete" data-toggle="tooltip"><i
+                            class="material-icons">&#xE872;</i></a>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input type="text" style="width:100%">
+                      </td>
+                      <td>
+                        <button type="button" class="btn btn-secondary btn-sm"> Add New</button>
+                      </td>
+                    </tr>
 
-      <app-habit-review-form 
-        [habitReviewForm]="habitReviewForm"
-        [noHabits]="noHabits"
-        [habits]="habits">
-      </app-habit-review-form>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
 
-      <app-guided-journal-form
-      [guidedJournalForm]="guidedJournalForm"
-      [previousDailyReview]="previousDailyReview"
-      [journalEntries]="journalEntries"
-    
-      >
-      </app-guided-journal-form>
-  
-  
-      
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" (click)="closePopup()">
+            Close
+          </button>
+        </div>
+      </div>
     </div>
-    <button class="btn btn-primary" (click)="submit()" [hidden]="previousDailyReview">Submit</button>
-    
-    
   </div>
+  <div class="flex-parent-container">
+
+    <app-wellness-rating-form [wellnessRatingForm]="wellnessRatingForm" [previousDailyReview]="previousDailyReview">
+    </app-wellness-rating-form>
+
+
+    <app-habit-review-form [habitReviewForm]="habitReviewForm" [noHabits]="noHabits" [habits]="habits"
+      (actionsClicked)="openPopup($event)">
+    </app-habit-review-form>
+
+    <app-guided-journal-form [guidedJournalForm]="guidedJournalForm" [previousDailyReview]="previousDailyReview"
+      [journalEntries]="journalEntries" (actionsClicked)="openPopup($event)">
+    </app-guided-journal-form>
+
+
+
+  </div>
+  <button class="btn btn-primary" (click)="submit()" [hidden]="previousDailyReview">Submit</button>
+
+
+</div>

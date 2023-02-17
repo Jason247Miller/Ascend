@@ -1,9 +1,11 @@
 <form [formGroup]="guidedJournalForm">
   <div class="review-form">
+    <div class="heading-container">
     <h5 class="heading">Guided Journal</h5>
-    <button type="button" (click)="openModal()" class="btn btn-primary" data-toggle="modal" data-target="#actionsModal">
+    <button type="button"  (click)="actionsClickedHandler()" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#actionsModal">
       Actions
     </button>
+  </div>
     <!-- Modal -->
 <div class="modal fade" id ="actionsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">

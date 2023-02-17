@@ -1,7 +1,7 @@
-import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
-declare var window:any; 
+
 
 @Component({
   selector: 'app-guided-journal-form',
@@ -12,9 +12,7 @@ export class GuidedJournalFormComponent implements OnInit {
 
 
 ngOnInit(): void {
-  this.formModal = new window.bootstrap.Modal(
-    document.getElementById('actionsModal')
-  )
+
    
  
 }
@@ -22,12 +20,11 @@ ngOnInit(): void {
 @Input() previousDailyReview:boolean; 
 @Input() journalEntries:IGuidedJournalEntry[]; 
 @Input() formModal:any; 
+@Output() actionsClicked =   new EventEmitter<string>();
+
+actionsClickedHandler(){
+this.actionsClicked.next('journal'); 
+}
 
 
-openModal(){
-  this.formModal.show(); 
-}
-doSomething(){
-  this.formModal.hide(); 
-}
 }

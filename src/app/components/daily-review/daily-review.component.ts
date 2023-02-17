@@ -41,14 +41,16 @@ export class DailyReviewComponent implements OnInit {
   guidedJournalForm!: FormGroup;
   habitReviewForm!: FormGroup;
   entryDate: string;
+  displayStyle:string; 
+  modalFormData:any; 
 
 
   ngOnInit(): void {
-   
+    this.displayStyle = 'none'
     this.dateParam = this.activatedRoute.snapshot.paramMap.get('date');
     this.currentUserId = JSON.parse(localStorage.getItem('currentUser') || '{}').id;
     this.noHabits = false;
-    this.newHabitLogEntry, this.newJournalEntry, this.newWellnessEntry, this.newJournalLogEntry = false;
+    this.newHabitLogEntry, this.newJournalEntry, this.newWellnessEntry = false; 
     this.setEntryDate();
     this.initializeForms();
     this.setFormInputValues();
@@ -83,8 +85,8 @@ export class DailyReviewComponent implements OnInit {
   submitGuidedJournalForm() {
     let guidedJournalFormData: IGuidedJournalEntry = this.guidedJournalForm.getRawValue();
 
-    if (this.newJournalEntry === true) {
-      this.newJournalEntry = false;
+    if (this.newJournalLogEntry === true) {
+      this.newJournalLogEntry = false;
       this.accountService.addJournalRecordEntry(guidedJournalFormData)
         .pipe(take(1))
         .subscribe(() => { this.alertService.success("Added Journal Entries Successfully"); });
@@ -300,7 +302,17 @@ export class DailyReviewComponent implements OnInit {
       datePassed.getMonth() === today.getMonth() &&
       datePassed.getFullYear() === today.getFullYear())
   }
-
+  
+  openPopup(formType:string) {
+    if(formType ==='journal'){
+   this.modalFormData = this.guidedJournalForm.getRawValue(); 
+   console.log('journal form data = ', this.modalFormData); 
+    }
+    this.displayStyle = "block";
+  }
+  closePopup() {
+    this.displayStyle = "none";
+  }
 
 
 }
