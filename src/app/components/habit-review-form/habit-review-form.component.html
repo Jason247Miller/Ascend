@@ -2,9 +2,11 @@
   <div class="review-form">
     <div class="heading-container">
       <h5 class="heading">Habits Completed</h5>
+      <ng-container *ngIf="!previousDailyReview">
       <button type="button"  class="btn btn-secondary btn-sm" (click)="actionsClickedHandler()">
         Actions
       </button>
+    </ng-container>
     </div>
       <div *ngFor="let habit of habits">
           <input type="checkbox" formControlName ="{{habit.id}}">

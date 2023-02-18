@@ -25,6 +25,7 @@ export class DailyReviewComponent implements OnInit {
   
   private entryDateHabitLogs: IHabitCompletionLog[];
   private entryDateJournalLogs: IGuidedJournalLog[];
+
   private currentUserId: number;
   wellnessEntry: IWellnessRating[] = [];
   modalFormData: any;
@@ -81,6 +82,15 @@ export class DailyReviewComponent implements OnInit {
   }
   submitGuidedJournalForm() {
 
+    //OnClick of Actions Button 
+    /*
+     1. openModal is called with a string indicating what form called it
+     2. if form = journal 
+    */ 
+    //OnClick of Modal Update Button 
+    /*
+       
+    */ 
     if (this.entryDateJournalLogs.length === 0) {
 
       Object.keys(this.guidedJournalForm.controls).forEach(controlName => {
@@ -198,7 +208,7 @@ export class DailyReviewComponent implements OnInit {
     });
 
     this.guidedJournalForm = this.fb.group({});
-    this.accountService.getJournalEntry(this.entryDate, this.currentUserId).
+    this.accountService.getJournalEntry(this.currentUserId).
       pipe(take(1)).
       subscribe(entry => {
         if (entry.length !== 0) {

@@ -357,7 +357,7 @@ export class AccountService {
         );
     }
 
-    getJournalEntry(datePassed: string, userId: number) {
+    getJournalEntry(userId: number) {
         return this.http.get<IGuidedJournalEntry[]>(this.guidedJournalUrl).
             pipe(
                 map((entries) => {

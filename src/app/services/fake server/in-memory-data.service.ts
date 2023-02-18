@@ -62,7 +62,7 @@ export class InMemoryDataService implements InMemoryDbService {
                 },
                 { id: 1,
                     userId: 1,
-                    date:'02-13-2023',
+                    date:'02-17-2023',
                     sleepRating:5,
                     exerciseRating:2,
                     nutritionRating:3,
@@ -95,29 +95,29 @@ export class InMemoryDataService implements InMemoryDbService {
                     id: 1,
                     userId: 1,
                     habitId:1,
-                    completed: true,
-                    date:'02-11-2023'
+                    completed: false,
+                    date:'02-17-2023'
                 },
                 {
                     id: 2,
                     userId: 1,
                     habitId: 2,
                     completed: false,
-                    date:'02-11-2023'
+                    date:'02-17-2023'
                 },
                 {
                     id: 3,
                     userId: 1,
-                    habitId: 3,
+                    habitId: 1,
                     completed: true,
                     date:'02-11-2023'
                 },
                 {
                     id: 4,
                     userId: 1,
-                    habitId:1,
+                    habitId:2,
                     completed: true,
-                    date:'02-13-2023'
+                    date:'02-11-2023'
                 },
                 {
                     id: 5,
@@ -158,7 +158,6 @@ export class InMemoryDataService implements InMemoryDbService {
                 {
                     id:1, 
                     userId: 1, 
-                    date:'02-11-2023',
                     entryName: 'What are you most greatful for?',
                     deleted:false
                    
@@ -167,7 +166,6 @@ export class InMemoryDataService implements InMemoryDbService {
                                     
                     id:2, 
                     userId: 1, 
-                    date:'02-11-2023',
                     entryName: 'what did you learn today?',
                     deleted:false
                  
@@ -189,6 +187,20 @@ export class InMemoryDataService implements InMemoryDbService {
                     entryId:2,
                     entryTextValue:'how to enjoy the moment',
                     date:'02-17-2023'
+                }, 
+                {
+                    id:3, 
+                    userId:1, 
+                    entryId:1,
+                    entryTextValue:'',
+                    date:'02-11-2023'
+                }, 
+                {
+                    id:4, 
+                    userId:1, 
+                    entryId:2,
+                    entryTextValue:'',
+                    date:'02-11-2023'
                 }
             ]
         };
