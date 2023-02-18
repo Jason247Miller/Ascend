@@ -6,31 +6,10 @@
       Actions
     </button>
   </div>
-    <!-- Modal -->
-<div class="modal fade" id ="actionsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="actionsModalLabel">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
-    <ng-container *ngIf="journalEntries.length > 0">
-    </ng-container>
+   
     <ng-container *ngFor="let entry of journalEntries">
       <label for={{entry.id}}>{{entry.entryName}}</label>
-      <textarea id={{entry.id}} [readOnly]="previousDailyReview" formControlName={{entry.id}} rows="4"
+      <textarea id={{entry.id}} formControlName={{entry.id}} rows="4"
         cols="50"></textarea>
     </ng-container>
   </div>

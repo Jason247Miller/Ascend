@@ -103,21 +103,20 @@ export class AccountService {
     }
 
     updateHabitCompletionLogs(habitCompletionLogs: IHabitCompletionLog[]) {
-
         combineLatest(habitCompletionLogs.map(
-            log =>  this.http.put<IHabitCompletionLog>(this.habitCompletionLogsUrl, log) 
+            log => this.http.put<IHabitCompletionLog>(this.habitCompletionLogsUrl, log)
                 .pipe(
                     catchError(error => {
                         this.alertService.error('Error updating habit log:' + log.id);
                         console.error('Error updating habit log:'+ log.id);
                         return throwError(() => new Error(error))
-                    })
+                    })         
                 )
         ))
             .pipe(
                 tap(log => console.log("log", log)),
                 catchError(error => this.handleError(error, 'Error: failed to update habit logs!:')),
-                
+                take(1)
             )
 
             .subscribe(() => {
@@ -125,23 +124,36 @@ export class AccountService {
             });
 
     }
-    updateGuidedjournalData(formData: IGuidedJournalEntry) {
-        return this.http.put(
-            this.guidedJournalUrl,
-            formData
-        ).
-            pipe(
-                tap(guidedJournalEntry => console.log(
-                    "updated guided journal entry",
-                    guidedJournalEntry
-                )),
-                catchError(error => {
-                    return this.handleError(
-                        error,
-                        'Error:Failed to Update guided journal entry'
-                    );
-                })
-            );
+    updateGuidedjournalData(guidedJournalLogs: IGuidedJournalLog[]) {
+        console.log("GUIDED JOURNAL BEFORE HTTP PUT", guidedJournalLogs);
+        combineLatest(guidedJournalLogs.map(log => this.http.put<IGuidedJournalLog>(this.guidedJournalLogsUrl, log)
+                .pipe(
+                    catchError(error => {
+                        this.alertService.error('Error updating Guided Journal log:' + log.id);
+                        console.error('Error updating guided journal log:'+ log.id);
+                        return throwError(() => new Error(error))
+                    }),
+                    tap(log => console.log("JOURNAL LOG ABOUT TO BE UPDATED:", log))
+                )
+        ))
+            .pipe(
+                catchError(error => this.handleError(error, 'Error: failed to update Guided Journal logs!:')),
+                take(1)
+            )
+
+            .subscribe(() => {
+                this.viewHabitCompletionEntries().subscribe();
+                this.alertService.success("Journal Entries have been successfully Updated")
+            });
+
+
+        
+
+
+
+
+
+         
     }
 
     updateWellnessData(formData: IWellnessRating) {
@@ -195,23 +207,50 @@ export class AccountService {
         return EMPTY;
     }
 
-    addJournalRecordEntry(guidedJournalEntry: IGuidedJournalEntry) {
-        console.log('inside add journal record entry');
-        return this.http.post<IGuidedJournalEntry>(
-            this.guidedJournalUrl,
-            guidedJournalEntry
-        ).
-            pipe(
-                tap(guidedJournalEntry => console.log(
-                    'added new journal entry: ',
-                    guidedJournalEntry
-                )),
-                catchError(error => this.handleError(
-                    error,
-                    'Error:Failed to add guided journal entry'
-                ))
-            );
-    }
+    addJournalRecordEntry(guidedJournalLogs: IGuidedJournalLog[]) {
+     console.log('add journal record entry guidedJournal*********', guidedJournalLogs)
+        combineLatest(guidedJournalLogs.map(
+            log => this.http.post<IGuidedJournalLog>(this.guidedJournalLogsUrl, log)
+                .pipe(
+                    catchError(error => {
+                        this.alertService.error('Error submitting Guided Journal log:' + log.id);
+                        console.error('Error submitting guided journal log:'+ log.id);
+                        return throwError(() => new Error(error))
+                    })
+                )
+        ))
+            .pipe(
+                tap(log => console.log("journal record in tap", log)),
+                catchError(error => this.handleError(error, 'Error: failed to submit Guided Journal logs!:')),
+                take(1)
+            )
+
+            .subscribe(() => {
+                this.viewHabitCompletionEntries().subscribe(); 
+                this.alertService.success("Journal Logs have been successfully submitted");
+            });
+
+
+        }
+
+
+
+    //     console.log('inside add journal record entry');
+    //     return this.http.post<IGuidedJournalLog>(
+    //         this.guidedJournalUrl,
+    //         guidedJournalEntry
+    //     ).
+    //         pipe(
+    //             tap(guidedJournalEntry => console.log(
+    //                 'added new journal entry: ',
+    //                 guidedJournalEntry
+    //             )),
+    //             catchError(error => this.handleError(
+    //                 error,
+    //                 'Error:Failed to add guided journal entry'
+    //             ))
+    //         );
+    // }
 
     addWellnessRatingEntry(wellnessEntry: IWellnessRating) {
         console.log('inside wellness rating add');
@@ -257,11 +296,11 @@ export class AccountService {
     
 
     viewHabitCompletionEntries() {
-        console.log("view habit logs");
-        return this.http.get<IHabitCompletionLog[]>(this.habitCompletionLogsUrl).
+        
+        return this.http.get<IGuidedJournalEntry[]>(this.guidedJournalUrl).
             pipe(tap(logs => {
                 console.log(
-                    'habit logs=',
+                    '******guided journal logs=',
                     logs
                 );
             }));

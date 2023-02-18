@@ -179,7 +179,7 @@ export class InMemoryDataService implements InMemoryDbService {
                     userId:1, 
                     entryId:1,
                     entryTextValue:'my health',
-                    date:'02-11-2023'
+                    date:'02-17-2023'
                                                        
                 },
            
@@ -188,7 +188,7 @@ export class InMemoryDataService implements InMemoryDbService {
                     userId:1, 
                     entryId:2,
                     entryTextValue:'how to enjoy the moment',
-                    date:'02-11-2023'
+                    date:'02-17-2023'
                 }
             ]
         };
@@ -205,26 +205,36 @@ export class InMemoryDataService implements InMemoryDbService {
             return this.logout(reqInfo);
         } else if(reqInfo.collectionName === 'register') {
             return this.register(reqInfo);
-        } else if(reqInfo.collectionName === 'habitCompletionLogs') {
+        } 
+        else if(reqInfo.collectionName === 'habitCompletionLogs') {
             return this.addHabitCompletionLogs(reqInfo);
         }
+        else if(reqInfo.collectionName === 'guidedJournalLogs') {
+            return this.addGuidedJournalLogs(reqInfo); 
+        }
+
         
       
         return undefined;
     }
    
    
-
+ addGuidedJournalLogs(reqInfo:any){
+    const requestBody = reqInfo['req']['body']; 
+    requestBody["id"] = this.genId(this.db.guidedJournalLogs);
+    console.log("IN SERVER METHOD ADDGUIDEDLOGS - NEW ID = ", requestBody["id"]);
+    this.db.guidedJournalLogs.push(requestBody); 
+ }
     addHabitCompletionLogs(reqInfo:any) {
       
         const requestBody = reqInfo['req']['body']; 
-        requestBody["id"] = this.genId(this.db.habitCompletionLogs);//generate an id that does not exist
+        requestBody["id"] = this.genId(this.db.habitCompletionLogs);
         this.db.habitCompletionLogs.push(requestBody); 
     }
     register(reqInfo:any) {
 
         const requestBody = reqInfo['req']['body']; 
-        const id:number = this.genId(this.db.users);//generate an id that does not exist
+        const id:number = this.genId(this.db.users);
         requestBody['id'] = id;
 
         //return error if email is already in db 
@@ -288,7 +298,7 @@ export class InMemoryDataService implements InMemoryDbService {
         });
     }
 
-    genId(entries: User[] | IWellnessRating[] | Habit[] | IGuidedJournalEntry[]|IHabitCompletionLog[] ): number {
+    genId(entries:any ): number {
         return entries.length > 0 ? Math.max(...entries.
             map((entry: { id: number; }) => entry.id)) + 1 : 1;
     }
