@@ -21,6 +21,8 @@ import { HabitReviewFormComponent } from './components/habit-review-form/habit-r
 import { WellnessRatingFormComponent } from './components/wellness-rating-form/wellness-rating-form.component';
 import { GuidedJournalFormComponent } from './components/guided-journal-form/guided-journal-form.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ActionsModalComponent } from './components/actions-modal/actions-modal.component';
 
 @NgModule(
   {
@@ -37,7 +39,8 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
     ReportsComponent,
     HabitReviewFormComponent,
     WellnessRatingFormComponent,
-    GuidedJournalFormComponent
+    GuidedJournalFormComponent,
+    ActionsModalComponent
    
   ],
   imports: [
@@ -70,7 +73,8 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
       {path: '**', redirectTo: 'Home', pathMatch: 'full'},
 
     ]),
-                       NoopAnimationsModule
+                       NoopAnimationsModule,
+                       NgbModule
   ],
   providers:[ AccountService ],
   bootstrap: [AppComponent]

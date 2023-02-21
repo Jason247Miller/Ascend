@@ -1,86 +1,85 @@
 <div class="container">
   <h2>Daily Review {{this.entryDate}}</h2>
-  <!--Actions Modal -->
-  <div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display':displayStyle}">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">Actions</h4>
-        </div>
-        <div class="modal-body">
-          <div class="container-lg">
-            <div class="table-responsive">
-              <div class="table-wrapper">
-                <div class="table-title">
-                  <div class="row">
-                    <div class="col-sm-8">
-                      <h2></h2>
-                    </div>
-                    <div class="col-sm-4">
-                    </div>
-                  </div>
-                </div>
-                <table class="table table-bordered">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        John Doe
-                      </td>
-                      <td>
-                        <a class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
-                        <a class="delete" title="Delete" data-toggle="tooltip"><i
-                            class="material-icons">&#xE872;</i></a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <input type="text" style="width:100%">
-                      </td>
-                      <td>
-                        <button type="button" class="btn btn-secondary btn-sm"> Add New</button>
-                      </td>
-                    </tr>
 
-                  </tbody>
-                </table>
+  
+  <ng-template #modalTemplate let-modal>
+    <form *ngIf="modalForm" [formGroup]="modalForm">
+    <div class="modal-header">
+      <h4 class="modal-title">Actions</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <div class="container-lg">
+        <div class="table-responsive">
+          <div class="table-wrapper">
+            <div class="table-title">
+              <div class="row">
+                <div class="col-sm-8">
+                  <h2></h2>
+                </div>
+                <div class="col-sm-4">
+                </div>
               </div>
             </div>
-          </div>
+          
+            <table class="table table-bordered">
+             
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+               
+                <ng-container formArrayName="items">
+                  <ng-container *ngFor = "let item of modalForm.get('items')?.value as items; let i = index">
+                    <tr>
+                      <td>
+                       <input type="text" style="width:100%" class="modal-input" [value]="item"> 
+                      </td>         
+                      <td>
+                        <a class="delete" title="Delete" (click)="deleteItem(i)" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </ng-container>
+               
+                <tr>
+                  <td>
+                    <input type="text" formControlName= "addItemInput" style="width:100%">
+                  </td>
+                  <td>
+                    <button type="button"  class="btn btn-secondary btn-sm" (click)="addItem()"> Add New</button>
+                  </td>
+                </tr>
 
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" (click)="closePopup()">
-            Close
-          </button>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="flex-parent-container">
 
+    </div>
+    <div class="modal-footer">
+      <button type="button" (click)="update()" class="btn btn-light">Update</button>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+    </div>
+  </form>
+  </ng-template>
+
+  <div class="flex-parent-container">
     <app-wellness-rating-form [wellnessRatingForm]="wellnessRatingForm" [previousDailyReview]="previousDailyReview">
     </app-wellness-rating-form>
 
-
-    <app-habit-review-form 
-    [habitReviewForm]="habitReviewForm"
-     [previousDailyReview]="previousDailyReview"
-     [noHabits]="noHabits"
-      [habits]="habits"
-      (actionsClicked)="openPopup($event)">
+    <app-habit-review-form [habitReviewForm]="habitReviewForm" [previousDailyReview]="previousDailyReview"
+      [noHabits]="noHabits" [habits]="habits" (actionsClicked)="openPopup($event, modalTemplate)">
     </app-habit-review-form>
 
-    <app-guided-journal-form 
-    [guidedJournalForm]="guidedJournalForm"
-    [previousDailyReview]="previousDailyReview"
-    [journalEntries]="journalEntries"
-    (actionsClicked)="openPopup($event)">
+    <app-guided-journal-form [guidedJournalForm]="guidedJournalForm" [previousDailyReview]="previousDailyReview"
+      [journalEntries]="journalEntries" (actionsClicked)="openPopup($event, modalTemplate)">
     </app-guided-journal-form>
 
 
