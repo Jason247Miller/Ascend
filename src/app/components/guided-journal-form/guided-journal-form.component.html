@@ -1,0 +1,13 @@
+<form [formGroup]="guidedJournalForm">
+  <div class="review-form">
+    <h5 class="heading">Guided Journal</h5>
+    <button class="add-button">Edit</button>
+    <ng-container *ngIf="journalEntries.length > 0">
+    </ng-container>
+    <ng-container *ngFor="let entry of journalEntries">
+      <label for={{entry.id}}>{{entry.entryName}}</label>
+      <textarea id={{entry.id}} [readOnly]="previousDailyReview" formControlName={{entry.id}} rows="4"
+        cols="50"></textarea>
+    </ng-container>
+  </div>
+</form>

@@ -1,1 +1,11 @@
-<p>dashboard - main page after user logs in</p>
+
+  <!-- Side navigation -->
+<div class="sidenav" [ngClass]= "{'removeSidebar':hideSidebar, 'sidenav' :!hideSidebar}">
+    <a [routerLink]="['overview']">Overview</a>
+    <a [routerLink]="['daily-review']">Daily Review</a>
+    <a [routerLink]="['reports']">Reports</a>
+    <a href="#">Dreams</a>
+  </div>
+  <div class="rendered-component-container">
+    <router-outlet></router-outlet>
+  </div>

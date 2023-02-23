@@ -1,6 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
-import { FormBuilder } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { catchError, EMPTY, first, take } from 'rxjs';
 import { Alert } from 'src/app/models/alert';
@@ -46,30 +45,20 @@ private fb : FormBuilder,
             this.password?.value
         ).
             pipe(
-                take(1), 
-                catchError(error => this.handleError(error))
+                take(1)
             ). 
             subscribe(user => this.handleLogin(user));
     }
 
-    handleError(error:string) {
-        this.errorMessage = JSON.stringify(error); 
-        console.error("error logging in " + this.errorMessage); 
-        this.alertService.error(
-            'User name or password is incorrect!',
-            {autoClose:false}
-        );
-        return EMPTY; 
-    }
     handleLogin(user:User) {
         if(this.accountService.redirectUrl) {
-            this.router.navigateByUrl(this.accountService.redirectUrl);
+        this.accountService.setLocalStoreageUserSubject(user);
+        console.log("Successfully logged in user:" + user.firstName);
+        this.router.navigateByUrl(this.accountService.redirectUrl);
         } else{
             this.router.navigateByUrl('/dashboard'); 
         }
     
-        this.accountService.setCurrentUserSubject(user);
-        console.log("Successfully logged in user:" + user.firstName);
     }
      
 }

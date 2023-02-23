@@ -8,7 +8,6 @@ import { AccountService } from 'src/app/services/account/account.service';
 import { User } from '../../models/Users';
 import { AlertService } from 'src/app/services/alert/alert.service';
 
-
 @Component({
     selector: "app-sign-up",
     templateUrl: "./sign-up.component.html",
@@ -48,7 +47,6 @@ private fb: FormBuilder,
     }
     submit() {
         console.log("submit() called");
-
         //use form data to make code cleaner
         //exclude the un-needed confirmPassword field on submit
         const formData = this.signUpForm.getRawValue();
@@ -61,8 +59,7 @@ private fb: FormBuilder,
 
         this.accountService.signUp(this.dataToSend).
             pipe(
-                take(1),
-                catchError(error => this.handleError(error))
+                take(1)
             ). 
             subscribe(() => {
                 this.handleSignUpSuccess(); 
@@ -86,19 +83,10 @@ private fb: FormBuilder,
         return this.signUpForm.get("confirmPassword"); 
     }
 
-    handleError(error:string) {
-        this.alertService.error("A User already exists with this email");
-        console.log(
-            "Error: ",
-            error
-        );
-        return EMPTY;
-    }
     handleSignUpSuccess() {
         console.log("Sign-up was Successful!");
         this.router.navigate(["./login"]);
     }
 
 }
-
 

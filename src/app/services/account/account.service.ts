@@ -1,81 +1,317 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, first,of,Subject,tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, EMPTY, map, take, tap, throwError } from 'rxjs';
 import { User } from 'src/app/models/Users';
 import { Router } from '@angular/router';
+import { IWellnessRating } from 'src/app/models/IWellnessRating';
+import { AlertService } from '../alert/alert.service';
+import { Habit } from 'src/app/models/Habit';
+import { IHabitCompletionLog } from 'src/app/models/IHabitCompletionLog';
+import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
+import { IGuidedJournalLog } from 'src/app/models/IGuidedJournalLog';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AccountService {
-    public redirectUrl?: string; 
-    private currentUserSubject = new BehaviorSubject<User | string>("default"); 
-    public currentUser$ = this.currentUserSubject.asObservable(); 
-    private localStorageUserSubject = new BehaviorSubject<User | string | null>("default");
-    public localStorageUser$ = this.localStorageUserSubject.asObservable(); 
-    constructor(private http: HttpClient, private router: Router) {  
-    }
 
-     setLocalStoreageUserSubject(localUser:string|null|User){
+    public redirectUrl?: string;
+    private currentUserSubject = new BehaviorSubject<User | string>("default");
+    public currentUser$ = this.currentUserSubject.asObservable();
+    private localStorageUserSubject = new BehaviorSubject<User | string | null>("default");
+    public localStorageUser$ = this.localStorageUserSubject.asObservable();
+    private hideSideBarSubject = new BehaviorSubject(false);
+    public hideSideBar$ = this.hideSideBarSubject.asObservable();
+    private wellnessRatingsUrl = 'api/wellnessRatings';
+    private habitsUrl = 'api/habits';
+    private guidedJournalUrl = 'api/guidedJournalEntries';
+    private guidedJournalLogsUrl = 'api/guidedJournalLogs';
+    private habitCompletionLogsUrl = 'api/habitCompletionLogs';
+    constructor(private http: HttpClient, private router: Router, private alertService: AlertService) {
+    }
+    setSidebarValue(display: boolean) {
+        this.hideSideBarSubject.next(display);
+    }
+    setLocalStoreageUserSubject(localUser: string | null | User) {
         this.localStorageUserSubject.next(localUser);
-     }
-    
-      setCurrentUserSubject(user:User) {
-        this.currentUserSubject.next(user);
-      }
+    }
+    getLocalStoreageUser$() {
+        return this.localStorageUserSubject.asObservable();
+    }
 
     login(email: string, password: string) {
         return this.http.post<User>(
             'api/authenticate',
-            {email, password}
+            { email, password }
         ).pipe(
-            first(), //emitt 1 item and close the Observable 
             tap(user => {
                 localStorage.setItem(
                     'currentUser',
                     JSON.stringify(user)
                 );
-                this.updateLocalStorageSubject(); 
-                return user; 
-            })
-        ); 
+                this.updateLocalStorageSubject();
+                return user;
+            }),
+            catchError(error => this.handleError(
+                error,
+                'User name or password is incorrect!'
+            ))
+        );
     }
 
-    logOut():void {
+    logOut(): void {
 
-  
         localStorage.removeItem('currentUser');
         //this.currentUserSubject.next("default");
         this.localStorageUserSubject.next('default');
         this.router.navigate(['/login']);
     }
 
-    signUp(userData:User) {
+    signUp(userData: User) {
         return this.http.post<User>(
             'api/register',
             userData
         ).
             pipe(
-                tap(item => console.log(item)),
                 catchError(error => {
-                    throw 'Email already exists in database!';
+                    return this.handleError(
+                        error,
+                        'Email already exists in database!'
+                    );
                 })
-            ); 
+            );
     }
 
-    isLoggedIn():boolean {
-    //return false if null or undefined, true otherwise!
-        console.log(
-            "local user",
-            localStorage.getItem('currentUser')
-        );
-        return !!localStorage.getItem('currentUser');  
+    isLoggedIn(): boolean {
+        //return false if null or undefined, true otherwise!
+        return !!localStorage.getItem('currentUser');
     }
-  
-    updateLocalStorageSubject():void {
+
+    updateLocalStorageSubject(): void {
         this.localStorageUserSubject.next(localStorage.getItem('currentUser'));
     }
-  
-}
 
+    updateHabitCompletionLogs(habitCompletionLogs: IHabitCompletionLog[]) {
+
+        combineLatest(habitCompletionLogs.map(
+            log => this.http.put<IHabitCompletionLog>(this.habitCompletionLogsUrl, log)
+                .pipe(
+                    catchError(error => {
+                        this.alertService.error('Error updating habit log:' + log.id);
+                        console.error('Error updating habit log:' + log.id);
+                        return throwError(() => new Error(error))
+                    })
+                )
+        ))
+            .pipe(
+                catchError(error => this.handleError(error, 'Error: failed to update habit logs!:')),
+            )
+
+            .subscribe(() => {
+                this.alertService.success("Habits have been successfully Updated")
+            });
+
+    }
+    updateGuidedjournalData(formData: IGuidedJournalEntry) {
+        return this.http.put(
+            this.guidedJournalUrl,
+            formData
+        ).
+            pipe(
+                catchError(error => {
+                    return this.handleError(
+                        error,
+                        'Error:Failed to Update guided journal entry'
+                    );
+                })
+            );
+    }
+
+    updateWellnessData(formData: IWellnessRating) {
+
+        return this.http.put(
+            this.wellnessRatingsUrl,
+            formData
+        ).
+            pipe(
+                catchError(error => {
+                    return this.handleError(
+                        error,
+                        'Error:Failed to Update wellness entry'
+                    );
+                })
+            );
+
+    }
+
+    getHabits(userId: number) {
+        return this.http.get<Habit[]>(this.habitsUrl).
+            pipe(
+                map(habits => {
+                    habits = habits.filter((habit) => {
+                        return habit.userId === userId && habit.deleted === false;
+                    });
+                    return habits;
+                })
+            );
+    }
+
+    handleError(error: string, customMessage?: string) {
+        if (customMessage) {
+            this.alertService.error(customMessage);
+        } else {
+            this.alertService.error(error);
+        }
+        console.error(error);
+        return EMPTY;
+    }
+
+    addJournalRecordEntry(guidedJournalEntry: IGuidedJournalEntry) {
+        return this.http.post<IGuidedJournalEntry>(
+            this.guidedJournalUrl,
+            guidedJournalEntry
+        ).
+            pipe(
+                catchError(error => this.handleError(
+                    error,
+                    'Error:Failed to add guided journal entry'
+                ))
+            );
+    }
+
+    addWellnessRatingEntry(wellnessEntry: IWellnessRating) {
+        return this.http.post<IWellnessRating>(
+            this.wellnessRatingsUrl,
+            wellnessEntry
+        ).
+            pipe(
+                tap(wellnessRating => {
+                }),
+                catchError(error => this.handleError(
+                    error,
+                    'Error:Failed to add wellnessRating'
+                ))
+            );
+    }
+
+    addHabitCompletionLogs(habitCompletionLogs: IHabitCompletionLog[]) {
+
+        combineLatest(habitCompletionLogs.map(
+            log => this.http.post<IHabitCompletionLog>(this.habitCompletionLogsUrl, log)
+                .pipe(
+                    catchError(error => {
+                        this.alertService.error('Error submitting habit log:' + log.id);
+                        console.error('Error submitting habit log:' + log.id);
+                        return throwError(() => new Error(error))
+                    })
+                )
+        ))
+            .pipe(
+                catchError(error => this.handleError(error, 'Error: failed to submit habit logs!:')),
+                take(1)
+            )
+
+            .subscribe(() => {
+                this.alertService.success("Habits have been successfully submitted");
+            });
+    }
+    viewHabitCompletionEntries() {
+        return this.http.get<IHabitCompletionLog[]>(this.habitCompletionLogsUrl)
+    }
+
+    getHabitLogEntries(currentDate: string, userId: number) {
+        return this.http.get<IHabitCompletionLog[]>(this.habitCompletionLogsUrl).
+            pipe(
+                map((habitLogs) => {
+
+                    habitLogs = habitLogs.filter((habitLog) => {
+                        return habitLog.date === currentDate && habitLog.userId === userId;
+                    });
+
+                    return habitLogs;
+                }),
+                catchError(error => {
+                    return this.handleError(error, "Error occured querying current Habit Logs");
+                })
+
+            );
+    }
+
+    getJournalLogEntries(currentDate: string, userId: number) {
+        return this.http.get<IGuidedJournalLog[]>(this.guidedJournalLogsUrl).
+            pipe(
+                map((journalLogs) => {
+
+                    journalLogs = journalLogs.filter((journalLog) => {
+                        return journalLog.date === currentDate && journalLog.userId === userId;
+                    });
+                    return journalLogs;
+                }),
+
+                catchError(error => {
+                    return this.handleError(error, "Error occured querying current Jounral Logs");
+                })
+
+            );
+    }
+
+    getJournalEntry(datePassed: string, userId: number) {
+        return this.http.get<IGuidedJournalEntry[]>(this.guidedJournalUrl).
+            pipe(
+                map((entries) => {
+
+                    entries = entries.filter((entry) => {
+                        return entry.userId === userId &&
+                            !entry.deleted;
+                    });
+                    return entries;
+                }),
+                catchError(error => {
+                    return this.handleError(error, "Error occured in journal entry exists query");
+                })
+
+            );
+    }
+
+    getWellnessEntryByDate(date: string, userId: number) {
+
+        return this.http.get<IWellnessRating[]>(this.wellnessRatingsUrl).
+            pipe(
+                map((rating) => {
+
+                    rating = rating.filter((entry) => {
+                        return entry.date === date && entry.userId === userId;
+                    });
+
+                    return rating;
+                })
+                ,
+                catchError(error => {
+                    return this.handleError(error, "Error occured in wellness rating exists query");
+                })
+
+            );
+    }
+
+    getWellnessEntriesInDateRange(oldestDate: Date, latestDate: Date, userId: number) {
+        return this.http.get<IWellnessRating[]>(this.wellnessRatingsUrl).
+            pipe(
+                map((wellnessRatings) => {
+
+                    wellnessRatings = wellnessRatings.filter((entry) => {
+                        let entryDate = new Date(entry.date);
+                        return (entryDate >= oldestDate) && (entryDate <= latestDate);
+                    });
+
+                    return wellnessRatings;
+                })
+                ,
+                catchError(error => {
+                    return this.handleError(error, "Error occured in Wellness Entries Date Range");
+                })
+
+            );
+    }
+
+}
 

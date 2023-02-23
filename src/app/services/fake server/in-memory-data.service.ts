@@ -3,12 +3,17 @@ import { Injectable } from '@angular/core';
 import { InMemoryDbService } from 'angular-in-memory-web-api';
 import { BehaviorSubject, delay, of } from 'rxjs';
 import { User } from 'src/app/models/Users';
-
+import { IGuidedJournalLog } from 'src/app/models/IGuidedJournalLog';
+import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
+import { Habit } from 'src/app/models/Habit';
+import { IWellnessRating } from 'src/app/models/IWellnessRating';
+import { IHabitCompletionLog } from 'src/app/models/IHabitCompletionLog';
 @Injectable({
     providedIn: 'root',
 })
 export class InMemoryDataService implements InMemoryDbService {
     private userSubject!: BehaviorSubject<User>;
+    guidedJournalLogs : IGuidedJournalLog[];
     createDb() {
         return { 
             users: [
@@ -23,6 +28,167 @@ export class InMemoryDataService implements InMemoryDbService {
                     lastName:'Smith',
                     email:'john@gmail.com',
                     password:'testPass123!2' 
+                }
+            ],
+        
+            wellnessRatings:[              
+                { id: 1,
+                    userId: 1,
+                    date:'02-11-2023',
+                    sleepRating:5,
+                    exerciseRating:7,
+                    nutritionRating:8,
+                    stressRating:10,
+                    sunlightRating:3,
+                    mindfulnessRating:7,
+                    productivityRating:8,
+                    moodRating:6,
+                    energyRating:9,
+                    overallDayRating:7
+                },
+                { id: 1,
+                    userId: 1,
+                    date:'02-07-2023',
+                    sleepRating:5,
+                    exerciseRating:7,
+                    nutritionRating:3,
+                    stressRating:6,
+                    sunlightRating:3,
+                    mindfulnessRating:7,
+                    productivityRating:2,
+                    moodRating:6,
+                    energyRating:9,
+                    overallDayRating:7
+                },
+                { id: 1,
+                    userId: 1,
+                    date:'02-13-2023',
+                    sleepRating:5,
+                    exerciseRating:2,
+                    nutritionRating:3,
+                    stressRating:5,
+                    sunlightRating:3,
+                    mindfulnessRating:7,
+                    productivityRating:1,
+                    moodRating:6,
+                    energyRating:3,
+                    overallDayRating:7
+                },
+                { id: 2,
+                    userId: 1,
+                    date:'01-06-2023',
+                    sleepRating:5,
+                    exerciseRating:0,
+                    nutritionRating:0,
+                    stressRating:0,
+                    sunlightRating:0,
+                    mindfulnessRating:0,
+                    productivityRating:0,
+                    moodRating:0,
+                    energyRating:0,
+                    overallDayRating:7
+                }
+            ],
+
+            habitCompletionLogs:[
+                {
+                    id: 1,
+                    userId: 1,
+                    habitId:1,
+                    completed: true,
+                    date:'02-11-2023'
+                },
+                {
+                    id: 2,
+                    userId: 1,
+                    habitId: 2,
+                    completed: false,
+                    date:'02-11-2023'
+                },
+                {
+                    id: 3,
+                    userId: 1,
+                    habitId: 3,
+                    completed: true,
+                    date:'02-11-2023'
+                },
+                {
+                    id: 4,
+                    userId: 1,
+                    habitId:1,
+                    completed: true,
+                    date:'02-13-2023'
+                },
+                {
+                    id: 5,
+                    userId: 1,
+                    habitId: 2,
+                    completed: false,
+                    date:'02-13-2023'
+                },
+                {
+                    id: 6,
+                    userId: 1,
+                    habitId: 3,
+                    completed: true,
+                    date:'02-13-2023'
+                }
+            ],
+            habits:[
+                {
+                    id:1, 
+                    userId: 1, 
+                    habitName:'Play Guitar for 20 minutes a day',
+                    deleted: false
+                },
+                {
+                    id:2, 
+                    userId: 1, 
+                    habitName:'Cardio for 30 minutes',
+                    deleted:false
+                },
+                {
+                    id:3, 
+                    userId: 1, 
+                    habitName:'Meditate for 10 minutes',
+                    deleted:true
+                }
+            ],
+            guidedJournalEntries:[
+                {
+                    id:1, 
+                    userId: 1, 
+                    date:'02-11-2023',
+                    entryName: 'What are you most greatful for?',
+                    deleted:false
+                   
+                },
+                {
+                                    
+                    id:2, 
+                    userId: 1, 
+                    date:'02-11-2023',
+                    entryName: 'what did you learn today?',
+                    deleted:false
+                 
+                }
+            ], 
+            guidedJournalLogs :  [
+                {
+                    id:1, 
+                    userId:1, 
+                    entryId:1,
+                    entryTextValue:'my health',
+                    date:'02-11-2023'
+                                                       
+                },
+           
+                {
+                    id:2, 
+                    userId:1, 
+                    entryId:2,
+                    entryTextValue:'how to enjoy the moment',
+                    date:'02-11-2023'
                 }
             ]
         };
@@ -39,11 +205,19 @@ export class InMemoryDataService implements InMemoryDbService {
             return this.logout(reqInfo);
         } else if(reqInfo.collectionName === 'register') {
             return this.register(reqInfo);
+        } else if(reqInfo.collectionName === 'habitCompletionLogs') {
+            return this.addHabitCompletionLogs(reqInfo);
         }
-        //  otherwise default response of In-memory DB
+      
         return undefined;
     }
 
+    addHabitCompletionLogs(reqInfo:any) {
+      
+        const requestBody = reqInfo['req']['body']; 
+        requestBody["id"] = this.genId(this.db.habitCompletionLogs);//generate an id that does not exist
+        this.db.habitCompletionLogs.push(requestBody); 
+    }
     register(reqInfo:any) {
 
         const requestBody = reqInfo['req']['body']; 
@@ -60,6 +234,7 @@ export class InMemoryDataService implements InMemoryDbService {
         return of(new HttpResponse({status: 200})).
             pipe(delay(500)); //mimic server delay
     }
+ 
     //not currently used
     logout(reqInfo: any) {
         return reqInfo.utils.createResponse$(() => {
@@ -102,17 +277,16 @@ export class InMemoryDataService implements InMemoryDbService {
                 status: 401, 
                 headers, 
                 url, 
-                body: {error: 'Error 401 Invalid Email or Password' } 
+                body: {error: 'Error 401 Invalid Email or Password'} 
             }; 
-
           
         });
     }
-    //Ensure there is never a duplicate id when adding users 
-    genId(users: User[]): number {
-        return users.length > 0 ? Math.max(...users.map(user => user.id)) + 1 : 1;
+
+    genId(entries: User[] | IWellnessRating[] | Habit[] | IGuidedJournalEntry[]|IHabitCompletionLog[] ): number {
+        return entries.length > 0 ? Math.max(...entries.
+            map((entry: { id: number; }) => entry.id)) + 1 : 1;
     }
    
 }
-  
     
