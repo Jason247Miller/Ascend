@@ -8,7 +8,6 @@ import { AccountService } from 'src/app/services/account/account.service';
 import { User } from '../../models/Users';
 import { AlertService } from 'src/app/services/alert/alert.service';
 
-
 @Component({
     selector: "app-sign-up",
     templateUrl: "./sign-up.component.html",
@@ -90,5 +89,4 @@ private fb: FormBuilder,
     }
 
 }
-
 

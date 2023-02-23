@@ -1,3 +1,4 @@
+
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AccountService } from 'src/app/services/account/account.service';
@@ -8,7 +9,6 @@ import { Habit } from 'src/app/models/Habit';
 import { IHabitCompletionLog } from 'src/app/models/IHabitCompletionLog';
 import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
 import { ActivatedRoute } from '@angular/router';
-import { IGuidedJournalLog } from 'src/app/models/IGuidedJournalLog';
 
 @Component({
   selector: 'app-daily-review',
@@ -39,7 +39,6 @@ export class DailyReviewComponent implements OnInit {
   guidedJournalForm!: FormGroup;
   habitReviewForm!: FormGroup;
   entryDate: string;
-
 
   ngOnInit(): void {
 
@@ -129,7 +128,6 @@ export class DailyReviewComponent implements OnInit {
 
     } else if (this.newHabitLogEntry === false) {
 
-      console.log("form before controls = ", this.entryDateHabitLogs);
       Object.keys(this.habitReviewForm.controls).forEach(habitFormControl => {
         this.entryDateHabitLogs.forEach((log) => {
           if (habitFormControl === log.habitId.toString()) {
@@ -139,7 +137,6 @@ export class DailyReviewComponent implements OnInit {
       });
       this.accountService.updateHabitCompletionLogs(this.entryDateHabitLogs);
     }
-
 
   }
 
@@ -176,7 +173,6 @@ export class DailyReviewComponent implements OnInit {
           });
         }
         else {
-          console.log("no habits is true")
           this.noHabits = true;
         }
       });
@@ -207,7 +203,6 @@ export class DailyReviewComponent implements OnInit {
             this.guidedJournalForm.addControl(entry.id.toString(), new FormControl(entry.entryValue));
           });
         }
-        else { console.log("no guided journals") }
       });
   }
 
@@ -253,7 +248,6 @@ export class DailyReviewComponent implements OnInit {
           this.newWellnessEntry = false;
           this.wellnessRatingForm.patchValue(ratingEntry[0]);
           if (!(this.isToday(new Date(this.entryDate)))) {
-            console.log("in wellness rating - date is not current date")
             this.wellnessRatingForm.disable();
           }
         }
@@ -295,5 +289,4 @@ export class DailyReviewComponent implements OnInit {
   }
 
 }
-
 

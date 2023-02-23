@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, combineLatest, EMPTY, map,take, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, EMPTY, map, take, tap, throwError } from 'rxjs';
 import { User } from 'src/app/models/Users';
 import { Router } from '@angular/router';
 import { IWellnessRating } from 'src/app/models/IWellnessRating';
@@ -33,16 +33,11 @@ export class AccountService {
         this.hideSideBarSubject.next(display);
     }
     setLocalStoreageUserSubject(localUser: string | null | User) {
-        console.log(
-            "localUser",
-            localUser
-        );
         this.localStorageUserSubject.next(localUser);
     }
     getLocalStoreageUser$() {
         return this.localStorageUserSubject.asObservable();
     }
-
 
     login(email: string, password: string) {
         return this.http.post<User>(
@@ -78,7 +73,6 @@ export class AccountService {
             userData
         ).
             pipe(
-                tap(item => console.log(item)),
                 catchError(error => {
                     return this.handleError(
                         error,
@@ -90,10 +84,6 @@ export class AccountService {
 
     isLoggedIn(): boolean {
         //return false if null or undefined, true otherwise!
-        console.log(
-            "local user",
-            localStorage.getItem('currentUser')
-        );
         return !!localStorage.getItem('currentUser');
     }
 
@@ -104,19 +94,17 @@ export class AccountService {
     updateHabitCompletionLogs(habitCompletionLogs: IHabitCompletionLog[]) {
 
         combineLatest(habitCompletionLogs.map(
-            log =>  this.http.put<IHabitCompletionLog>(this.habitCompletionLogsUrl, log) 
+            log => this.http.put<IHabitCompletionLog>(this.habitCompletionLogsUrl, log)
                 .pipe(
                     catchError(error => {
                         this.alertService.error('Error updating habit log:' + log.id);
-                        console.error('Error updating habit log:'+ log.id);
+                        console.error('Error updating habit log:' + log.id);
                         return throwError(() => new Error(error))
                     })
                 )
         ))
             .pipe(
-                tap(log => console.log("log", log)),
                 catchError(error => this.handleError(error, 'Error: failed to update habit logs!:')),
-                
             )
 
             .subscribe(() => {
@@ -130,10 +118,6 @@ export class AccountService {
             formData
         ).
             pipe(
-                tap(guidedJournalEntry => console.log(
-                    "updated guided journal entry",
-                    guidedJournalEntry
-                )),
                 catchError(error => {
                     return this.handleError(
                         error,
@@ -150,10 +134,6 @@ export class AccountService {
             formData
         ).
             pipe(
-                tap(rating => console.log(
-                    "updated wellness rating",
-                    rating
-                )),
                 catchError(error => {
                     return this.handleError(
                         error,
@@ -172,12 +152,6 @@ export class AccountService {
                         return habit.userId === userId && habit.deleted === false;
                     });
                     return habits;
-                }),
-                tap(habits => {
-                    console.log(
-                        'habits with userId passed=',
-                        habits
-                    );
                 })
             );
     }
@@ -185,7 +159,6 @@ export class AccountService {
     handleError(error: string, customMessage?: string) {
         if (customMessage) {
             this.alertService.error(customMessage);
-            console.log(customMessage);
         } else {
             this.alertService.error(error);
         }
@@ -194,16 +167,11 @@ export class AccountService {
     }
 
     addJournalRecordEntry(guidedJournalEntry: IGuidedJournalEntry) {
-        console.log('inside add journal record entry');
         return this.http.post<IGuidedJournalEntry>(
             this.guidedJournalUrl,
             guidedJournalEntry
         ).
             pipe(
-                tap(guidedJournalEntry => console.log(
-                    'added new journal entry: ',
-                    guidedJournalEntry
-                )),
                 catchError(error => this.handleError(
                     error,
                     'Error:Failed to add guided journal entry'
@@ -212,14 +180,12 @@ export class AccountService {
     }
 
     addWellnessRatingEntry(wellnessEntry: IWellnessRating) {
-        console.log('inside wellness rating add');
         return this.http.post<IWellnessRating>(
             this.wellnessRatingsUrl,
             wellnessEntry
         ).
             pipe(
                 tap(wellnessRating => {
-                     console.log('added new wellness rating: ',wellnessRating);
                 }),
                 catchError(error => this.handleError(
                     error,
@@ -235,13 +201,12 @@ export class AccountService {
                 .pipe(
                     catchError(error => {
                         this.alertService.error('Error submitting habit log:' + log.id);
-                        console.error('Error submitting habit log:'+ log.id);
+                        console.error('Error submitting habit log:' + log.id);
                         return throwError(() => new Error(error))
                     })
                 )
         ))
             .pipe(
-                tap(log => console.log("log", log)),
                 catchError(error => this.handleError(error, 'Error: failed to submit habit logs!:')),
                 take(1)
             )
@@ -251,14 +216,7 @@ export class AccountService {
             });
     }
     viewHabitCompletionEntries() {
-        console.log("view habit logs");
-        return this.http.get<IHabitCompletionLog[]>(this.habitCompletionLogsUrl).
-            pipe(tap(logs => {
-                console.log(
-                    'habit logs=',
-                    logs
-                );
-            }));
+        return this.http.get<IHabitCompletionLog[]>(this.habitCompletionLogsUrl)
     }
 
     getHabitLogEntries(currentDate: string, userId: number) {
@@ -271,38 +229,30 @@ export class AccountService {
                     });
 
                     return habitLogs;
-                })
-                ,
-                tap(logs => console.log("current habit logs", logs)),
-
+                }),
                 catchError(error => {
                     return this.handleError(error, "Error occured querying current Habit Logs");
                 })
 
-
             );
     }
 
-    getJournalLogEntries(currentDate: string, userId: number){
+    getJournalLogEntries(currentDate: string, userId: number) {
         return this.http.get<IGuidedJournalLog[]>(this.guidedJournalLogsUrl).
-        pipe(
-            map((journalLogs) => {
+            pipe(
+                map((journalLogs) => {
 
-                journalLogs = journalLogs.filter((journalLog) => {
-                    return journalLog.date === currentDate && journalLog.userId === userId;
-                });
-                console.log(
-                    'current date jounral log entry=',
-                    journalLogs
-                );
-                return journalLogs;
-            }),
+                    journalLogs = journalLogs.filter((journalLog) => {
+                        return journalLog.date === currentDate && journalLog.userId === userId;
+                    });
+                    return journalLogs;
+                }),
 
-            catchError(error => {
-                return this.handleError(error, "Error occured querying current Jounral Logs");
-            })
+                catchError(error => {
+                    return this.handleError(error, "Error occured querying current Jounral Logs");
+                })
 
-        );
+            );
     }
 
     getJournalEntry(datePassed: string, userId: number) {
@@ -312,12 +262,8 @@ export class AccountService {
 
                     entries = entries.filter((entry) => {
                         return entry.userId === userId &&
-                              !entry.deleted;
+                            !entry.deleted;
                     });
-                    console.log(
-                        'current journal date entry=',
-                        entries
-                    );
                     return entries;
                 }),
                 catchError(error => {
@@ -340,8 +286,6 @@ export class AccountService {
                     return rating;
                 })
                 ,
-                tap(item => console.log(item)),
-
                 catchError(error => {
                     return this.handleError(error, "Error occured in wellness rating exists query");
                 })
@@ -366,10 +310,8 @@ export class AccountService {
                     return this.handleError(error, "Error occured in Wellness Entries Date Range");
                 })
 
-
             );
     }
 
 }
-
 

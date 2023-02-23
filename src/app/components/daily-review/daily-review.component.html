@@ -6,7 +6,6 @@
       [wellnessRatingForm]="wellnessRatingForm"
       [previousDailyReview]="previousDailyReview">
       </app-wellness-rating-form>
-     
 
       <app-habit-review-form 
         [habitReviewForm]="habitReviewForm"
@@ -20,11 +19,8 @@
       [journalEntries]="journalEntries"
       >
       </app-guided-journal-form>
-  
-  
       
     </div>
     <button class="btn btn-primary" (click)="submit()" [hidden]="previousDailyReview">Submit</button>
-    
     
   </div>

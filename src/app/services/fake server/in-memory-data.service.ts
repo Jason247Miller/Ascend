@@ -208,12 +208,9 @@ export class InMemoryDataService implements InMemoryDbService {
         } else if(reqInfo.collectionName === 'habitCompletionLogs') {
             return this.addHabitCompletionLogs(reqInfo);
         }
-        
       
         return undefined;
     }
-   
-   
 
     addHabitCompletionLogs(reqInfo:any) {
       
@@ -237,7 +234,6 @@ export class InMemoryDataService implements InMemoryDbService {
         return of(new HttpResponse({status: 200})).
             pipe(delay(500)); //mimic server delay
     }
-   
  
     //not currently used
     logout(reqInfo: any) {
@@ -283,7 +279,6 @@ export class InMemoryDataService implements InMemoryDbService {
                 url, 
                 body: {error: 'Error 401 Invalid Email or Password'} 
             }; 
-
           
         });
     }
@@ -294,5 +289,4 @@ export class InMemoryDataService implements InMemoryDbService {
     }
    
 }
-  
     
