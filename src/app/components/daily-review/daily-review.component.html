@@ -22,8 +22,14 @@
               <table class="table table-bordered">
                 <thead>
                   <tr>
-                    <th>Name</th>
-                    <th>Actions</th>
+                    <ng-container *ngIf="formType === 'habits'">
+                      <th>Habits</th>
+                    </ng-container>
+                    <ng-container *ngIf="formType === 'journal'">
+                      <th>Guided Journal Entries</th>
+                    </ng-container>
+                    
+                    <th>Delete</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -55,10 +61,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" type="submit" class="btn btn-light">Update</button>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+        <button type="button" type="submit" class="btn btn-primary btn-sm">Update</button>
+        <button type="button" class="btn btn-secondary btn-sm" (click)="modal.close('Close click')">Close</button>
       </div>
     </form>
   </ng-template>

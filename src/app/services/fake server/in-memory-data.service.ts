@@ -8,31 +8,26 @@ import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
 import { Habit } from 'src/app/models/Habit';
 import { IWellnessRating } from 'src/app/models/IWellnessRating';
 import { IHabitCompletionLog } from 'src/app/models/IHabitCompletionLog';
-@Injectable({
-    providedIn: 'root',
-})
+@Injectable({providedIn: 'root',})
 export class InMemoryDataService implements InMemoryDbService {
     private userSubject!: BehaviorSubject<User>;
     guidedJournalLogs : IGuidedJournalLog[];
     createDb() {
-        return { 
-            users: [
-                { id: 1,
+        return {users: [
+                {id: 1,
                     firstName: 'Jason',
                     lastName:'Miller',
                     email:'jason.miller@yahoo.com',
-                    password:'testPass123!' 
-                },
-                { id: 2,
+                    password:'testPass123!'},
+                {id: 2,
                     firstName: 'John',
                     lastName:'Smith',
                     email:'john@gmail.com',
-                    password:'testPass123!2' 
-                }
+                    password:'testPass123!2'}
             ],
         
             wellnessRatings:[              
-                { id: 1,
+                {id: 1,
                     userId: 1,
                     date:'02-11-2023',
                     sleepRating:5,
@@ -44,9 +39,8 @@ export class InMemoryDataService implements InMemoryDbService {
                     productivityRating:8,
                     moodRating:6,
                     energyRating:9,
-                    overallDayRating:7
-                },
-                { id: 1,
+                    overallDayRating:7},
+                {id: 1,
                     userId: 1,
                     date:'02-07-2023',
                     sleepRating:5,
@@ -58,9 +52,8 @@ export class InMemoryDataService implements InMemoryDbService {
                     productivityRating:2,
                     moodRating:6,
                     energyRating:9,
-                    overallDayRating:7
-                },
-                { id: 1,
+                    overallDayRating:7},
+                {id: 1,
                     userId: 1,
                     date:'02-17-2023',
                     sleepRating:5,
@@ -72,9 +65,8 @@ export class InMemoryDataService implements InMemoryDbService {
                     productivityRating:1,
                     moodRating:6,
                     energyRating:3,
-                    overallDayRating:7
-                },
-                { id: 2,
+                    overallDayRating:7},
+                {id: 2,
                     userId: 1,
                     date:'01-06-2023',
                     sleepRating:5,
@@ -86,116 +78,84 @@ export class InMemoryDataService implements InMemoryDbService {
                     productivityRating:0,
                     moodRating:0,
                     energyRating:0,
-                    overallDayRating:7
-                }
+                    overallDayRating:7}
             ],
 
             habitCompletionLogs:[
-                {
-                    id: 1,
+                {id: 1,
                     userId: 1,
                     habitId:'d58a9560-3ed8-4eaa-b97e-c558179861e8',
                     completed: false,
-                    date:'02-17-2023'
-                },
-                {
-                    id: 2,
+                    date:'02-17-2023'},
+                {id: 2,
                     userId: 1,
                     habitId: '2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec',
                     completed: false,
-                    date:'02-17-2023'
-                },
-                {
-                    id: 3,
+                    date:'02-17-2023'},
+                {id: 3,
                     userId: 1,
                     habitId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     completed: true,
-                    date:'02-11-2023'
-                },
-                {
-                    id: 4,
+                    date:'02-11-2023'},
+                {id: 4,
                     userId: 1,
                     habitId:'2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec',
                     completed: true,
-                    date:'02-11-2023'
-                }
+                    date:'02-11-2023'}
               
             ],
             habits:[
-                {
-                    id:1, 
+                {id:1, 
                     userId: 1, 
                     habitName:'Play Guitar for 20 minutes a day',
                     uuid:'d58a9560-3ed8-4eaa-b97e-c558179861e8',
-                    deleted: false
-                },
-                {
-                    id:2, 
+                    deleted: false},
+                {id:2, 
                     userId: 1, 
                     habitName:'Cardio for 30 minutes',
                     uuid:'2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec', 
-                    deleted:false
-                },
-                {
-                    id:3, 
+                    deleted:false},
+                {id:3, 
                     userId: 1, 
                     habitName:'Meditate for 10 minutes',
                     uuid:'2e2bd1d4-c4a3-475a-bc8a-5aea1157e0ec', 
-                    deleted:true
-                }
+                    deleted:true}
             ],
             guidedJournalEntries:[
-                {
-                    id:1, 
+                {id:1, 
                     userId: 1, 
                     entryName: 'What are you most greatful for?',
                     uuid:'d58a9560-3ed8-4eaa-b97e-c558179861e8',
-                    deleted:false
-                   
-                },
-                {
-                                    
-                    id:2, 
+                    deleted:false},
+                {id:2, 
                     userId: 1, 
                     entryName: 'what did you learn today?',
                     uuid:'2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec',
-                    deleted:false
-                 
-                }
+                    deleted:false}
             ], 
             guidedJournalLogs :  [
-                {
-                    id:1, 
+                {id:1, 
                     userId:1, 
                     entryId:'d58a9560-3ed8-4eaa-b97e-c558179861e8',
                     entryTextValue:'my health',
-                    date:'02-17-2023'
-                                                       
-                },
+                    date:'02-17-2023'},
            
-                {
-                    id:2, 
+                {id:2, 
                     userId:1, 
                     entryId:'2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec',
                     entryTextValue:'how to enjoy the moment',
-                    date:'02-17-2023'
-                }, 
-                {
-                    id:3, 
+                    date:'02-17-2023'}, 
+                {id:3, 
                     userId:1, 
                     entryId:'d58a9560-3ed8-4eaa-b97e-c558179861e8',
                     entryTextValue:'',
-                    date:'02-11-2023'
-                }, 
-                {
-                    id:4, 
+                    date:'02-11-2023'}, 
+                {id:4, 
                     userId:1, 
                     entryId:'2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec',
                     entryTextValue:'',
-                    date:'02-11-2023'
-                }
-            ]
-        };
+                    date:'02-11-2023'}
+            ]};
     }
     db = this.createDb();
 
@@ -216,12 +176,9 @@ export class InMemoryDataService implements InMemoryDbService {
         else if(reqInfo.collectionName === 'guidedJournalLogs') {
             return this.addGuidedJournalLogs(reqInfo); 
         }
-
-        
       
         return undefined;
     }
-   
    
  addGuidedJournalLogs(reqInfo:any){
     const requestBody = reqInfo['req']['body']; 
@@ -251,19 +208,16 @@ export class InMemoryDataService implements InMemoryDbService {
         return of(new HttpResponse({status: 200})).
             pipe(delay(500)); //mimic server delay
     }
-   
  
     //not currently used
     logout(reqInfo: any) {
         return reqInfo.utils.createResponse$(() => {
             console.log('HTTP POST api/logout override');
             const { headers, url } = reqInfo;
-            return {
-                status: 200,
+            return {status: 200,
                 headers,
                 url,
-                body: {}
-            };
+                body: {}};
         });
     }
 
@@ -278,26 +232,19 @@ export class InMemoryDataService implements InMemoryDbService {
             const password = requestBody["password"]; 
             const user = this.db.users.find(u => u.email === email && u.password === password);
             if (user)
-                return { 
-                    status: 200, 
+                return {status: 200, 
                     headers, // reqInfo (line 30)
                     url, // reqInfo (line 30)
-                    body: { 
-                        id: user.id, 
+                    body: {id: user.id, 
                         email: user.email,
                         firstName: user.firstName,
                         lastName: user.lastName,
-                        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
-                    } 
-                };
+                        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'}};
             //  otherwise return response with status code 401 (unauthorized)
-            return { 
-                status: 401, 
+            return {status: 401, 
                 headers, 
                 url, 
-                body: {error: 'Error 401 Invalid Email or Password'} 
-            }; 
-
+                body: {error: 'Error 401 Invalid Email or Password'}}; 
           
         });
     }
@@ -308,5 +255,4 @@ export class InMemoryDataService implements InMemoryDbService {
     }
    
 }
-  
     

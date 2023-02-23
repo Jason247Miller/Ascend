@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnChanges, OnInit, QueryList,TemplateRef,ViewChildren} from '@angular/core';
+import { Component, ElementRef, OnInit, QueryList,TemplateRef,ViewChildren} from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AccountService } from 'src/app/services/account/account.service';
 import { IWellnessRating } from 'src/app/models/IWellnessRating';
@@ -11,12 +11,11 @@ import { ActivatedRoute } from '@angular/router';
 import { IGuidedJournalLog } from 'src/app/models/IGuidedJournalLog';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-@Component({
-  selector: 'app-daily-review',
+@Component({selector: 'app-daily-review',
   templateUrl: './daily-review.component.html',
-  styleUrls: ['./daily-review.component.less']
-})
+  styleUrls: ['./daily-review.component.less']})
 export class DailyReviewComponent implements OnInit {
+
   constructor(
     private fb: FormBuilder,
     private accountService: AccountService,
@@ -45,10 +44,8 @@ export class DailyReviewComponent implements OnInit {
   deletedJournalEntries: IGuidedJournalEntry[] = [];
   formType: string;
   guidedJournalForm!: FormGroup;
-  modalForm = this.fb.group({
-    items: new FormArray([]),
-    addItemInput: new FormControl('')
-  });
+  modalForm = this.fb.group({items: new FormArray([]),
+    addItemInput: new FormControl('')});
 
   @ViewChildren('modalTemplate') inputtedValues: QueryList<ElementRef>;
   ngOnInit(): void {
@@ -60,7 +57,6 @@ export class DailyReviewComponent implements OnInit {
     this.setFormInputValues();
   }
 
-
   setEntryDate(): void {
 
     if (this.dateParam && !this.isToday(new Date(this.dateParam))) {
@@ -68,13 +64,12 @@ export class DailyReviewComponent implements OnInit {
       this.entryDate = this.dateParam;
     }
     else {
+
       this.previousDailyReview = false;
       let date = new Date();
-      this.entryDate = date.toLocaleDateString("en-US", {
-        month: "2-digit",
+      this.entryDate = date.toLocaleDateString("en-US", {month: "2-digit",
         day: "2-digit",
-        year: "numeric"
-      });
+        year: "numeric"});
 
       //format it to the type consistent throughout the application
       this.entryDate = this.entryDate.replace(/(\d+)\/(\d+)\/(\d+)/, "$1-$2-$3");
@@ -93,17 +88,14 @@ export class DailyReviewComponent implements OnInit {
 
       Object.keys(this.guidedJournalForm.controls).forEach(controlName => {
         const control = this.guidedJournalForm.controls[controlName];
-        this.entryDateJournalLogs.push({
-          id: 0,
+        this.entryDateJournalLogs.push({id: 0,
           userId: this.currentUserId,
           entryId: controlName,
           entryTextValue: control.value,
-          date: this.entryDate
-        });
+          date: this.entryDate});
 
       });
 
-      //add all new logs to the logs table 
       this.entryDateJournalLogs.forEach(log => {
         this.accountService.addJournalRecordLog(log)
           .pipe(take(1))
@@ -123,6 +115,7 @@ export class DailyReviewComponent implements OnInit {
       }
       );
       this.entryDateJournalLogs.forEach(log => {
+
         this.accountService.updateJournalRecordLog(log)
           .pipe(take(1))
           .subscribe();
@@ -130,20 +123,17 @@ export class DailyReviewComponent implements OnInit {
     }
   }
 
-
   submitHabitReviewForm() {
 
     if (this.entryDateHabitLogs.length === 0) {
 
       Object.keys(this.habitReviewForm.controls).forEach(controlName => {
 
-        this.entryDateHabitLogs.push({
-          id: 0,
+        this.entryDateHabitLogs.push({id: 0,
           userId: this.currentUserId,
           habitId: controlName,
           completed: this.habitReviewForm.controls[controlName].value,
-          date: this.entryDate
-        });
+          date: this.entryDate});
       });
 
       this.accountService.addHabitCompletionLogs(this.entryDateHabitLogs);
@@ -160,23 +150,23 @@ export class DailyReviewComponent implements OnInit {
       this.accountService.updateHabitCompletionLogs(this.entryDateHabitLogs);
     }
 
-
   }
 
   submitWellnessRatingForm() {
     const wellnessFormData: IWellnessRating = this.wellnessRatingForm.getRawValue();
+   
     if (this.wellnessEntry.length === 0) {
 
       this.accountService.addWellnessRatingEntry(wellnessFormData)
         .pipe(take(1))
-        .subscribe(() => { this.alertService.success("Added new Wellness Entry Successfully"); });
+        .subscribe();
     }
     else if (this.wellnessEntry.length > 0) {
 
       wellnessFormData.id = this.wellnessEntry[0].id;
       this.accountService.updateWellnessData(wellnessFormData).
         pipe(take(1)).
-        subscribe(() => { this.alertService.success("Updated Wellness Entry Successfully"); });
+        subscribe();
     }
   }
   initializeForms() {
@@ -192,9 +182,7 @@ export class DailyReviewComponent implements OnInit {
         }
       });
 
-
-    this.wellnessRatingForm = this.fb.group({
-      id: 0,
+    this.wellnessRatingForm = this.fb.group({id: 0,
       sleepRating: [1, Validators.required],
       exerciseRating: [1, Validators.required],
       nutritionRating: [1, Validators.required],
@@ -206,8 +194,7 @@ export class DailyReviewComponent implements OnInit {
       energyRating: [1, Validators.required],
       overallDayRating: [1, Validators.required],
       userId: this.currentUserId,
-      date: this.entryDate
-    });
+      date: this.entryDate});
     this.guidedJournalForm = this.fb.group({});
     this.accountService.getJournalEntry(this.currentUserId).
       pipe(take(1)).
@@ -319,7 +306,7 @@ export class DailyReviewComponent implements OnInit {
       })
     }
 
-    this.modalService.open(content, { size: 'md' });
+    this.modalService.open(content, {size: 'md'});
 
   }
 
@@ -335,7 +322,6 @@ export class DailyReviewComponent implements OnInit {
     }
     formArray.removeAt(index);
   }
-
 
   update() {
 
@@ -405,27 +391,24 @@ export class DailyReviewComponent implements OnInit {
 
       let newItem = this.modalForm.get('addItemInput')?.value;
       this.modalForm.get('addItemInput')?.setValue('');
-      let newEntry: IGuidedJournalEntry = {
-        id: 0,
+      let newEntry: IGuidedJournalEntry = {id: 0,
         userId: this.currentUserId,
         entryName: newItem ?? '',
         uuid: this.accountService.generateUUID(),
-        deleted: false
-      };
+        deleted: false};
 
       (<FormArray>this.modalForm.get('items')).push(new FormControl(newItem))
       this.modalJournalEntries.push(newEntry);
     }
     else if (this.formType === 'habits') {
+
       let newItem = this.modalForm.get('addItemInput')?.value;
       this.modalForm.get('addItemInput')?.setValue('');
-      let newHabit: Habit = {
-        id: 0,
+      let newHabit: Habit = {id: 0,
         userId: this.currentUserId,
         habitName: newItem ?? '',
         uuid: this.accountService.generateUUID(),
-        deleted: false
-      };
+        deleted: false};
 
       (<FormArray>this.modalForm.get('items')).push(new FormControl(newItem))
       this.modalHabits.push(newHabit);

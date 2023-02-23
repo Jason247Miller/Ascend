@@ -2,20 +2,12 @@ import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChil
 import { FormGroup } from '@angular/forms';
 import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
 
-
-@Component({
-  selector: 'app-guided-journal-form',
+@Component({selector: 'app-guided-journal-form',
   templateUrl: './guided-journal-form.component.html',
-  styleUrls: ['./guided-journal-form.component.less']
-})
-export class GuidedJournalFormComponent implements OnInit {
+  styleUrls: ['./guided-journal-form.component.less']})
+export class GuidedJournalFormComponent  {
 
 
-ngOnInit(): void {
-
-   
- 
-}
 @Input() guidedJournalForm:FormGroup; 
 @Input() previousDailyReview:boolean; 
 @Input() journalEntries:IGuidedJournalEntry[]; 
@@ -25,6 +17,5 @@ ngOnInit(): void {
 actionsClickedHandler(){
 this.actionsClicked.next('journal'); 
 }
-
 
 }

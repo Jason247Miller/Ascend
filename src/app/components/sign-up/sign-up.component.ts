@@ -8,12 +8,9 @@ import { AccountService } from 'src/app/services/account/account.service';
 import { User } from '../../models/Users';
 import { AlertService } from 'src/app/services/alert/alert.service';
 
-
-@Component({
-    selector: "app-sign-up",
+@Component({selector: "app-sign-up",
     templateUrl: "./sign-up.component.html",
-    styleUrls: ["./sign-up.component.less"]
-})
+    styleUrls: ["./sign-up.component.less"]})
 export class SignUpComponent implements OnInit {
 
     constructor(
@@ -29,21 +26,17 @@ private fb: FormBuilder,
     ngOnInit(): void {
     
         this.signUpForm = this.fb.group(
-            {
-                firstName: ["", Validators.required],
+            {firstName: ["", Validators.required],
                 lastName: ["", Validators.required],
                 email: ["", [Validators.required, Validators.email]],
                 password: ["", [Validators.required,
                     Validators.pattern("^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9])(?=.*[a-z]).{8,}$")]],
                 confirmPassword: ["", [Validators.required, 
-                    Validators.pattern("^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9])(?=.*[a-z]).{8,}$")]]
-            },
-            {
-                validator:MustMatch(
+                    Validators.pattern("^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9])(?=.*[a-z]).{8,}$")]]},
+            {validator:MustMatch(
                     "password",
                     "confirmPassword"
-                )
-            }
+                )}
         );
     }
     submit() {
@@ -55,8 +48,7 @@ private fb: FormBuilder,
             firstName: formData.firstName,
             lastName: formData.lastName,
             email: formData.email, 
-            password: formData.password
-        };
+            password: formData.password};
 
         this.accountService.signUp(this.dataToSend).
             pipe(
@@ -90,5 +82,4 @@ private fb: FormBuilder,
     }
 
 }
-
 

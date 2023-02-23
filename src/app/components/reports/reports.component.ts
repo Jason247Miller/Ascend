@@ -5,15 +5,13 @@ import { take } from 'rxjs';
 import { AccountService } from 'src/app/services/account/account.service';
 
 Chart.register(...registerables);
-@Component({
-  selector: 'app-reports',
+@Component({selector: 'app-reports',
   templateUrl: './reports.component.html',
-  styleUrls: ['./reports.component.less']
-})
+  styleUrls: ['./reports.component.less']})
 export class ReportsComponent implements OnInit {
 
   constructor(private router: Router, private accountService: AccountService) { }
-  @ViewChild('chartCanvas', { static: true }) canvasRef: ElementRef;
+  @ViewChild('chartCanvas', {static: true}) canvasRef: ElementRef;
   ctx!: CanvasRenderingContext2D;
   canvas!: HTMLCanvasElement;
   myChart!: Chart;
@@ -42,30 +40,16 @@ export class ReportsComponent implements OnInit {
     this.canvas = this.canvasRef.nativeElement;
     const ctx = this.canvas.getContext('2d');
 
-    this.myChartData = {
-      labels: this.dates,
-      datasets: []
-    };
+    this.myChartData = {labels: this.dates,
+      datasets: []};
 
     if (ctx) {
-      this.myChart = new Chart(ctx, {
-        type: 'bar',
+      this.myChart = new Chart(ctx, {type: 'bar',
         data: this.myChartData,
-        options: {
-          maintainAspectRatio:false,
-          scales: {
-            y: { beginAtZero: true, },
-            x: {
-              ticks: {
-                color: "purple",
-                font: {
-                  size: 14
-                }
-              }
-            }
-          },
-        }
-      });
+        options: {maintainAspectRatio:false,
+          scales: {y: {beginAtZero: true,},
+            x: {ticks: {color: "purple",
+                font: {size: 14}}}},}});
 
       //redirects to journal entry with the date of the clicked X-Axis Label
       this.canvas.addEventListener('click', (clickEvent: MouseEvent) => {
@@ -121,16 +105,11 @@ export class ReportsComponent implements OnInit {
     for (let i = this.startIndex; i < this.startIndex + 7; i++) {
       const date = new Date();
       date.setDate(date.getDate() - i);
-      const chartDateString = date.toLocaleDateString("en-US", {
-        month: "2-digit",
-        day: "2-digit"
-
-      });
-      let queryDateString = date.toLocaleDateString("en-US", {
-        month: "2-digit",
+      const chartDateString = date.toLocaleDateString("en-US", {month: "2-digit",
+        day: "2-digit"});
+      let queryDateString = date.toLocaleDateString("en-US", {month: "2-digit",
         day: "2-digit",
-        year: "numeric"
-      });
+        year: "numeric"});
       queryDateString = queryDateString.replace(/(\d+)\/(\d+)\/(\d+)/, "$1-$2-$3");
       this.queryDatesArray.push(queryDateString);
       displayDateArray.push(chartDateString);
@@ -198,8 +177,7 @@ export class ReportsComponent implements OnInit {
         }
         this.myChart.data.datasets = [];
         this.myChart.data.datasets.push(
-          {
-            label: 'Sleep',
+          {label: 'Sleep',
             data: this.sleepRatings,
             spanGaps: true,
             backgroundColor: [
@@ -220,13 +198,11 @@ export class ReportsComponent implements OnInit {
               'rgba(169, 0, 110, 1)',
               'rgba(169, 0, 110, 1)'
             ],       
-            borderWidth: 1
-          }
+            borderWidth: 1}
         )
         this.myChart.data.datasets.push(
 
-          {
-            label: 'Exercise',
+          {label: 'Exercise',
             data: this.exerciseRatings,
             spanGaps: true,
             backgroundColor: [
@@ -247,14 +223,11 @@ export class ReportsComponent implements OnInit {
               'rgba(0, 99, 255, 1)',
               'rgba(0, 99, 255, 1)'
             ],
-            borderWidth: 1
-
-          }
+            borderWidth: 1}
         );
         this.myChart.data.datasets.push(
 
-          {
-            label: 'Nutrition',
+          {label: 'Nutrition',
             data: this.nutritionRatings,
             spanGaps: true,
             backgroundColor: [
@@ -275,13 +248,10 @@ export class ReportsComponent implements OnInit {
               'rgba(237, 155, 189, 1)',
               'rgba(237, 155, 189, 1)'
             ],
-            borderWidth: 1
-
-          });
+            borderWidth: 1});
         this.myChart.data.datasets.push(
 
-          {
-            label: 'Stress',
+          {label: 'Stress',
             data: this.stressRatings,
             spanGaps: true,
             backgroundColor: [
@@ -302,14 +272,11 @@ export class ReportsComponent implements OnInit {
               'rgba(0, 0, 0, 1)',
               'rgba(0, 0, 0, 1)'
             ],
-            borderWidth: 1
-
-          });
+            borderWidth: 1});
 
         this.myChart.data.datasets.push(
 
-          {
-            label: 'Sunlight',
+          {label: 'Sunlight',
             data: this.sunlightRatings,
             spanGaps: true,
             backgroundColor: [
@@ -332,13 +299,10 @@ export class ReportsComponent implements OnInit {
               'rgba(198, 254, 42, 1)'
 
             ],
-            borderWidth: 1
-
-          });
+            borderWidth: 1});
         this.myChart.data.datasets.push(
 
-          {
-            label: 'Mindfulness',
+          {label: 'Mindfulness',
             data: this.mindfulnessRatings,
             spanGaps: true,
             backgroundColor: [
@@ -359,13 +323,10 @@ export class ReportsComponent implements OnInit {
               'rgba(0, 184, 7, 1)',
               'rgba(0, 184, 7, 1)'
             ],
-            borderWidth: 1
-
-          });
+            borderWidth: 1});
         this.myChart.data.datasets.push(
 
-          {
-            label: 'Productivity',
+          {label: 'Productivity',
             data: this.productivityRatings,
             spanGaps: true,
             backgroundColor: [
@@ -386,13 +347,10 @@ export class ReportsComponent implements OnInit {
               'rgba(206, 5, 5, 1)',
               'rgba(206, 5, 5, 1)'
             ],
-            borderWidth: 1
-
-          });
+            borderWidth: 1});
         this.myChart.data.datasets.push(
 
-          {
-            label: 'Mood',
+          {label: 'Mood',
             data: this.moodRatings,
             spanGaps: true,
             backgroundColor: [
@@ -413,13 +371,10 @@ export class ReportsComponent implements OnInit {
               'rgba(126, 74, 74, 1)',
               'rgba(126, 74, 74, 1)'
             ],
-            borderWidth: 1
-
-          });
+            borderWidth: 1});
         this.myChart.data.datasets.push(
 
-          {
-            label: 'Energy',
+          {label: 'Energy',
             data: this.energyRatings,
             spanGaps: true,
             backgroundColor: [
@@ -438,13 +393,10 @@ export class ReportsComponent implements OnInit {
               'rgba(132, 143, 82, 1)',
               'rgba(132, 143, 82, 1)'
             ],
-            borderWidth: 1
-
-          });
+            borderWidth: 1});
         this.myChart.data.datasets.push(
 
-          {
-            label: 'Overall',
+          {label: 'Overall',
             data: this.overallRatings,
             spanGaps: true,
             backgroundColor: [
@@ -463,9 +415,7 @@ export class ReportsComponent implements OnInit {
               'rgba(255, 167, 0, 1)',
               'rgba(255, 167, 0, 1)'
             ],
-            borderWidth: 1
-
-          });
+            borderWidth: 1});
 
         this.myChart.update();
       });
@@ -473,6 +423,4 @@ export class ReportsComponent implements OnInit {
   }
 
 }
-
-
 

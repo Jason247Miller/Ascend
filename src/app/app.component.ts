@@ -1,14 +1,13 @@
+
 import { Component, OnInit } from '@angular/core';
 import {  Observable, take } from 'rxjs';
 import { AccountService } from './services/account/account.service';
 import { User } from './models/Users';
 import { ActivatedRoute } from '@angular/router';
 
-@Component({
-    selector: 'app-root',
+@Component({selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.less']
-})
+    styleUrls: ['./app.component.less']})
 export class AppComponent implements OnInit {
     localStorageUser$:Observable<User|string|null> =  this.accountService.getLocalStoreageUser$(); 
     title = 'Ascend';
@@ -16,20 +15,17 @@ export class AppComponent implements OnInit {
     currentRoute:string; 
     constructor(private accountService: AccountService, private route:ActivatedRoute) { console.log('MyComponent: ActivatedRoute:', this.route);}
     ngOnInit(): void {
-
-
-        this.route.url.subscribe(url => {
+        
+        this.route.url
+        .pipe(take(1))
+        .subscribe(url => {
             this.currentRoute = url.join('');
-            console.log('Current URL:', this.currentRoute);
           });
-        
-    
-        
         
        this.hideSidebar = false; 
         
         if(localStorage.getItem('currentUser')) {
-            console.log("inside localStoreage if");
+
             this.accountService.setLocalStoreageUserSubject(localStorage.getItem('currentUser'));
              
         }
@@ -41,7 +37,6 @@ export class AppComponent implements OnInit {
     logOut():void {
         this.accountService.logOut(); 
     }
-
    
     sideBarMenuDisplay(){
       
@@ -51,6 +46,5 @@ export class AppComponent implements OnInit {
        })
        this.accountService.setSidebarValue(!this.hideSidebar);
     }
-
 
 }

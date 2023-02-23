@@ -7,9 +7,7 @@ describe('WellnessRatingFormComponent', () => {
   let fixture: ComponentFixture<WellnessRatingFormComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ WellnessRatingFormComponent ]
-    })
+    await TestBed.configureTestingModule({declarations: [ WellnessRatingFormComponent ]})
     .compileComponents();
 
     fixture = TestBed.createComponent(WellnessRatingFormComponent);
