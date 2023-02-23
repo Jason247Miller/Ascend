@@ -25,7 +25,7 @@ export class AccountService {
     public hideSideBar$ = this.hideSideBarSubject.asObservable();
     private wellnessRatingsUrl = 'api/wellnessRatings';
     private habitsUrl = 'api/habits';
-    private guidedJournalUrl = 'api/guidedJournalEntries';
+    private guidedJournalEntriesUrl = 'api/guidedJournalEntries';
     private guidedJournalLogsUrl = 'api/guidedJournalLogs';
     private habitCompletionLogsUrl = 'api/habitCompletionLogs';
     constructor(private http: HttpClient, private router: Router, private alertService: AlertService) {
@@ -207,51 +207,68 @@ export class AccountService {
         return EMPTY;
     }
 
-    addJournalRecordEntry(guidedJournalLogs: IGuidedJournalLog[]) {
-     console.log('add journal record entry guidedJournal*********', guidedJournalLogs)
-        combineLatest(guidedJournalLogs.map(
-            log => this.http.post<IGuidedJournalLog>(this.guidedJournalLogsUrl, log)
-                .pipe(
-                    catchError(error => {
-                        this.alertService.error('Error submitting Guided Journal log:' + log.id);
-                        console.error('Error submitting guided journal log:'+ log.id);
-                        return throwError(() => new Error(error))
-                    })
-                )
-        ))
-            .pipe(
-                tap(log => console.log("journal record in tap", log)),
-                catchError(error => this.handleError(error, 'Error: failed to submit Guided Journal logs!:')),
-                take(1)
-            )
-
-            .subscribe(() => {
-                this.viewHabitCompletionEntries().subscribe(); 
-                this.alertService.success("Journal Logs have been successfully submitted");
-            });
+    addJournalRecordEntry(guidedJournalEntry: IGuidedJournalEntry) {
+    
+        return this.http.post<IGuidedJournalEntry>(
+            this.guidedJournalEntriesUrl,
+            guidedJournalEntry
+        ).
+            pipe(
+                catchError(error => this.handleError(
+                    error,
+                    'Error:Failed to add Entry'
+                ))
+            );
 
 
         }
+        addJournalRecordLog(guidedJournalLog: IGuidedJournalLog) {
+    
+            return this.http.post<IGuidedJournalEntry>(
+                this.guidedJournalLogsUrl,
+                guidedJournalLog
+            ).
+                pipe(
+                    catchError(error => this.handleError(
+                        error,
+                        'Error:Failed to add Entry'
+                    ))
+                );
+    
+    
+            }
+    
+    updateJournalRecordEntry(journalEntry:IGuidedJournalEntry){
+        return this.http.put(
+            this.guidedJournalEntriesUrl,
+            journalEntry
+        ).
+            pipe(
 
+                catchError(error => {
+                    return this.handleError(
+                        error,
+                        'Error:Failed to Update Entry'
+                    );
+                })
+            );
+    }
 
+    updateJournalRecordLog(journalLog:IGuidedJournalLog){
+        return this.http.put(
+            this.guidedJournalLogsUrl,
+            journalLog
+        ).
+            pipe(
 
-    //     console.log('inside add journal record entry');
-    //     return this.http.post<IGuidedJournalLog>(
-    //         this.guidedJournalUrl,
-    //         guidedJournalEntry
-    //     ).
-    //         pipe(
-    //             tap(guidedJournalEntry => console.log(
-    //                 'added new journal entry: ',
-    //                 guidedJournalEntry
-    //             )),
-    //             catchError(error => this.handleError(
-    //                 error,
-    //                 'Error:Failed to add guided journal entry'
-    //             ))
-    //         );
-    // }
-
+                catchError(error => {
+                    return this.handleError(
+                        error,
+                        'Error:Failed to Update Log'
+                    );
+                })
+            );
+    }
     addWellnessRatingEntry(wellnessEntry: IWellnessRating) {
         console.log('inside wellness rating add');
         return this.http.post<IWellnessRating>(
@@ -265,6 +282,32 @@ export class AccountService {
                 catchError(error => this.handleError(
                     error,
                     'Error:Failed to add wellnessRating'
+                ))
+            );
+    }
+
+    addHabitEntry(habit: Habit){
+       
+        return this.http.post<Habit>(
+            this.habitsUrl,
+            habit
+        ).
+            pipe(      
+                catchError(error => this.handleError(
+                    error,
+                    'Error:Failed to add Habit Entry'
+                ))
+            );
+    }
+    updateHabitEntry(habit:Habit){
+        return this.http.put<Habit>(
+            this.habitsUrl,
+            habit
+        ).
+            pipe(      
+                catchError(error => this.handleError(
+                    error,
+                    'Error:Failed to update Habit Entry'
                 ))
             );
     }
@@ -297,7 +340,7 @@ export class AccountService {
 
     viewHabitCompletionEntries() {
         
-        return this.http.get<IGuidedJournalEntry[]>(this.guidedJournalUrl).
+        return this.http.get<IGuidedJournalEntry[]>(this.guidedJournalEntriesUrl).
             pipe(tap(logs => {
                 console.log(
                     '******guided journal logs=',
@@ -358,7 +401,7 @@ export class AccountService {
     }
 
     getJournalEntry(userId: number) {
-        return this.http.get<IGuidedJournalEntry[]>(this.guidedJournalUrl).
+        return this.http.get<IGuidedJournalEntry[]>(this.guidedJournalEntriesUrl).
             pipe(
                 map((entries) => {
 
@@ -376,7 +419,7 @@ export class AccountService {
                 tap(entries => console.log("journal entry array retrieved", entries)),
 
                 catchError(error => {
-                    return this.handleError(error, "Error occured in journal entry exists query");
+                    return this.handleError(error , "Error occured in journal entry exists query");
                 })
 
 
@@ -431,7 +474,14 @@ export class AccountService {
 
             );
     }
-
+    generateUUID() {
+        // generate a random UUID (source: https://stackoverflow.com/a/2117523)
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+          return v.toString(16);
+        });
+      }
 }
+
 
 

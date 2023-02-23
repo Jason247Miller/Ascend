@@ -10,7 +10,6 @@ import { Habit } from 'src/app/models/Habit';
 export class HabitReviewFormComponent implements OnInit {
 
 @Input() habitReviewForm:FormGroup; 
-@Input() noHabits:boolean; 
 @Input() habits: Habit[] = [];
 @Input() previousDailyReview:boolean; 
 @Output() actionsClicked =   new EventEmitter<string>();
