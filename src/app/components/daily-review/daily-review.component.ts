@@ -1,8 +1,8 @@
-import { Component, ElementRef, OnInit, QueryList,TemplateRef,ViewChildren} from '@angular/core';
+import { Component, ElementRef, OnInit, QueryList, TemplateRef, ViewChildren } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AccountService } from 'src/app/services/account/account.service';
 import { IWellnessRating } from 'src/app/models/IWellnessRating';
-import { take } from 'rxjs';
+import { combineLatest, EMPTY, forkJoin, from, of, switchMap, take, tap } from 'rxjs';
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { Habit } from 'src/app/models/Habit';
 import { IHabitCompletionLog } from 'src/app/models/IHabitCompletionLog';
@@ -138,7 +138,7 @@ export class DailyReviewComponent implements OnInit {
 
       this.accountService.addHabitCompletionLogs(this.entryDateHabitLogs);
     }
-     else if (this.entryDateHabitLogs.length > 0) {
+    else if (this.entryDateHabitLogs.length > 0) {
 
       Object.keys(this.habitReviewForm.controls).forEach(controlName => {
         this.entryDateHabitLogs.forEach((existingHabitLog) => {
@@ -154,7 +154,7 @@ export class DailyReviewComponent implements OnInit {
 
   submitWellnessRatingForm() {
     const wellnessFormData: IWellnessRating = this.wellnessRatingForm.getRawValue();
-   
+
     if (this.wellnessEntry.length === 0) {
 
       this.accountService.addWellnessRatingEntry(wellnessFormData)
@@ -306,17 +306,19 @@ export class DailyReviewComponent implements OnInit {
       })
     }
 
-    this.modalService.open(content, {size: 'md'});
+    this.modalService.open(content, { size: 'md' });
 
   }
 
   deleteItem(index: number) {
     let formArray = this.modalForm.get('items') as FormArray;
     if (this.formType === 'journal') {
+      this.modalJournalEntries[index].deleted = true;
       this.deletedJournalEntries.push(this.modalJournalEntries[index]);
       this.modalJournalEntries.splice(index, 1);
     }
     else if (this.formType === 'habits') {
+      this.modalHabits[index].deleted = true;
       this.deletedHabits.push(this.modalHabits[index]);
       this.modalHabits.splice(index, 1);
     }
@@ -327,60 +329,22 @@ export class DailyReviewComponent implements OnInit {
 
     if (this.formType === 'journal') {
 
-      this.deletedJournalEntries.forEach(entry => {
-        entry.deleted = true;
-        this.accountService.updateJournalRecordEntry(entry)
-          .pipe(take(1))
-          .subscribe();
-      });
+      this.accountService.updateJournalRecordEntries(this.deletedJournalEntries)
+        .pipe(take(1)).subscribe();
 
-      this.modalJournalEntries.forEach(entry => {
-
-        if (entry.id === 0) {
-
-          this.accountService.addJournalRecordEntry(entry)
-            .pipe(take(1))
-            .subscribe();
-        }
-        else if (entry.id > 0) {
-
-          for (const controlName in this.modalForm.get("items")) {
-            if (entry.uuid === controlName) {
-              //entry.entryName = this.modalForm.controls[controlName].value; 
-            }
-          }
-          this.accountService.updateJournalRecordEntry(entry)
-            .pipe(take(1))
-            .subscribe();
-        }
-      });
+      this.accountService.addJournalRecordEntries(this.modalJournalEntries)
+        .pipe(take(1)).subscribe();
+      this.journalEntries = [];
     }
+
     else if (this.formType === 'habits') {
-      this.deletedHabits.forEach(habit => {
-        habit.deleted = true;
-        this.accountService.updateHabitEntry(habit)
-          .pipe(take(1))
-          .subscribe();
-      });
-
-      this.modalHabits = this.modalHabits.filter((habit) => !this.habits.includes(habit));
-      this.modalHabits.forEach(habit => {
-        if (habit.id === 0) {
-
-          this.accountService.addHabitEntry(habit)
-            .pipe(take(1))
-            .subscribe();
-        }
-        else if (habit.id > 0) {
-          this.accountService.updateHabitEntry(habit)
-            .pipe(take(1))
-            .subscribe();
-        }
-      });
+      this.accountService.addHabitEntries(this.modalHabits)
+        .pipe(take(1)).subscribe();
+      this.accountService.updateHabitEntries(this.deletedHabits)
+        .pipe(take(1)).subscribe();
+      this.habits = [];
     }
 
-    this.habits = [];
-    this.journalEntries = [];
     this.initializeForms();
     this.setFormInputValues();
     this.modalService.dismissAll();
@@ -398,6 +362,7 @@ export class DailyReviewComponent implements OnInit {
         deleted: false};
 
       (<FormArray>this.modalForm.get('items')).push(new FormControl(newItem))
+      console.log("new entry id ", newEntry.id)
       this.modalJournalEntries.push(newEntry);
     }
     else if (this.formType === 'habits') {
