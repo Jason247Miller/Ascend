@@ -12,7 +12,6 @@ export class HabitReviewFormComponent  {
 @Input() previousDailyReview:boolean; 
 @Output() actionsClicked =   new EventEmitter<string>();
 
-
 actionsClickedHandler(){
 this.actionsClicked.next('habits'); 
 }

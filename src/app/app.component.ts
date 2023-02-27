@@ -13,7 +13,7 @@ export class AppComponent implements OnInit {
     title = 'Ascend';
     hideSidebar:boolean; 
     currentRoute:string; 
-    constructor(private accountService: AccountService, private route:ActivatedRoute) { console.log('MyComponent: ActivatedRoute:', this.route);}
+    constructor(private accountService: AccountService, private route:ActivatedRoute) {}
     ngOnInit(): void {
         
         this.route.url
@@ -42,7 +42,6 @@ export class AppComponent implements OnInit {
       
        this.accountService.hideSideBar$.pipe(take(1)).subscribe(value =>{
         this.hideSidebar = value; 
-        console.log(this.hideSidebar)
        })
        this.accountService.setSidebarValue(!this.hideSidebar);
     }

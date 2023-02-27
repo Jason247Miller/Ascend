@@ -22,7 +22,7 @@ import { WellnessRatingFormComponent } from './components/wellness-rating-form/w
 import { GuidedJournalFormComponent } from './components/guided-journal-form/guided-journal-form.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
+import { GoalsComponent } from './components/goals/goals.component';
 
 @NgModule(
       {declarations: [
@@ -38,7 +38,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
                   ReportsComponent,
                   HabitReviewFormComponent,
                   WellnessRatingFormComponent,
-                  GuidedJournalFormComponent
+                  GuidedJournalFormComponent,
+                  GoalsComponent
             ],
             imports: [
 
@@ -61,7 +62,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
                                     {path: 'overview', component: OverviewComponent},
                                     {path: 'daily-review', component: DailyReviewComponent},
                                     {path: 'daily-review/:date', component: DailyReviewComponent},
-                                    {path: 'reports', component: ReportsComponent}
+                                    {path: 'reports', component: ReportsComponent},
+                                    {path: 'goals', component: GoalsComponent}
                               ]},
                         {path: '', redirectTo: 'Home', pathMatch: 'full'},
                         {path: '**', redirectTo: 'Home', pathMatch: 'full'},

@@ -169,7 +169,25 @@ export class AccountService {
         console.error(error);
         return EMPTY;
     }
-
+    addJournalRecordEntries(journalEntries: IGuidedJournalEntry[]) {
+    
+        return   combineLatest(journalEntries.map(
+              entry => this.http.post<IGuidedJournalEntry>(this.guidedJournalEntriesUrl, entry)
+                  .pipe(
+                      catchError(error => {
+                          this.alertService.error('Error submitting Entry log:' + entry.id);
+                          console.error('Error submitting Journal Entry:' + entry.id);
+                          return throwError(() => new Error(error))
+                      })
+                  )
+          ))
+              .pipe(
+                take(1),
+                  catchError(error => this.handleError(error, 'Error: failed to submit habit logs!:')),
+                  
+              )
+        
+      }
     addJournalRecordEntry(guidedJournalEntry: IGuidedJournalEntry) {
 
         return this.http.post<IGuidedJournalEntry>(
@@ -199,20 +217,24 @@ export class AccountService {
 
     }
 
-    updateJournalRecordEntry(journalEntry: IGuidedJournalEntry) {
-        return this.http.put(
-            this.guidedJournalEntriesUrl,
-            journalEntry
-        ).
-            pipe(
-
-                catchError(error => {
-                    return this.handleError(
-                        error,
-                        'Error:Failed to Update Entry'
-                    );
-                })
+    updateJournalRecordEntries(journalEntries: IGuidedJournalEntry[]) {
+    
+      return   combineLatest(journalEntries.map(
+            entry => this.http.put<IGuidedJournalEntry>(this.guidedJournalEntriesUrl, entry)
+                .pipe(
+                    take(1),
+                    catchError(error => {
+                        this.alertService.error('Error submitting Entry log:' + entry.id);
+                        console.error('Error submitting Journal Entry:' + entry.id);
+                        return throwError(() => new Error(error))
+                    })
+                )
+        ))
+            .pipe(
+                catchError(error => this.handleError(error, 'Error: failed to submit habit logs!:')),
+                take(1)
             );
+      
     }
 
     updateJournalRecordLog(journalLog: IGuidedJournalLog) {
@@ -242,19 +264,40 @@ export class AccountService {
                 ))
             );
     }
-
-    addHabitEntry(habit: Habit) {
-
-        return this.http.post<Habit>(
-            this.habitsUrl,
-            habit
-        ).
-            pipe(
-                catchError(error => this.handleError(
-                    error,
-                    'Error:Failed to add Habit Entry'
-                ))
+   
+    updateHabitEntries(habits: Habit[]) {
+        return   combineLatest(habits.map(
+            habit => this.http.put<Habit>(this.habitsUrl, habit)
+                .pipe(
+                    catchError(error => {
+                        this.alertService.error('Error submitting Entry log:' + habit.id);
+                        console.error('Error submitting Journal Entry:' + habit.id);
+                        return throwError(() => new Error(error))
+                    })
+                )
+        ))
+            .pipe(
+                catchError(error => this.handleError(error, 'Error: failed to submit habit logs!:')),
+                take(1)
             );
+
+            }
+    addHabitEntries(habits: Habit[]) {
+        return   combineLatest(habits.map(
+            habit => this.http.post<Habit>(this.habitsUrl, habit)
+                .pipe(
+                    catchError(error => {
+                        this.alertService.error('Error submitting Entry log:' + habit.id);
+                        console.error('Error submitting Journal Entry:' + habit.id);
+                        return throwError(() => new Error(error))
+                    })
+                )
+        ))
+            .pipe(
+                catchError(error => this.handleError(error, 'Error: failed to submit habit logs!:')),
+                take(1)
+            );
+
     }
     updateHabitEntry(habit: Habit) {
         return this.http.put<Habit>(
@@ -290,7 +333,6 @@ export class AccountService {
                 this.alertService.success("Habits have been successfully submitted");
             });
     }
-
 
     getHabitLogEntries(currentDate: string, userId: number) {
         return this.http.get<IHabitCompletionLog[]>(this.habitCompletionLogsUrl).

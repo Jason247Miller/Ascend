@@ -40,9 +40,7 @@ private fb: FormBuilder,
         );
     }
     submit() {
-        console.log("submit() called");
-        //use form data to make code cleaner
-        //exclude the un-needed confirmPassword field on submit
+
         const formData = this.signUpForm.getRawValue();
         this.dataToSend = {id:0, //default
             firstName: formData.firstName,
@@ -77,7 +75,7 @@ private fb: FormBuilder,
     }
 
     handleSignUpSuccess() {
-        console.log("Sign-up was Successful!");
+        
         this.router.navigate(["./login"]);
     }
 

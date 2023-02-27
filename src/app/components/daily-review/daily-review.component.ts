@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, QueryList, TemplateRef, ViewChildren } f
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AccountService } from 'src/app/services/account/account.service';
 import { IWellnessRating } from 'src/app/models/IWellnessRating';
-import { combineLatest, EMPTY, forkJoin, from, of, switchMap, take, tap } from 'rxjs';
+import { forkJoin, of, take } from 'rxjs';
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { Habit } from 'src/app/models/Habit';
 import { IHabitCompletionLog } from 'src/app/models/IHabitCompletionLog';
@@ -260,7 +260,7 @@ export class DailyReviewComponent implements OnInit {
       this.currentUserId).
       pipe(take(1)).
       subscribe(logs => {
-        //save logs for later http call
+
         this.entryDateHabitLogs = logs;
 
         if (logs.length !== 0) {
@@ -270,7 +270,7 @@ export class DailyReviewComponent implements OnInit {
             let currentControl = this.habitReviewForm.get(habitId.toString());
             currentControl?.setValue(logs[i].completed);
           }
-          //if entryDate is not currentdate, disable the form
+  
           if (!this.isToday(new Date(this.entryDate))) {
             this.habitReviewForm.disable();
           }
@@ -328,13 +328,27 @@ export class DailyReviewComponent implements OnInit {
   update() {
 
     if (this.formType === 'journal') {
+     
+       let deletedEntries$ = this.deletedJournalEntries.length > 0 ? 
+                             this.accountService.updateJournalRecordEntries(this.deletedJournalEntries)
+                             .pipe(take(1)):
+                              of({}).pipe(take(1));
+                              
+      let newModalEntries = this.modalJournalEntries.filter(entry => entry.id === 0);
+      let newEntries$ = newModalEntries.length > 0 ?
+                          this.accountService.addJournalRecordEntries(newModalEntries)
+                          .pipe(take(1)) :
+                          of({}).pipe(take(1));
 
-      this.accountService.updateJournalRecordEntries(this.deletedJournalEntries)
-        .pipe(take(1)).subscribe();
-
-      this.accountService.addJournalRecordEntries(this.modalJournalEntries)
-        .pipe(take(1)).subscribe();
-      this.journalEntries = [];
+      forkJoin([deletedEntries$, newEntries$])
+      .subscribe(() =>{
+       this.journalEntries = [];
+       this.habits = [];
+       this.initializeForms();
+       this.setFormInputValues();
+       this.modalService.dismissAll();
+      });
+     
     }
 
     else if (this.formType === 'habits') {
@@ -342,12 +356,9 @@ export class DailyReviewComponent implements OnInit {
         .pipe(take(1)).subscribe();
       this.accountService.updateHabitEntries(this.deletedHabits)
         .pipe(take(1)).subscribe();
-      this.habits = [];
+  
     }
 
-    this.initializeForms();
-    this.setFormInputValues();
-    this.modalService.dismissAll();
   }
   addItem() {
 
@@ -362,7 +373,6 @@ export class DailyReviewComponent implements OnInit {
         deleted: false};
 
       (<FormArray>this.modalForm.get('items')).push(new FormControl(newItem))
-      console.log("new entry id ", newEntry.id)
       this.modalJournalEntries.push(newEntry);
     }
     else if (this.formType === 'habits') {

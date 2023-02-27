@@ -176,14 +176,20 @@ export class InMemoryDataService implements InMemoryDbService {
         else if(reqInfo.collectionName === 'guidedJournalLogs') {
             return this.addGuidedJournalLogs(reqInfo); 
         }
+        else if(reqInfo.collectionName === 'guidedJournalEntries'){
+            return this.addGuidedJournalLogs(reqInfo);
+        }
       
         return undefined;
     }
-   
+addGuidedJournalEntries(reqInfo:any){
+    const requestBody = reqInfo['req']['body']; 
+    requestBody["id"] = this.genId(this.db.guidedJournalEntries);
+    this.db.guidedJournalEntries.push(requestBody); 
+}
  addGuidedJournalLogs(reqInfo:any){
     const requestBody = reqInfo['req']['body']; 
     requestBody["id"] = this.genId(this.db.guidedJournalLogs);
-    console.log("IN SERVER METHOD ADDGUIDEDLOGS - NEW ID = ", requestBody["id"]);
     this.db.guidedJournalLogs.push(requestBody); 
  }
     addHabitCompletionLogs(reqInfo:any) {
@@ -212,7 +218,6 @@ export class InMemoryDataService implements InMemoryDbService {
     //not currently used
     logout(reqInfo: any) {
         return reqInfo.utils.createResponse$(() => {
-            console.log('HTTP POST api/logout override');
             const { headers, url } = reqInfo;
             return {status: 200,
                 headers,
@@ -226,7 +231,6 @@ export class InMemoryDataService implements InMemoryDbService {
         const requestBody = reqInfo["req"]["body"]; 
         // return an Observable response
         return reqInfo.utils.createResponse$(() => {
-            console.log('HTTP POST api/authentication override');
             const { headers, url } = reqInfo.utils.getJsonBody(reqInfo.req);
             const email = requestBody['email'];
             const password = requestBody["password"]; 

@@ -7,7 +7,6 @@ import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
   styleUrls: ['./guided-journal-form.component.less']})
 export class GuidedJournalFormComponent  {
 
-
 @Input() guidedJournalForm:FormGroup; 
 @Input() previousDailyReview:boolean; 
 @Input() journalEntries:IGuidedJournalEntry[]; 
