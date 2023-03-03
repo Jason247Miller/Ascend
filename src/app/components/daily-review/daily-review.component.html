@@ -15,8 +15,7 @@
                   <div class="col-sm-8">
                     <h2></h2>
                   </div>
-                  <div class="col-sm-4">
-                  </div>
+                  <div class="col-sm-4"></div>
                 </div>
               </div>
               <table class="table table-bordered">
@@ -69,7 +68,7 @@
     <app-wellness-rating-form [wellnessRatingForm]="wellnessRatingForm" [previousDailyReview]="previousDailyReview">
     </app-wellness-rating-form>
     <app-habit-review-form [habitReviewForm]="habitReviewForm" [previousDailyReview]="previousDailyReview"
-       [habits]="habits" (actionsClicked)="openPopup($event, modalTemplate)">
+      [habits]="habits" (actionsClicked)="openPopup($event, modalTemplate)">
     </app-habit-review-form>
     <app-guided-journal-form [guidedJournalForm]="guidedJournalForm" [previousDailyReview]="previousDailyReview"
       [journalEntries]="journalEntries" (actionsClicked)="openPopup($event, modalTemplate)">
