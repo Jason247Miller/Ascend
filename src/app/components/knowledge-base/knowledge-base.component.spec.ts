@@ -7,9 +7,7 @@ describe('KnowledgeBaseComponent', () => {
   let fixture: ComponentFixture<KnowledgeBaseComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ KnowledgeBaseComponent ]
-    })
+    await TestBed.configureTestingModule({declarations: [ KnowledgeBaseComponent ]})
     .compileComponents();
 
     fixture = TestBed.createComponent(KnowledgeBaseComponent);

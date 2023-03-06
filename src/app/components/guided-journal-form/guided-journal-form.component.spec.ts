@@ -7,9 +7,7 @@ describe('GuidedJournalFormComponent', () => {
   let fixture: ComponentFixture<GuidedJournalFormComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ GuidedJournalFormComponent ]
-    })
+    await TestBed.configureTestingModule({declarations: [ GuidedJournalFormComponent ]})
     .compileComponents();
 
     fixture = TestBed.createComponent(GuidedJournalFormComponent);

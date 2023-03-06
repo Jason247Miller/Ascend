@@ -7,11 +7,9 @@ import { User } from 'src/app/models/Users';
 import { AccountService } from 'src/app/services/account/account.service';
 import { AlertService } from 'src/app/services/alert/alert.service';
 
-@Component({
-    selector: 'app-login',
+@Component({selector: 'app-login',
     templateUrl: './login.component.html',
-    styleUrls: ['./login.component.less']
-})
+    styleUrls: ['./login.component.less']})
 export class LoginComponent implements OnInit {
 
     constructor(
@@ -23,10 +21,8 @@ private fb : FormBuilder,
     loginForm!: FormGroup;
     errorMessage?:string;
     ngOnInit(): void {
-        this.loginForm = this.fb.group({
-            email: ['', [Validators.required, Validators.email]],
-            password: ['', Validators.required]
-        });
+        this.loginForm = this.fb.group({email: ['', [Validators.required, Validators.email]],
+            password: ['', Validators.required]});
     }
     //getters for form access 
     get password() {

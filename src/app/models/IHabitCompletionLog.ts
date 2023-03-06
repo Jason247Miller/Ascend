@@ -1,7 +1,7 @@
 export interface IHabitCompletionLog {
       id: number,
       userId: number,
-      habitId:number,
+      habitId:string,
       completed: boolean,
       date:string
       

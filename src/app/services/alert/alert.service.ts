@@ -4,8 +4,7 @@ import { filter } from 'rxjs/operators';
 import { Alert } from 'src/app/models/alert';
 import { AlertType } from 'src/app/models/alert';
 
-@Injectable({ providedIn: 'root'
- })
+@Injectable({providedIn: 'root'})
 export class AlertService {
     private subject = new Subject<Alert>();
     private defaultId = 'default-alert';
@@ -17,21 +16,21 @@ export class AlertService {
 
     // convenience methods
     success(message: string, options?: any) {
-        this.alert(new Alert({ ...options, type: AlertType.Success, message }));
+        this.alert(new Alert({...options, type: AlertType.Success, message}));
     }
 
     error(message: string, options?: any) {
         
         console.log("error options:" + JSON.stringify(options))
-        this.alert(new Alert({ ...options, type: AlertType.Error, message }));
+        this.alert(new Alert({...options, type: AlertType.Error, message}));
     }
 
     info(message: string, options?: any) {
-        this.alert(new Alert({ ...options, type: AlertType.Info, message }));
+        this.alert(new Alert({...options, type: AlertType.Info, message}));
     }
 
     warn(message: string, options?: any) {
-        this.alert(new Alert({ ...options, type: AlertType.Warning, message }));
+        this.alert(new Alert({...options, type: AlertType.Warning, message}));
     }
 
     // core alert method
@@ -43,6 +42,6 @@ export class AlertService {
 
     // clear alerts
     clear(id = this.defaultId) {
-        this.subject.next(new Alert({ id }));
+        this.subject.next(new Alert({id}));
     }
 }

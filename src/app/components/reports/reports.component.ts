@@ -39,7 +39,7 @@ export class ReportsComponent implements OnInit {
 
     this.currentUserId = JSON.parse(localStorage.getItem('currentUser') || '{}').id;
     this.dates = this.updateDays();//previous 7 days by default
-    this.setChartData(); 
+    this.setChartData();
     this.canvas = this.canvasRef.nativeElement;
     const ctx = this.canvas.getContext('2d');
 
@@ -53,20 +53,24 @@ export class ReportsComponent implements OnInit {
         type: 'bar',
         data: this.myChartData,
         options: {
-          maintainAspectRatio:false,
+          maintainAspectRatio: false,
           scales: {
-            y: { beginAtZero: true, },
+            y: {
+              min: 0,
+              max: 10,
+              beginAtZero: true
+            }
+            ,
             x: {
               ticks: {
                 color: "purple",
-                font: {
-                  size: 14
-                }
+                font: { size: 14 }
               }
             }
           },
         }
-      });
+      }
+      );
 
       //redirects to journal entry with the date of the clicked X-Axis Label
       this.canvas.addEventListener('click', (clickEvent: MouseEvent) => {
@@ -74,7 +78,7 @@ export class ReportsComponent implements OnInit {
         this.clickableScales(clickEvent, resetCoordinates);
 
       });
-      
+
       //change pointer to cursor onHover of X-Axis labels
       this.canvas.addEventListener('mousemove', (mouseMoveEvent: MouseEvent) => {
         let resetCoordinates = this.canvas.getBoundingClientRect();
@@ -96,10 +100,10 @@ export class ReportsComponent implements OnInit {
     //substract outer margin to get accurate x and y coordinates for the graph part of the canvas
     const x = mouseEvent.clientX - resetCoordinates.left;
     const y = mouseEvent.clientY - resetCoordinates.top;
-  
+
     for (let i = 0; i < this.myChart.scales['x'].ticks.length; i++) {
       if (x >= left + (right * i) && x <= right + (right * i) && y >= top && y <= bottom) {
-       this.canvas.style.cursor = 'pointer';
+        this.canvas.style.cursor = 'pointer';
         if (this.myChart.data.labels && mouseEvent.type === 'click') {
           this.accountService.getWellnessEntryByDate(this.queryDatesArray[i], this.currentUserId,)
             .pipe(take(1))
@@ -108,7 +112,7 @@ export class ReportsComponent implements OnInit {
               if (entriesForDate.length !== 0) {
                 this.router.navigate(['dashboard/daily-review', this.queryDatesArray[i]])
               }
-           });
+            });
         }
       }
     }
@@ -125,7 +129,6 @@ export class ReportsComponent implements OnInit {
       const chartDateString = date.toLocaleDateString("en-US", {
         month: "2-digit",
         day: "2-digit"
-
       });
       let queryDateString = date.toLocaleDateString("en-US", {
         month: "2-digit",
@@ -148,7 +151,7 @@ export class ReportsComponent implements OnInit {
       this.myChart.data.labels = this.updateDays();
       this.setChartData();
     }
-    else if (this.startIndex === 0) {return;}
+    else if (this.startIndex === 0) { return; }
   }
   previousWeek() {
 
@@ -169,7 +172,7 @@ export class ReportsComponent implements OnInit {
     this.moodRatings = [null, null, null, null, null, null, null];
     this.energyRatings = [null, null, null, null, null, null, null];
     this.overallRatings = [null, null, null, null, null, null, null];
-    
+
     //used for http get
     let oldestDate = new Date(this.queryDatesArray[0]);
     let latestDate = new Date(this.queryDatesArray[this.queryDatesArray.length - 1]);
@@ -220,7 +223,7 @@ export class ReportsComponent implements OnInit {
               'rgba(169, 0, 110, 1)',
               'rgba(169, 0, 110, 1)',
               'rgba(169, 0, 110, 1)'
-            ],       
+            ],
             borderWidth: 1
           }
         )
@@ -249,7 +252,6 @@ export class ReportsComponent implements OnInit {
               'rgba(0, 99, 255, 1)'
             ],
             borderWidth: 1
-
           }
         );
         this.myChart.data.datasets.push(
@@ -277,7 +279,6 @@ export class ReportsComponent implements OnInit {
               'rgba(237, 155, 189, 1)'
             ],
             borderWidth: 1
-
           });
         this.myChart.data.datasets.push(
 
@@ -304,7 +305,6 @@ export class ReportsComponent implements OnInit {
               'rgba(0, 0, 0, 1)'
             ],
             borderWidth: 1
-
           });
 
         this.myChart.data.datasets.push(
@@ -334,7 +334,6 @@ export class ReportsComponent implements OnInit {
 
             ],
             borderWidth: 1
-
           });
         this.myChart.data.datasets.push(
 
@@ -361,7 +360,6 @@ export class ReportsComponent implements OnInit {
               'rgba(0, 184, 7, 1)'
             ],
             borderWidth: 1
-
           });
         this.myChart.data.datasets.push(
 
@@ -388,7 +386,6 @@ export class ReportsComponent implements OnInit {
               'rgba(206, 5, 5, 1)'
             ],
             borderWidth: 1
-
           });
         this.myChart.data.datasets.push(
 
@@ -415,7 +412,6 @@ export class ReportsComponent implements OnInit {
               'rgba(126, 74, 74, 1)'
             ],
             borderWidth: 1
-
           });
         this.myChart.data.datasets.push(
 
@@ -440,7 +436,6 @@ export class ReportsComponent implements OnInit {
               'rgba(132, 143, 82, 1)'
             ],
             borderWidth: 1
-
           });
         this.myChart.data.datasets.push(
 
@@ -465,7 +460,6 @@ export class ReportsComponent implements OnInit {
               'rgba(255, 167, 0, 1)'
             ],
             borderWidth: 1
-
           });
 
         this.myChart.update();

@@ -1,12 +1,17 @@
 <form [formGroup]="habitReviewForm">
   <div class="review-form">
-    <ng-container *ngIf="habits.length > 0">
-      <h5 class="heading">Check Habits if Completed</h5>
-      <div *ngFor="let habit of habits">
-          <input type="checkbox" formControlName ="{{habit.id}}">
-          <label for={{habit.id}}>{{habit.habitName}}</label><br>
-      </div>
-    </ng-container>
+    <div class="heading-container">
+      <h5 class="heading">Habits Completed</h5>
+      <ng-container *ngIf="!previousDailyReview">
+        <button type="button" class="btn btn-secondary btn-sm" (click)="actionsClickedHandler()">
+          Actions
+        </button>
+      </ng-container>
+    </div>
+    <div class="habitContainer" *ngFor="let habit of habits">
+      <input type="checkbox" formControlName="{{habit.uuid}}">
+      <label for={{habit.uuid}}>{{habit.habitName}}</label><br>
+    </div>
     <ng-container *ngIf="habits.length === 0">
       <h5 class="heading">There are no habits created to Display</h5>
     </ng-container>

@@ -1,26 +1,50 @@
-  <div class="container">
-    <h2>Daily Review {{this.entryDate}}</h2>
-    <div class="flex-parent-container">
-
-      <app-wellness-rating-form
-      [wellnessRatingForm]="wellnessRatingForm"
-      [previousDailyReview]="previousDailyReview">
-      </app-wellness-rating-form>
-
-      <app-habit-review-form 
-        [habitReviewForm]="habitReviewForm"
-        [noHabits]="noHabits"
-        [habits]="habits">
-      </app-habit-review-form>
-
-      <app-guided-journal-form
-      [guidedJournalForm]="guidedJournalForm"
-      [previousDailyReview]="previousDailyReview"
-      [journalEntries]="journalEntries"
-      >
-      </app-guided-journal-form>
-      
-    </div>
-    <button class="btn btn-primary" (click)="submit()" [hidden]="previousDailyReview">Submit</button>
-    
+<div class="template-container">
+  <h2>Daily Review {{this.entryDate}}</h2>
+  <ng-template #modalTemplate let-modal>
+    <form *ngIf="modalForm" [formGroup]="modalForm" (ngSubmit)="update()">
+      <div class="modal-header">
+        <h2 class="modal-title">Actions</h2>
+        <button type="button" class="btn-close btn-close-white" (click)="modal.dismiss('Cross click')"  aria-label="Close"></button>
+      </div>
+      <div class="grid-container">
+        <div class="header">
+          <ng-container *ngIf="formType === 'habits'">
+            <h4>Habits</h4>
+          </ng-container>
+          <ng-container *ngIf="formType === 'journal'">
+            <h4>Guided Journal Entries</h4>
+          </ng-container>
+        </div>
+        <div class="grid-body">
+          <ng-container formArrayName="items">
+            <ng-container *ngFor="let item of modalForm.get('items')?.value as items; let i = index">
+              <div class="item">
+                <span>{{item}}</span>
+                <button type="button" class="delete" (click)="deleteItem(i)">Delete</button>
+              </div>
+            </ng-container>
+          </ng-container>
+          <div class="new-item">
+            <input type="text" formControlName="addItemInput">
+            <button type="button" class="add" (click)="addItem()">Add New</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" type="submit" class="update-button">Update</button>
+        <button type="button" class="close-button" (click)="modal.close('Close click')">Close</button>
+      </div>
+    </form>
+  </ng-template>
+  <div class="review-form-flex-container">
+    <app-wellness-rating-form [wellnessRatingForm]="wellnessRatingForm" [previousDailyReview]="previousDailyReview">
+    </app-wellness-rating-form>
+    <app-habit-review-form [habitReviewForm]="habitReviewForm" [previousDailyReview]="previousDailyReview"
+      [habits]="habits" (actionsClicked)="openPopup($event, modalTemplate)">
+    </app-habit-review-form>
+    <app-guided-journal-form [guidedJournalForm]="guidedJournalForm" [previousDailyReview]="previousDailyReview"
+      [journalEntries]="journalEntries" (actionsClicked)="openPopup($event, modalTemplate)">
+    </app-guided-journal-form>
   </div>
+  <button class="btn btn-primary" (click)="submit()" [hidden]="previousDailyReview">Submit</button>
+</div>

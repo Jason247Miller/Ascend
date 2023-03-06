@@ -1,14 +1,15 @@
-
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, ElementRef, OnInit, QueryList, TemplateRef, ViewChildren } from '@angular/core';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AccountService } from 'src/app/services/account/account.service';
 import { IWellnessRating } from 'src/app/models/IWellnessRating';
-import { take } from 'rxjs';
+import { forkJoin, Observable, of, take } from 'rxjs';
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { Habit } from 'src/app/models/Habit';
 import { IHabitCompletionLog } from 'src/app/models/IHabitCompletionLog';
 import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
 import { ActivatedRoute } from '@angular/router';
+import { IGuidedJournalLog } from 'src/app/models/IGuidedJournalLog';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-daily-review',
@@ -16,36 +17,48 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./daily-review.component.less']
 })
 export class DailyReviewComponent implements OnInit {
+
   constructor(
     private fb: FormBuilder,
     private accountService: AccountService,
     private alertService: AlertService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private modalService: NgbModal
   ) { }
   private entryDateHabitLogs: IHabitCompletionLog[];
+  private entryDateJournalLogs: IGuidedJournalLog[];
   private currentUserId: number;
-  private newWellnessEntry: boolean;
-  private newJournalLogEntry: boolean;
-  private newJournalEntry: boolean;
-  private newHabitLogEntry: boolean;
 
+  journalLogs$: Observable<IGuidedJournalLog[]>;
+  rating$: Observable<IWellnessRating>;
+  habits$: Observable<IHabitCompletionLog[]>;
+  habitsFormGroup: FormGroup;
+  wellnessEntry: IWellnessRating[] = [];
+  displayStyle: string;
   isFormDisabled: boolean = false;
   previousDailyReview: boolean;
   dateParam: string | null;
-  noHabits: boolean;
   habits: Habit[] = [];
   journalEntries: IGuidedJournalEntry[] = [];
   wellnessRatingForm!: FormGroup;
-  guidedJournalForm!: FormGroup;
   habitReviewForm!: FormGroup;
+  modalJournalEntries: IGuidedJournalEntry[];
+  modalHabits: Habit[];
   entryDate: string;
+  deletedHabits: Habit[] = [];
+  deletedJournalEntries: IGuidedJournalEntry[] = [];
+  formType: string;
+  guidedJournalForm!: FormGroup;
+  modalForm = this.fb.group({
+    items: new FormArray([]),
+    addItemInput: new FormControl('')
+  });
 
+  @ViewChildren('modalTemplate') inputtedValues: QueryList<ElementRef>;
   ngOnInit(): void {
 
     this.dateParam = this.activatedRoute.snapshot.paramMap.get('date');
     this.currentUserId = JSON.parse(localStorage.getItem('currentUser') || '{}').id;
-    this.noHabits = false;
-    this.newHabitLogEntry, this.newJournalEntry, this.newWellnessEntry, this.newJournalLogEntry = false;
     this.setEntryDate();
     this.initializeForms();
     this.setFormInputValues();
@@ -60,14 +73,10 @@ export class DailyReviewComponent implements OnInit {
     else {
       this.previousDailyReview = false;
       let date = new Date();
-      this.entryDate = date.toLocaleDateString("en-US", {
-        month: "2-digit",
-        day: "2-digit",
-        year: "numeric"
-      });
-
-      //format it to the type consistent throughout the application
-      this.entryDate = this.entryDate.replace(/(\d+)\/(\d+)\/(\d+)/, "$1-$2-$3");
+      let month = date.getMonth() + 1; // getMonth() returns a zero-based index, so we need to add 1 to get the correct month
+      let day = date.getDate();
+      let year = date.getFullYear();
+      this.entryDate = month + "-" + day + "-" + year;
     }
   }
 
@@ -76,89 +85,104 @@ export class DailyReviewComponent implements OnInit {
     this.submitWellnessRatingForm();
     this.submitHabitReviewForm();
     this.submitGuidedJournalForm();
+    forkJoin([this.rating$, this.habits$, this.journalLogs$])
+      .pipe(
+        take(1)
+      )
+      .subscribe(() => {
+        this.alertService.success("Entries Submitted Successfully");
+      });
   }
   submitGuidedJournalForm() {
-    let guidedJournalFormData: IGuidedJournalEntry = this.guidedJournalForm.getRawValue();
 
-    if (this.newJournalEntry === true) {
-      this.newJournalEntry = false;
-      this.accountService.addJournalRecordEntry(guidedJournalFormData)
-        .pipe(take(1))
-        .subscribe(() => { this.alertService.success("Added Journal Entries Successfully"); });
+    if (this.entryDateJournalLogs.length === 0) {
+
+      Object.keys(this.guidedJournalForm.controls).forEach(controlName => {
+        const control = this.guidedJournalForm.controls[controlName];
+        this.entryDateJournalLogs.push({
+          id: 0,
+          userId: this.currentUserId,
+          entryId: controlName,
+          entryTextValue: control.value,
+          date: this.entryDate
+        });
+
+      });
+
+
+      this.journalLogs$ = this.accountService.addJournalRecordLogs(this.entryDateJournalLogs)
+        .pipe(take(1));
+
+
+
     }
-    else if (this.newWellnessEntry === false) {
-      this.accountService.getWellnessEntryByDate(
-        this.entryDate,
-        this.currentUserId
-      ).
-        pipe(take(1)).
-        subscribe(guidedJournalEntry => {
+    else if (this.entryDateJournalLogs.length > 0) {
 
-          if (guidedJournalEntry.length !== 0) {
-            //update the existing currentDate wellness entry with the Forms data
-            guidedJournalFormData.id = guidedJournalEntry[0].id;
-            this.accountService.updateGuidedjournalData(guidedJournalFormData).
-              pipe(take(1)).
-              subscribe(() => {
-                this.alertService.success("Updated Journal Entries Successfully");
-              });
-
+      Object.keys(this.guidedJournalForm.controls).forEach(controlName => {
+        this.entryDateJournalLogs.forEach(existingJournalLog => {
+          if (existingJournalLog.entryId.toString() === controlName) {
+            existingJournalLog.entryTextValue = this.guidedJournalForm.controls[controlName].value;
           }
         });
-    }
+      }
+      );
 
+
+      this.journalLogs$ = this.accountService.updateJournalRecordLogs(this.entryDateJournalLogs)
+        .pipe(take(1));
+
+
+    }
   }
+
   submitHabitReviewForm() {
 
-    if (this.newHabitLogEntry === true) {
+    if (this.entryDateHabitLogs.length === 0) {
 
-      Object.keys(this.habitReviewForm.controls).forEach(key => {
+      Object.keys(this.habitReviewForm.controls).forEach(controlName => {
 
         this.entryDateHabitLogs.push({
           id: 0,
           userId: this.currentUserId,
-          habitId: Number(key),
-          completed: this.habitReviewForm.controls[key].value,
+          habitId: controlName,
+          completed: this.habitReviewForm.controls[controlName].value,
           date: this.entryDate
         });
       });
 
-      this.newHabitLogEntry = false;
-      this.accountService.addHabitCompletionLogs(this.entryDateHabitLogs);
+      this.habits$ = this.accountService.addHabitCompletionLogs(this.entryDateHabitLogs)
+        .pipe(take(1));
+    }
+    else if (this.entryDateHabitLogs.length > 0) {
 
-    } else if (this.newHabitLogEntry === false) {
-
-      Object.keys(this.habitReviewForm.controls).forEach(habitFormControl => {
-        this.entryDateHabitLogs.forEach((log) => {
-          if (habitFormControl === log.habitId.toString()) {
-            log.completed = this.habitReviewForm.controls[habitFormControl].value;
+      Object.keys(this.habitReviewForm.controls).forEach(controlName => {
+        this.entryDateHabitLogs.forEach((existingHabitLog) => {
+          if (controlName === existingHabitLog.habitId.toString()) {
+            existingHabitLog.completed = this.habitReviewForm.controls[controlName].value;
           }
         });
       });
-      this.accountService.updateHabitCompletionLogs(this.entryDateHabitLogs);
+      this.habits$ = this.accountService.updateHabitCompletionLogs(this.entryDateHabitLogs)
+        .pipe(take(1));
     }
 
   }
 
   submitWellnessRatingForm() {
     const wellnessFormData: IWellnessRating = this.wellnessRatingForm.getRawValue();
-    if (this.newWellnessEntry === true) {
-      this.newWellnessEntry = false;
-      this.accountService.addWellnessRatingEntry(wellnessFormData)
-        .pipe(take(1))
-        .subscribe(() => { this.alertService.success("Added new Wellness Entry Successfully"); });
+    of({}).pipe(take(1));
+
+    if (this.wellnessEntry.length === 0) {
+
+      this.rating$ = this.accountService.addWellnessRatingEntry(wellnessFormData)
+        .pipe(take(1));
+
     }
-    else if (this.newWellnessEntry === false) {
-      this.accountService.getWellnessEntryByDate(this.entryDate, this.currentUserId)
-        .pipe(take(1))
-        .subscribe(wellnessEntry => {
-          if (wellnessEntry.length !== 0) {
-            wellnessFormData.id = wellnessEntry[0].id;
-            this.accountService.updateWellnessData(wellnessFormData).
-              pipe(take(1)).
-              subscribe(() => { this.alertService.success("Updated Wellness Entry Successfully"); });
-          }
-        });
+    else if (this.wellnessEntry.length > 0) {
+      wellnessFormData.id = this.wellnessEntry[0].id;
+      this.rating$ = this.accountService.updateWellnessData(wellnessFormData).
+        pipe(take(1));
+
     }
   }
   initializeForms() {
@@ -166,14 +190,11 @@ export class DailyReviewComponent implements OnInit {
     this.accountService.getHabits(this.currentUserId).
       pipe(take(1)).
       subscribe(habits => {
-        if (habits.length !== 0) {
+        if (habits.length > 0) {
           habits.forEach(habit => {
             this.habits.push(habit);
-            this.habitReviewForm.addControl(habit.id.toString(), new FormControl(false));
+            this.habitReviewForm.addControl(habit.uuid, new FormControl(false));
           });
-        }
-        else {
-          this.noHabits = true;
         }
       });
 
@@ -192,21 +213,21 @@ export class DailyReviewComponent implements OnInit {
       userId: this.currentUserId,
       date: this.entryDate
     });
-
     this.guidedJournalForm = this.fb.group({});
-    this.accountService.getJournalEntry(this.entryDate, this.currentUserId).
+    this.accountService.getJournalEntry(this.currentUserId).
       pipe(take(1)).
       subscribe(entry => {
         if (entry.length !== 0) {
           entry.forEach(entry => {
             this.journalEntries.push(entry);
-            this.guidedJournalForm.addControl(entry.id.toString(), new FormControl(entry.entryValue));
+            this.guidedJournalForm.addControl(entry.uuid, new FormControl(''));
           });
         }
       });
   }
 
   setFormInputValues() {
+    //sets the values of all the forms to any existing values in the db for todays date
     this.setGuidedJournalFormValues();
     this.setHabitReviewFormValues();
     this.setWellnessRatingFormValues();
@@ -218,23 +239,18 @@ export class DailyReviewComponent implements OnInit {
       this.currentUserId).
       pipe(take(1)).
       subscribe(journalLogs => {
+        this.entryDateJournalLogs = journalLogs;
+        if (journalLogs.length > 0) {
 
-        if (journalLogs.length !== 0) {
-
-          this.newJournalLogEntry = false;
           for (let i = 0; i < journalLogs.length; i++) {
-            let journalId = journalLogs[i].entryId;
-            let currentControl = this.guidedJournalForm.get(journalId.toString());
+            let currentControl = this.guidedJournalForm.get(journalLogs[i].entryId);
             currentControl?.setValue(journalLogs[i].entryTextValue);
           }
-          //if entryDate is not currentdate, disable the form
           if (!this.isToday(new Date(this.entryDate))) {
             this.guidedJournalForm.disable();
           }
         }
-        else { this.newJournalLogEntry = true; }
       });
-
   }
 
   setWellnessRatingFormValues() {
@@ -242,16 +258,16 @@ export class DailyReviewComponent implements OnInit {
       this.entryDate,
       this.currentUserId).
       pipe(take(1)).
-      subscribe(ratingEntry => {
+      subscribe(wellnessRatings => {
         //if rating entries exist for current date
-        if (ratingEntry.length !== 0) {
-          this.newWellnessEntry = false;
-          this.wellnessRatingForm.patchValue(ratingEntry[0]);
+        this.wellnessEntry = wellnessRatings;
+        if (wellnessRatings.length > 0) {
+
+          this.wellnessRatingForm.patchValue(wellnessRatings[0]);
           if (!(this.isToday(new Date(this.entryDate)))) {
             this.wellnessRatingForm.disable();
           }
         }
-        else { this.newWellnessEntry = true; }
       });
   }
 
@@ -261,23 +277,21 @@ export class DailyReviewComponent implements OnInit {
       this.currentUserId).
       pipe(take(1)).
       subscribe(logs => {
-        //save logs for later http call
+
         this.entryDateHabitLogs = logs;
 
         if (logs.length !== 0) {
 
-          this.newHabitLogEntry = false;
           for (let i = 0; i < logs.length; i++) {
             let habitId = logs[i].habitId;
             let currentControl = this.habitReviewForm.get(habitId.toString());
             currentControl?.setValue(logs[i].completed);
           }
-          //if entryDate is not currentdate, disable the form
+
           if (!this.isToday(new Date(this.entryDate))) {
             this.habitReviewForm.disable();
           }
         }
-        else { this.newHabitLogEntry = true; }
       });
   }
 
@@ -288,5 +302,119 @@ export class DailyReviewComponent implements OnInit {
       datePassed.getFullYear() === today.getFullYear())
   }
 
-}
+  openPopup(formType: string, content: TemplateRef<any>) {
+    this.formType = formType;
+    this.deletedJournalEntries = [];
+    this.deletedHabits = [];
+    this.modalForm.addControl('addItemInput', new FormControl(''));
+    (<FormArray>this.modalForm.get('items')).clear();
 
+    if (formType === 'journal') {
+      this.modalJournalEntries = this.journalEntries.slice();
+      this.modalJournalEntries.forEach(entry => {
+        (<FormArray>this.modalForm.get('items')).push(new FormControl(entry.entryName))
+      })
+
+    }
+    else if (formType === 'habits') {
+      this.modalHabits = this.habits.slice();
+      this.modalHabits.forEach(habit => {
+        (<FormArray>this.modalForm.get('items')).push(new FormControl(habit.habitName))
+      })
+    }
+    this.modalService.open(content, { size: 'md' });
+  }
+
+  deleteItem(index: number) {
+    let formArray = this.modalForm.get('items') as FormArray;
+    if (this.formType === 'journal') {
+      this.modalJournalEntries[index].deleted = true;
+      this.deletedJournalEntries.push(this.modalJournalEntries[index]);
+      this.modalJournalEntries.splice(index, 1);
+    }
+    else if (this.formType === 'habits') {
+      this.modalHabits[index].deleted = true;
+      this.deletedHabits.push(this.modalHabits[index]);
+      this.modalHabits.splice(index, 1);
+    }
+    formArray.removeAt(index);
+  }
+
+  update() {
+
+    if (this.formType === 'journal') {
+
+      let deletedEntries$ = this.deletedJournalEntries.length > 0 ?
+        this.accountService.updateJournalRecordEntries(this.deletedJournalEntries)
+          .pipe(take(1)) :
+        of({}).pipe(take(1));
+
+      let newModalEntries = this.modalJournalEntries.filter(entry => entry.id === 0);
+      let newEntries$ = newModalEntries.length > 0 ?
+        this.accountService.addJournalRecordEntries(newModalEntries)
+          .pipe(take(1)) :
+        of({}).pipe(take(1));
+
+      forkJoin([deletedEntries$, newEntries$])
+        .pipe(take(1))
+        .subscribe(() => {
+          this.modalService.dismissAll();
+        });
+    }
+
+    else if (this.formType === 'habits') {
+      let deletedHabits$ = this.deletedHabits.length > 0 ?
+        this.accountService.updateHabitEntries(this.deletedHabits)
+          .pipe(take(1)) :
+        of({}).pipe(take(1));
+
+      let newModalHabits = this.modalHabits.filter(habit => habit.id === 0);
+      let newHabits$ = newModalHabits.length > 0 ?
+        this.accountService.addHabitEntries(newModalHabits)
+          .pipe(take(1)) :
+        of({}).pipe(take(1));
+
+      forkJoin([deletedHabits$, newHabits$])
+        .pipe(take(1))
+        .subscribe(() => {
+
+          this.modalService.dismissAll();
+        });
+
+    }
+
+    this.habits = [];
+    this.journalEntries = [];
+    this.initializeForms();
+    this.setFormInputValues();
+  }
+  addItem() {
+
+    if (this.formType === 'journal') {
+      let newItem = this.modalForm.get('addItemInput')?.value;
+      this.modalForm.get('addItemInput')?.setValue('');
+      let newEntry: IGuidedJournalEntry = {
+        id: 0,
+        userId: this.currentUserId,
+        entryName: newItem ?? '',
+        uuid: this.accountService.generateUUID(),
+        deleted: false
+      };
+      (<FormArray>this.modalForm.get('items')).push(new FormControl(newItem))
+      this.modalJournalEntries.push(newEntry);
+    }
+    else if (this.formType === 'habits') {
+      let newItem = this.modalForm.get('addItemInput')?.value;
+      this.modalForm.get('addItemInput')?.setValue('');
+      let newHabit: Habit = {
+        id: 0,
+        userId: this.currentUserId,
+        habitName: newItem ?? '',
+        uuid: this.accountService.generateUUID(),
+        deleted: false
+      };
+      (<FormArray>this.modalForm.get('items')).push(new FormControl(newItem))
+      this.modalHabits.push(newHabit);
+    }
+  }
+}

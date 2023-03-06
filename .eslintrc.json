@@ -29,7 +29,11 @@
         "plugin:@angular-eslint/template/process-inline-templates"      ],
 
       "rules": {
-
+        "no-console":"error", 
+        "no-multiple-empty-lines": ["error", {"max": 1}],
+       "object-curly-newline": ["error", "never"
+      
+    ],
         "@angular-eslint/directive-selector": [
 
           "error",
@@ -66,17 +70,13 @@
 
       "files": [
 
-        "*.html", "*.ts"      ],
+        "*.html"      ],
 
       "extends": [
 
         "plugin:@angular-eslint/template/recommended"      ],
 
-      "rules": {
-        "no-multiple-empty-lines": ["error", { "max": 1 }],
-    
-       
-      }
+      "rules": {}
 
     }
 

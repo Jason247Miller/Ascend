@@ -5,7 +5,7 @@ import { AlertType } from 'src/app/models/alert';
 import { Alert } from '../../models/alert';
 import { AlertService } from 'src/app/services/alert/alert.service';
 
-@Component({ selector: 'app-alert', templateUrl: 'alert.component.html', styleUrls: ['alert.component.less'] })
+@Component({selector: 'app-alert', templateUrl: 'alert.component.html', styleUrls: ['alert.component.less']})
 export class AlertComponent implements OnInit, OnDestroy {
     @Input() id = 'default-alert';
     @Input() fade = false;
@@ -76,12 +76,10 @@ export class AlertComponent implements OnInit, OnDestroy {
 
         const classes = ['alert', 'alert-dismissable'];
                 
-        const alertTypeClass = {
-            [AlertType.Success]: 'alert alert-success',
+        const alertTypeClass = {[AlertType.Success]: 'alert alert-success',
             [AlertType.Error]: 'alert alert-danger',
             [AlertType.Info]: 'alert alert-info',
-            [AlertType.Warning]: 'alert alert-warning'
-        }
+            [AlertType.Warning]: 'alert alert-warning'}
 
         classes.push(alertTypeClass[alert.type]);
 

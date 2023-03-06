@@ -7,9 +7,7 @@ describe('HabitReviewFormComponent', () => {
   let fixture: ComponentFixture<HabitReviewFormComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ HabitReviewFormComponent ]
-    })
+    await TestBed.configureTestingModule({declarations: [ HabitReviewFormComponent ]})
     .compileComponents();
 
     fixture = TestBed.createComponent(HabitReviewFormComponent);
