@@ -1,3 +1,4 @@
+
 import { Component, ElementRef, OnInit, QueryList, TemplateRef, ViewChildren } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AccountService } from 'src/app/services/account/account.service';
@@ -8,8 +9,10 @@ import { Habit } from 'src/app/models/Habit';
 import { IHabitCompletionLog } from 'src/app/models/IHabitCompletionLog';
 import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
 import { ActivatedRoute } from '@angular/router';
+
 import { IGuidedJournalLog } from 'src/app/models/IGuidedJournalLog';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
 
 @Component({
   selector: 'app-daily-review',
@@ -26,9 +29,12 @@ export class DailyReviewComponent implements OnInit {
     private modalService: NgbModal
   ) { }
 
+
+
   private entryDateHabitLogs: IHabitCompletionLog[];
   private entryDateJournalLogs: IGuidedJournalLog[];
   private currentUserId: number;
+
 
   journalLogs$: Observable<IGuidedJournalLog[]>;
   rating$: Observable<IWellnessRating>;
@@ -36,6 +42,7 @@ export class DailyReviewComponent implements OnInit {
   habitsFormGroup: FormGroup;
   wellnessEntry: IWellnessRating[] = [];
   displayStyle: string;
+
   isFormDisabled: boolean = false;
   previousDailyReview: boolean;
   dateParam: string | null;
@@ -55,7 +62,9 @@ export class DailyReviewComponent implements OnInit {
     addItemInput: new FormControl('')
   });
 
+
   @ViewChildren('modalTemplate') inputtedValues: QueryList<ElementRef>;
+
   ngOnInit(): void {
 
     this.dateParam = this.activatedRoute.snapshot.paramMap.get('date');
@@ -156,10 +165,12 @@ export class DailyReviewComponent implements OnInit {
     }
     else if (this.entryDateHabitLogs.length > 0) {
 
+
       Object.keys(this.habitReviewForm.controls).forEach(controlName => {
         this.entryDateHabitLogs.forEach((existingHabitLog) => {
           if (controlName === existingHabitLog.habitId.toString()) {
             existingHabitLog.completed = this.habitReviewForm.controls[controlName].value;
+
           }
         });
       });
@@ -197,6 +208,8 @@ export class DailyReviewComponent implements OnInit {
             this.habitReviewForm.addControl(habit.uuid, new FormControl(false));
           });
         }
+
+
       });
 
     this.wellnessRatingForm = this.fb.group({
@@ -215,7 +228,9 @@ export class DailyReviewComponent implements OnInit {
       date: this.entryDate
     });
     this.guidedJournalForm = this.fb.group({});
+
     this.accountService.getJournalEntry(this.currentUserId).
+
       pipe(take(1)).
       subscribe(entry => {
         if (entry.length !== 0) {
@@ -240,8 +255,10 @@ export class DailyReviewComponent implements OnInit {
       this.currentUserId).
       pipe(take(1)).
       subscribe(journalLogs => {
+      
         this.entryDateJournalLogs = journalLogs;
         if (journalLogs.length > 0) {
+
 
           for (let i = 0; i < journalLogs.length; i++) {
             let currentControl = this.guidedJournalForm.get(journalLogs[i].entryId);
@@ -252,6 +269,8 @@ export class DailyReviewComponent implements OnInit {
           }
         }
       });
+
+
   }
 
   setWellnessRatingFormValues() {
@@ -345,6 +364,7 @@ export class DailyReviewComponent implements OnInit {
 
     if (this.formType === 'journal') {
 
+
       let deletedEntries$ = this.deletedJournalEntries.length > 0 ?
         this.accountService.updateJournalRecordEntries(this.deletedJournalEntries)
           .pipe(take(1)) :
@@ -419,3 +439,4 @@ export class DailyReviewComponent implements OnInit {
     }
   }
 }
+

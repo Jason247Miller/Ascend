@@ -10,7 +10,9 @@ import { IHabitCompletionLog } from 'src/app/models/IHabitCompletionLog';
 import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
 import { IGuidedJournalLog } from 'src/app/models/IGuidedJournalLog';
 
+
 @Injectable({ providedIn: 'root' })
+
 export class AccountService {
 
     public redirectUrl?: string;
@@ -81,6 +83,8 @@ export class AccountService {
     }
 
     isLoggedIn(): boolean {
+
+
         return !!localStorage.getItem('currentUser');
     }
 
@@ -89,7 +93,9 @@ export class AccountService {
     }
 
     updateHabitCompletionLogs(habitCompletionLogs: IHabitCompletionLog[]) {
+
         return combineLatest(habitCompletionLogs.map(
+
             log => this.http.put<IHabitCompletionLog>(this.habitCompletionLogsUrl, log)
                 .pipe(
                     catchError(error => {
@@ -101,6 +107,7 @@ export class AccountService {
         ))
             .pipe(
                 catchError(error => this.handleError(error, 'Error: failed to update habit logs!:')),
+
                 take(1)
             );
 
@@ -117,6 +124,7 @@ export class AccountService {
             .pipe(
                 catchError(error => this.handleError(error, 'Error: failed to update Guided Journal logs!:')),
                 take(1)
+
             )
 
             .subscribe(() => {
@@ -124,6 +132,8 @@ export class AccountService {
             });
 
     }
+
+
 
     updateWellnessData(formData: IWellnessRating) {
 
@@ -150,8 +160,10 @@ export class AccountService {
                         return habit.userId === userId && habit.deleted === false;
                     });
                     return habits;
+
                 }),
                 tap(habits => {
+
                 })
             );
     }
@@ -185,6 +197,8 @@ export class AccountService {
 
     }
     addJournalRecordEntry(guidedJournalEntry: IGuidedJournalEntry) {
+
+
 
         return this.http.post<IGuidedJournalEntry>(
             this.guidedJournalEntriesUrl,
@@ -264,6 +278,8 @@ export class AccountService {
             wellnessEntry
         ).
             pipe(
+
+
                 catchError(error => this.handleError(
                     error,
                     'Error:Failed to add wellnessRating'
@@ -276,8 +292,10 @@ export class AccountService {
             habit => this.http.put<Habit>(this.habitsUrl, habit)
                 .pipe(
                     catchError(error => {
+
                         this.alertService.error('Error submitting Entry log:' + habit.id);
                         console.error('Error submitting Journal Entry:' + habit.id);
+
                         return throwError(() => new Error(error))
                     })
                 )
@@ -288,6 +306,7 @@ export class AccountService {
             );
 
     }
+
     addHabitEntries(habits: Habit[]) {
         return combineLatest(habits.map(
             habit => this.http.post<Habit>(this.habitsUrl, habit)
@@ -335,6 +354,7 @@ export class AccountService {
             );
 
 
+
     }
 
     getHabitLogEntries(currentDate: string, userId: number) {
@@ -345,11 +365,15 @@ export class AccountService {
                     habitLogs = habitLogs.filter((habitLog) => {
                         return habitLog.date === currentDate && habitLog.userId === userId;
                     });
+
+
                     return habitLogs;
                 }),
                 catchError(error => {
                     return this.handleError(error, "Error occured querying current Habit Logs");
                 })
+
+
             );
     }
 
@@ -362,11 +386,13 @@ export class AccountService {
                         return journalLog.date === currentDate && journalLog.userId === userId;
                     });
                     return journalLogs;
+
                 })
                 ,
                 catchError(error => {
                     return this.handleError(error, "Error occured querying current Jounral Logs");
                 })
+
 
             );
     }
@@ -381,8 +407,10 @@ export class AccountService {
                             !entry.deleted;
                     });
                     return entries;
+
                 })
                 ,
+
                 catchError(error => {
                     return this.handleError(error, "Error occured in journal entry exists query");
                 })
@@ -399,6 +427,8 @@ export class AccountService {
                     rating = rating.filter((entry) => {
                         return entry.date === date && entry.userId === userId;
                     });
+
+
                     return rating;
                 })
                 ,
@@ -420,7 +450,9 @@ export class AccountService {
                     });
 
                     return wellnessRatings;
+
                 }),
+
                 catchError(error => {
                     return this.handleError(error, "Error occured in Wellness Entries Date Range");
                 })
@@ -435,3 +467,5 @@ export class AccountService {
         });
     }
 }
+
+

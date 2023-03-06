@@ -213,6 +213,7 @@ export class InMemoryDataService implements InMemoryDbService {
         else if (reqInfo.collectionName === 'habitCompletionLogs') {
             return this.addHabitCompletionLogs(reqInfo);
         }
+
         else if (reqInfo.collectionName === 'guidedJournalLogs') {
             console.log("server if reached")
             return this.addGuidedJournalLogs(reqInfo);
@@ -223,6 +224,7 @@ export class InMemoryDataService implements InMemoryDbService {
         else if (reqInfo.collectionName === 'habits') {
             return this.addHabits(reqInfo);
         }
+
 
         return undefined;
     }
@@ -266,6 +268,8 @@ export class InMemoryDataService implements InMemoryDbService {
             pipe(delay(500)); //mimic server delay
     }
 
+
+
     //not currently used
     logout(reqInfo: any) {
         return reqInfo.utils.createResponse$(() => {
@@ -302,12 +306,14 @@ export class InMemoryDataService implements InMemoryDbService {
                     }
                 };
             //  otherwise return response with status code 401 (unauthorized)
+
             return {
                 status: 401,
                 headers,
                 url,
                 body: { error: 'Error 401 Invalid Email or Password' }
             };
+
 
         });
     }
@@ -318,3 +324,5 @@ export class InMemoryDataService implements InMemoryDbService {
     }
 
 }
+
+

@@ -25,6 +25,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { GoalsComponent } from './components/goals/goals.component';
 
 @NgModule(
+
       {declarations: [
                   AppComponent,
                   LoginComponent,
@@ -67,6 +68,7 @@ import { GoalsComponent } from './components/goals/goals.component';
                               ]},
                         {path: '', redirectTo: 'Home', pathMatch: 'full'},
                         {path: '**', redirectTo: 'Home', pathMatch: 'full'},
+
 
                   ]),
                   NoopAnimationsModule,
