@@ -15,7 +15,9 @@ export class AppComponent implements OnInit {
     currentRoute:string; 
     constructor(private accountService: AccountService, private route:ActivatedRoute) {}
     ngOnInit(): void {
+
         
+
         this.route.url
         .pipe(take(1))
         .subscribe(url => {
@@ -25,6 +27,8 @@ export class AppComponent implements OnInit {
        this.hideSidebar = false; 
         
         if(localStorage.getItem('currentUser')) {
+
+
 
             this.accountService.setLocalStoreageUserSubject(localStorage.getItem('currentUser'));
              

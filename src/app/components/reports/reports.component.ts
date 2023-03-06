@@ -20,6 +20,7 @@ export class ReportsComponent implements OnInit {
   dates!: string[];
   startIndex: number = 0;
   yearTracker: number = 0;
+  
   private queryDatesArray: string[] = [];
   private sleepRatings: (number | null)[];
   private exerciseRatings: (number | null)[];
