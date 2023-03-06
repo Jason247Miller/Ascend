@@ -214,6 +214,7 @@ export class InMemoryDataService implements InMemoryDbService {
             return this.addHabitCompletionLogs(reqInfo);
         }
         else if (reqInfo.collectionName === 'guidedJournalLogs') {
+            console.log("server if reached")
             return this.addGuidedJournalLogs(reqInfo);
         }
         else if (reqInfo.collectionName === 'guidedJournalEntries') {
@@ -238,6 +239,7 @@ export class InMemoryDataService implements InMemoryDbService {
     }
     addGuidedJournalLogs(reqInfo: any) {
         const requestBody = reqInfo['req']['body'];
+        console.log("add guided journal logs server reached", requestBody);
         requestBody["id"] = this.genId(this.db.guidedJournalLogs);
         this.db.guidedJournalLogs.push(requestBody);
     }

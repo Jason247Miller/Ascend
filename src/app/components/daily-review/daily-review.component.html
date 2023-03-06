@@ -1,70 +1,42 @@
-<div class="container">
+<div class="template-container">
   <h2>Daily Review {{this.entryDate}}</h2>
   <ng-template #modalTemplate let-modal>
     <form *ngIf="modalForm" [formGroup]="modalForm" (ngSubmit)="update()">
       <div class="modal-header">
-        <h4 class="modal-title">Actions</h4>
-        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+        <h2 class="modal-title">Actions</h2>
+        <button type="button" class="btn-close btn-close-white" (click)="modal.dismiss('Cross click')"  aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-        <div class="container-lg">
-          <div class="table-responsive">
-            <div class="table-wrapper">
-              <div class="table-title">
-                <div class="row">
-                  <div class="col-sm-8">
-                    <h2></h2>
-                  </div>
-                  <div class="col-sm-4"></div>
-                </div>
+      <div class="grid-container">
+        <div class="header">
+          <ng-container *ngIf="formType === 'habits'">
+            <h4>Habits</h4>
+          </ng-container>
+          <ng-container *ngIf="formType === 'journal'">
+            <h4>Guided Journal Entries</h4>
+          </ng-container>
+        </div>
+        <div class="grid-body">
+          <ng-container formArrayName="items">
+            <ng-container *ngFor="let item of modalForm.get('items')?.value as items; let i = index">
+              <div class="item">
+                <span>{{item}}</span>
+                <button type="button" class="delete" (click)="deleteItem(i)">Delete</button>
               </div>
-              <table class="table table-bordered">
-                <thead>
-                  <tr>
-                    <ng-container *ngIf="formType === 'habits'">
-                      <th>Habits</th>
-                    </ng-container>
-                    <ng-container *ngIf="formType === 'journal'">
-                      <th>Guided Journal Entries</th>
-                    </ng-container>
-                    <th>Delete</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <ng-container formArrayName="items">
-                    <ng-container *ngFor="let item of modalForm.get('items')?.value as items; let i = index">
-                      <tr>
-                        <td>
-                          <span>{{item}}</span>
-                        </td>
-                        <td>
-                          <a class="delete" title="Delete" (click)="deleteItem(i)" data-toggle="tooltip"><i
-                              class="material-icons">&#xE872;</i></a>
-                        </td>
-                      </tr>
-                    </ng-container>
-                  </ng-container>
-                  <tr>
-                    <td>
-                      <input type="text" formControlName="addItemInput" style="width:100%">
-                    </td>
-                    <td>
-                      <button type="button" class="btn btn-secondary btn-sm" (click)="addItem()"> Add New</button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            </ng-container>
+          </ng-container>
+          <div class="new-item">
+            <input type="text" formControlName="addItemInput">
+            <button type="button" class="add" (click)="addItem()">Add New</button>
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" type="submit" class="btn btn-primary btn-sm">Update</button>
-        <button type="button" class="btn btn-secondary btn-sm" (click)="modal.close('Close click')">Close</button>
+        <button type="button" type="submit" class="update-button">Update</button>
+        <button type="button" class="close-button" (click)="modal.close('Close click')">Close</button>
       </div>
     </form>
   </ng-template>
-  <div class="flex-parent-container">
+  <div class="review-form-flex-container">
     <app-wellness-rating-form [wellnessRatingForm]="wellnessRatingForm" [previousDailyReview]="previousDailyReview">
     </app-wellness-rating-form>
     <app-habit-review-form [habitReviewForm]="habitReviewForm" [previousDailyReview]="previousDailyReview"

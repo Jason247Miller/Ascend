@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, QueryList, TemplateRef, ViewChildren } f
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AccountService } from 'src/app/services/account/account.service';
 import { IWellnessRating } from 'src/app/models/IWellnessRating';
-import { forkJoin, of, take } from 'rxjs';
+import { forkJoin, Observable, of, take } from 'rxjs';
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { Habit } from 'src/app/models/Habit';
 import { IHabitCompletionLog } from 'src/app/models/IHabitCompletionLog';
@@ -29,6 +29,10 @@ export class DailyReviewComponent implements OnInit {
   private entryDateHabitLogs: IHabitCompletionLog[];
   private entryDateJournalLogs: IGuidedJournalLog[];
   private currentUserId: number;
+
+  journalLogs$: Observable<IGuidedJournalLog[]>;
+  rating$: Observable<IWellnessRating>;
+  habits$: Observable<IHabitCompletionLog[]>;
   habitsFormGroup: FormGroup;
   wellnessEntry: IWellnessRating[] = [];
   displayStyle: string;
@@ -68,17 +72,12 @@ export class DailyReviewComponent implements OnInit {
       this.entryDate = this.dateParam;
     }
     else {
-
       this.previousDailyReview = false;
       let date = new Date();
-      this.entryDate = date.toLocaleDateString("en-US", {
-        month: "2-digit",
-        day: "2-digit",
-        year: "numeric"
-      });
-
-      //format it to the type consistent throughout the application
-      this.entryDate = this.entryDate.replace(/(\d+)\/(\d+)\/(\d+)/, "$1-$2-$3");
+      let month = date.getMonth() + 1; // getMonth() returns a zero-based index, so we need to add 1 to get the correct month
+      let day = date.getDate();
+      let year = date.getFullYear();
+      this.entryDate = month + "-" + day + "-" + year;
     }
   }
 
@@ -87,6 +86,13 @@ export class DailyReviewComponent implements OnInit {
     this.submitWellnessRatingForm();
     this.submitHabitReviewForm();
     this.submitGuidedJournalForm();
+    forkJoin([this.rating$, this.habits$, this.journalLogs$])
+      .pipe(
+        take(1)
+      )
+      .subscribe(() => {
+        this.alertService.success("Entries Submitted Successfully");
+      });
   }
   submitGuidedJournalForm() {
 
@@ -104,11 +110,11 @@ export class DailyReviewComponent implements OnInit {
 
       });
 
-      this.entryDateJournalLogs.forEach(log => {
-        this.accountService.addJournalRecordLog(log)
-          .pipe(take(1))
-          .subscribe();
-      })
+
+      this.journalLogs$ = this.accountService.addJournalRecordLogs(this.entryDateJournalLogs)
+        .pipe(take(1));
+
+
 
     }
     else if (this.entryDateJournalLogs.length > 0) {
@@ -121,12 +127,12 @@ export class DailyReviewComponent implements OnInit {
         });
       }
       );
-      this.entryDateJournalLogs.forEach(log => {
 
-        this.accountService.updateJournalRecordLog(log)
-          .pipe(take(1))
-          .subscribe();
-      })
+
+      this.journalLogs$ = this.accountService.updateJournalRecordLogs(this.entryDateJournalLogs)
+        .pipe(take(1));
+
+
     }
   }
 
@@ -145,7 +151,8 @@ export class DailyReviewComponent implements OnInit {
         });
       });
 
-      this.accountService.addHabitCompletionLogs(this.entryDateHabitLogs);
+      this.habits$ = this.accountService.addHabitCompletionLogs(this.entryDateHabitLogs)
+        .pipe(take(1));
     }
     else if (this.entryDateHabitLogs.length > 0) {
 
@@ -156,25 +163,27 @@ export class DailyReviewComponent implements OnInit {
           }
         });
       });
-      this.accountService.updateHabitCompletionLogs(this.entryDateHabitLogs);
+      this.habits$ = this.accountService.updateHabitCompletionLogs(this.entryDateHabitLogs)
+        .pipe(take(1));
     }
 
   }
 
   submitWellnessRatingForm() {
     const wellnessFormData: IWellnessRating = this.wellnessRatingForm.getRawValue();
+    of({}).pipe(take(1));
 
     if (this.wellnessEntry.length === 0) {
 
-      this.accountService.addWellnessRatingEntry(wellnessFormData)
-        .pipe(take(1))
-        .subscribe();
+      this.rating$ = this.accountService.addWellnessRatingEntry(wellnessFormData)
+        .pipe(take(1));
+
     }
     else if (this.wellnessEntry.length > 0) {
       wellnessFormData.id = this.wellnessEntry[0].id;
-      this.accountService.updateWellnessData(wellnessFormData).
-        pipe(take(1)).
-        subscribe();
+      this.rating$ = this.accountService.updateWellnessData(wellnessFormData).
+        pipe(take(1));
+
     }
   }
   initializeForms() {
@@ -348,6 +357,7 @@ export class DailyReviewComponent implements OnInit {
         of({}).pipe(take(1));
 
       forkJoin([deletedEntries$, newEntries$])
+        .pipe(take(1))
         .subscribe(() => {
           this.modalService.dismissAll();
         });
@@ -366,6 +376,7 @@ export class DailyReviewComponent implements OnInit {
         of({}).pipe(take(1));
 
       forkJoin([deletedHabits$, newHabits$])
+        .pipe(take(1))
         .subscribe(() => {
 
           this.modalService.dismissAll();
