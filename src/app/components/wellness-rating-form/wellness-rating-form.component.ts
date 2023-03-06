@@ -1,11 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
-@Component({
-  selector: 'app-wellness-rating-form',
+@Component({selector: 'app-wellness-rating-form',
   templateUrl: './wellness-rating-form.component.html',
-  styleUrls: ['./wellness-rating-form.component.less']
-})
+  styleUrls: ['./wellness-rating-form.component.less']})
 export class WellnessRatingFormComponent {
 @Input() wellnessRatingForm: FormGroup; 
 @Input() previousDailyReview:boolean; 

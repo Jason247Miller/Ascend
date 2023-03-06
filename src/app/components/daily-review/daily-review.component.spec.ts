@@ -7,9 +7,7 @@ describe('DailyReviewComponent', () => {
   let fixture: ComponentFixture<DailyReviewComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ DailyReviewComponent ]
-    })
+    await TestBed.configureTestingModule({declarations: [ DailyReviewComponent ]})
     .compileComponents();
 
     fixture = TestBed.createComponent(DailyReviewComponent);

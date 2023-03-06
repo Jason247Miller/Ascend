@@ -7,9 +7,7 @@ describe('OverviewComponent', () => {
   let fixture: ComponentFixture<OverviewComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ OverviewComponent ]
-    })
+    await TestBed.configureTestingModule({declarations: [ OverviewComponent ]})
     .compileComponents();
 
     fixture = TestBed.createComponent(OverviewComponent);

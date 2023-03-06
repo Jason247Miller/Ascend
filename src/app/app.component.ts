@@ -1,14 +1,13 @@
+
 import { Component, OnInit } from '@angular/core';
 import {  Observable, take } from 'rxjs';
 import { AccountService } from './services/account/account.service';
 import { User } from './models/Users';
 import { ActivatedRoute } from '@angular/router';
 
-@Component({
-    selector: 'app-root',
+@Component({selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.less']
-})
+    styleUrls: ['./app.component.less']})
 export class AppComponent implements OnInit {
     localStorageUser$:Observable<User|string|null> =  this.accountService.getLocalStoreageUser$(); 
     title = 'Ascend';
@@ -16,6 +15,8 @@ export class AppComponent implements OnInit {
     currentRoute:string; 
     constructor(private accountService: AccountService, private route:ActivatedRoute) {}
     ngOnInit(): void {
+
+        
 
         this.route.url
         .pipe(take(1))
@@ -26,6 +27,9 @@ export class AppComponent implements OnInit {
        this.hideSidebar = false; 
         
         if(localStorage.getItem('currentUser')) {
+
+
+
             this.accountService.setLocalStoreageUserSubject(localStorage.getItem('currentUser'));
              
         }

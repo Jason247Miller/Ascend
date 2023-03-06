@@ -1,12 +1,16 @@
 <form [formGroup]="guidedJournalForm">
   <div class="review-form">
+    <div class="heading-container">
     <h5 class="heading">Guided Journal</h5>
-    <button class="add-button">Edit</button>
-    <ng-container *ngIf="journalEntries.length > 0">
-    </ng-container>
+    <ng-container *ngIf="!previousDailyReview">
+    <button type="button"  (click)="actionsClickedHandler()" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#actionsModal">
+      Actions
+    </button>
+  </ng-container>
+  </div>
     <ng-container *ngFor="let entry of journalEntries">
-      <label for={{entry.id}}>{{entry.entryName}}</label>
-      <textarea id={{entry.id}} [readOnly]="previousDailyReview" formControlName={{entry.id}} rows="4"
+      <label for={{entry.uuid}}>{{entry.entryName}}</label>
+      <textarea id={{entry.uuid}} formControlName={{entry.uuid}} rows="4"
         cols="50"></textarea>
     </ng-container>
   </div>

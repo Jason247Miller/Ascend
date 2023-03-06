@@ -1,35 +1,37 @@
-/* You can add global styles to this file, and also import other style files */
-.field-error{
-    border: 1px solid red;
+
+
+.field-error {
+
+  border: 1px solid red;
 }
 
-.review-form{
-    padding-top: 25px;
-    display: inline-flex;
-    background-color: lightgray;
+.review-form {
+
+  padding-top: 25px;
+  display: flex;
+  background-color: lightgray;
+  flex-direction: row;
+  align-content: flex-start;
+  margin-top: 25px;
+  padding: 5px;
+  justify-content: left;
+  flex-wrap: wrap;
+  width: 300px;
+  box-shadow: 3px 3px 10px 9px rgb(63, 61, 61);
+
+  .heading-container {
+    display: flex;
+    width: 100%;
     flex-direction: row;
-    align-content: flex-start;
-    border-style: solid;
-    margin-top: 25px;
-    padding: 5px;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    width: 300px;
-  .add-button{
-    position: relative;
-    border-radius: 10px;
-    margin: auto;
-    height: 25px;
-    background-color:gray;
-    left: 0;
-  }
-    div {
-      height: 40px;
+    justify-content: space-between;
 
-      label {
-        margin-right: 5px;
-      }
-    }
+  }
+  button, input{
+    border-radius: 10px;
+  }
 }
 
 
+body {
+    font-family: 'Open Sans', sans-serif;
+}

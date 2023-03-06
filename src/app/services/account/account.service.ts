@@ -10,9 +10,9 @@ import { IHabitCompletionLog } from 'src/app/models/IHabitCompletionLog';
 import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
 import { IGuidedJournalLog } from 'src/app/models/IGuidedJournalLog';
 
-@Injectable({
-    providedIn: 'root'
-})
+
+@Injectable({ providedIn: 'root' })
+
 export class AccountService {
 
     public redirectUrl?: string;
@@ -24,7 +24,7 @@ export class AccountService {
     public hideSideBar$ = this.hideSideBarSubject.asObservable();
     private wellnessRatingsUrl = 'api/wellnessRatings';
     private habitsUrl = 'api/habits';
-    private guidedJournalUrl = 'api/guidedJournalEntries';
+    private guidedJournalEntriesUrl = 'api/guidedJournalEntries';
     private guidedJournalLogsUrl = 'api/guidedJournalLogs';
     private habitCompletionLogsUrl = 'api/habitCompletionLogs';
     constructor(private http: HttpClient, private router: Router, private alertService: AlertService) {
@@ -83,7 +83,8 @@ export class AccountService {
     }
 
     isLoggedIn(): boolean {
-        //return false if null or undefined, true otherwise!
+
+
         return !!localStorage.getItem('currentUser');
     }
 
@@ -93,7 +94,8 @@ export class AccountService {
 
     updateHabitCompletionLogs(habitCompletionLogs: IHabitCompletionLog[]) {
 
-        combineLatest(habitCompletionLogs.map(
+        return combineLatest(habitCompletionLogs.map(
+
             log => this.http.put<IHabitCompletionLog>(this.habitCompletionLogsUrl, log)
                 .pipe(
                     catchError(error => {
@@ -105,31 +107,37 @@ export class AccountService {
         ))
             .pipe(
                 catchError(error => this.handleError(error, 'Error: failed to update habit logs!:')),
+
+                take(1)
+            );
+
+    }
+    updateGuidedjournalData(guidedJournalLogs: IGuidedJournalLog[]) {
+        combineLatest(guidedJournalLogs.map(log => this.http.put<IGuidedJournalLog>(this.guidedJournalLogsUrl, log)
+            .pipe(
+                catchError(error => {
+                    this.alertService.error('Error updating Guided Journal log:' + log.id);
+                    return throwError(() => new Error(error))
+                })
+            )
+        ))
+            .pipe(
+                catchError(error => this.handleError(error, 'Error: failed to update Guided Journal logs!:')),
+                take(1)
+
             )
 
             .subscribe(() => {
-                this.alertService.success("Habits have been successfully Updated")
+                this.alertService.success("Journal Entries have been successfully Updated")
             });
 
     }
-    updateGuidedjournalData(formData: IGuidedJournalEntry) {
-        return this.http.put(
-            this.guidedJournalUrl,
-            formData
-        ).
-            pipe(
-                catchError(error => {
-                    return this.handleError(
-                        error,
-                        'Error:Failed to Update guided journal entry'
-                    );
-                })
-            );
-    }
+
+
 
     updateWellnessData(formData: IWellnessRating) {
 
-        return this.http.put(
+        return this.http.put<IWellnessRating>(
             this.wellnessRatingsUrl,
             formData
         ).
@@ -152,6 +160,10 @@ export class AccountService {
                         return habit.userId === userId && habit.deleted === false;
                     });
                     return habits;
+
+                }),
+                tap(habits => {
+
                 })
             );
     }
@@ -165,28 +177,109 @@ export class AccountService {
         console.error(error);
         return EMPTY;
     }
+    addJournalRecordEntries(journalEntries: IGuidedJournalEntry[]) {
 
+        return combineLatest(journalEntries.map(
+            entry => this.http.post<IGuidedJournalEntry>(this.guidedJournalEntriesUrl, entry)
+                .pipe(
+                    catchError(error => {
+                        this.alertService.error('Error submitting Entry log:' + entry.id);
+                        console.error('Error submitting Journal Entry:' + entry.id);
+                        return throwError(() => new Error(error))
+                    })
+                )
+        ))
+            .pipe(
+                take(1),
+                catchError(error => this.handleError(error, 'Error: failed to submit habit logs!:')),
+
+            )
+
+    }
     addJournalRecordEntry(guidedJournalEntry: IGuidedJournalEntry) {
+
+
+
         return this.http.post<IGuidedJournalEntry>(
-            this.guidedJournalUrl,
+            this.guidedJournalEntriesUrl,
             guidedJournalEntry
         ).
             pipe(
                 catchError(error => this.handleError(
                     error,
-                    'Error:Failed to add guided journal entry'
+                    'Error:Failed to add Entry'
                 ))
             );
+
+    }
+    addJournalRecordLogs(guidedJournalLogs: IGuidedJournalLog[]) {
+
+        return combineLatest(guidedJournalLogs.map(
+            log => this.http.post<IGuidedJournalLog>(this.guidedJournalLogsUrl, log)
+                .pipe(
+                    catchError(error => {
+                        this.alertService.error('Error updating journal log:' + log.id);
+                        console.error('Error updating journal log:' + log.id);
+                        return throwError(() => new Error(error))
+                    }
+                    ),
+                    take(1)
+                )
+        ))
+            .pipe(
+                catchError(error => this.handleError(error, 'Error: failed to update habit logs!:')),
+                take(1)
+            );
+
+
     }
 
+    updateJournalRecordEntries(journalEntries: IGuidedJournalEntry[]) {
+
+        return combineLatest(journalEntries.map(
+            entry => this.http.put<IGuidedJournalEntry>(this.guidedJournalEntriesUrl, entry)
+                .pipe(
+                    take(1),
+                    catchError(error => {
+                        this.alertService.error('Error submitting Entry log:' + entry.id);
+                        console.error('Error submitting Journal Entry:' + entry.id);
+                        return throwError(() => new Error(error))
+                    })
+                )
+        ))
+            .pipe(
+                catchError(error => this.handleError(error, 'Error: failed to submit habit logs!:')),
+                take(1)
+            );
+
+    }
+
+    updateJournalRecordLogs(journalLogs: IGuidedJournalLog[]) {
+        return combineLatest(journalLogs.map(
+            log => this.http.put<IGuidedJournalLog>(this.guidedJournalLogsUrl, log)
+                .pipe(
+                    catchError(error => {
+                        this.alertService.error('Error updating journal log:' + log.id);
+                        console.error('Error updating journal log:' + log.id);
+                        return throwError(() => new Error(error))
+                    }
+                    ),
+                    take(1)
+                )
+        ))
+            .pipe(
+                catchError(error => this.handleError(error, 'Error: failed to update habit logs!:')),
+                take(1)
+            );
+    }
     addWellnessRatingEntry(wellnessEntry: IWellnessRating) {
         return this.http.post<IWellnessRating>(
             this.wellnessRatingsUrl,
             wellnessEntry
         ).
             pipe(
-                tap(wellnessRating => {
-                }),
+
+
                 catchError(error => this.handleError(
                     error,
                     'Error:Failed to add wellnessRating'
@@ -194,9 +287,58 @@ export class AccountService {
             );
     }
 
-    addHabitCompletionLogs(habitCompletionLogs: IHabitCompletionLog[]) {
+    updateHabitEntries(habits: Habit[]) {
+        return combineLatest(habits.map(
+            habit => this.http.put<Habit>(this.habitsUrl, habit)
+                .pipe(
+                    catchError(error => {
 
-        combineLatest(habitCompletionLogs.map(
+                        this.alertService.error('Error submitting Entry log:' + habit.id);
+                        console.error('Error submitting Journal Entry:' + habit.id);
+
+                        return throwError(() => new Error(error))
+                    })
+                )
+        ))
+            .pipe(
+                catchError(error => this.handleError(error, 'Error: failed to submit habit logs!:')),
+                take(1)
+            );
+
+    }
+
+    addHabitEntries(habits: Habit[]) {
+        return combineLatest(habits.map(
+            habit => this.http.post<Habit>(this.habitsUrl, habit)
+                .pipe(
+                    catchError(error => {
+                        this.alertService.error('Error submitting Entry log:' + habit.id);
+                        console.error('Error submitting Journal Entry:' + habit.id);
+                        return throwError(() => new Error(error))
+                    })
+                )
+        ))
+            .pipe(
+                catchError(error => this.handleError(error, 'Error: failed to submit habit logs!:')),
+                take(1)
+            );
+
+    }
+    updateHabitEntry(habit: Habit) {
+        return this.http.put<Habit>(
+            this.habitsUrl,
+            habit
+        ).
+            pipe(
+                catchError(error => this.handleError(
+                    error,
+                    'Error:Failed to update Habit Entry'
+                ))
+            );
+    }
+
+    addHabitCompletionLogs(habitCompletionLogs: IHabitCompletionLog[]) {
+        return combineLatest(habitCompletionLogs.map(
             log => this.http.post<IHabitCompletionLog>(this.habitCompletionLogsUrl, log)
                 .pipe(
                     catchError(error => {
@@ -209,14 +351,10 @@ export class AccountService {
             .pipe(
                 catchError(error => this.handleError(error, 'Error: failed to submit habit logs!:')),
                 take(1)
-            )
+            );
 
-            .subscribe(() => {
-                this.alertService.success("Habits have been successfully submitted");
-            });
-    }
-    viewHabitCompletionEntries() {
-        return this.http.get<IHabitCompletionLog[]>(this.habitCompletionLogsUrl)
+
+
     }
 
     getHabitLogEntries(currentDate: string, userId: number) {
@@ -228,11 +366,13 @@ export class AccountService {
                         return habitLog.date === currentDate && habitLog.userId === userId;
                     });
 
+
                     return habitLogs;
                 }),
                 catchError(error => {
                     return this.handleError(error, "Error occured querying current Habit Logs");
                 })
+
 
             );
     }
@@ -246,17 +386,19 @@ export class AccountService {
                         return journalLog.date === currentDate && journalLog.userId === userId;
                     });
                     return journalLogs;
-                }),
 
+                })
+                ,
                 catchError(error => {
                     return this.handleError(error, "Error occured querying current Jounral Logs");
                 })
 
+
             );
     }
 
-    getJournalEntry(datePassed: string, userId: number) {
-        return this.http.get<IGuidedJournalEntry[]>(this.guidedJournalUrl).
+    getJournalEntry(userId: number) {
+        return this.http.get<IGuidedJournalEntry[]>(this.guidedJournalEntriesUrl).
             pipe(
                 map((entries) => {
 
@@ -265,7 +407,10 @@ export class AccountService {
                             !entry.deleted;
                     });
                     return entries;
-                }),
+
+                })
+                ,
+
                 catchError(error => {
                     return this.handleError(error, "Error occured in journal entry exists query");
                 })
@@ -282,6 +427,7 @@ export class AccountService {
                     rating = rating.filter((entry) => {
                         return entry.date === date && entry.userId === userId;
                     });
+
 
                     return rating;
                 })
@@ -304,14 +450,22 @@ export class AccountService {
                     });
 
                     return wellnessRatings;
-                })
-                ,
+
+                }),
+
                 catchError(error => {
                     return this.handleError(error, "Error occured in Wellness Entries Date Range");
                 })
 
             );
     }
-
+    generateUUID() {
+        // generate a random UUID (source: https://stackoverflow.com/a/2117523)
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
 }
+
 
