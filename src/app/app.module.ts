@@ -68,6 +68,7 @@ import { GoalsComponent } from './components/goals/goals.component';
                         {path: '', redirectTo: 'Home', pathMatch: 'full'},
                         {path: '**', redirectTo: 'Home', pathMatch: 'full'},
 
+
                   ]),
                   NoopAnimationsModule,
                   NgbModule

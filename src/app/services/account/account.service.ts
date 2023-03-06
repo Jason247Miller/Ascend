@@ -287,6 +287,7 @@ export class AccountService {
             );
 
     }
+
     addHabitEntries(habits: Habit[]) {
         return combineLatest(habits.map(
             habit => this.http.post<Habit>(this.habitsUrl, habit)
@@ -349,8 +350,8 @@ export class AccountService {
                 catchError(error => {
                     return this.handleError(error, "Error occured querying current Habit Logs");
                 })
-            );
-    }
+            )
+            }
 
     getJournalLogEntries(currentDate: string, userId: number) {
         return this.http.get<IGuidedJournalLog[]>(this.guidedJournalLogsUrl).
@@ -366,6 +367,7 @@ export class AccountService {
                 catchError(error => {
                     return this.handleError(error, "Error occured querying current Jounral Logs");
                 })
+
 
             );
     }
