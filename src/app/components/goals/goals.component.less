@@ -1,31 +1,50 @@
-.main-content{
-    border-style: solid;
-
-}
-
-.right-col{
-    border-style:solid; 
-    
+.grid-container{
+    display: grid;
+    border:1px solid black; 
+    grid-template-columns: 79% 20%;
+    grid-template-rows: minmax(40px, auto);
+    grid-row-gap: 5px;
+    grid-column-gap: 10px;
+    grid-template-areas:
+    "command-bar empty"
+    "content side-bar"
+    "content side-bar"; 
 }
 .command-bar{
-    position: relative;
-    padding: 2px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    height:53px ;
-    border-style: solid;
-   .command-item{
-    position:absolute;
-    right: 0;
-    margin-right: 2px;
-    border-style: solid;
-   }
+background-color: aqua;
+height: 50px;
 }
 
-.container-xl{
+.content{
+    background-color: rgb(7, 5, 7);
+    height: 50px;
+}
+.side-bar{
+    background-color: green;
+    height: 50px;
+}
+.empty{
     width:100%; 
-   
 }
-
+.add-button{
+    background-color: rgb(169, 167, 167);
+    
+}
+.command-bar-flex{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding:5px; 
+}
+.button{
+    margin-right: 10px;
+}
+@media screen and (max-width: 650px) {
+    .grid-container{
+        grid-template-columns: 100%;
+        grid-template-areas:
+    "command-bar"
+    "content"
+    "side-bar"; 
+    }
+   }

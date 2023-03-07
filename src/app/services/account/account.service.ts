@@ -105,25 +105,25 @@ export class AccountService {
             );
 
     }
-    updateGuidedjournalData(guidedJournalLogs: IGuidedJournalLog[]) {
-        combineLatest(guidedJournalLogs.map(log => this.http.put<IGuidedJournalLog>(this.guidedJournalLogsUrl, log)
-            .pipe(
-                catchError(error => {
-                    this.alertService.error('Error updating Guided Journal log:' + log.id);
-                    return throwError(() => new Error(error))
-                })
-            )
-        ))
-            .pipe(
-                catchError(error => this.handleError(error, 'Error: failed to update Guided Journal logs!:')),
-                take(1)
-            )
+    // updateGuidedjournalData(guidedJournalLogs: IGuidedJournalLog[]) {
+    //     combineLatest(guidedJournalLogs.map(log => this.http.put<IGuidedJournalLog>(this.guidedJournalLogsUrl, log)
+    //         .pipe(
+    //             catchError(error => {
+    //                 this.alertService.error('Error updating Guided Journal log:' + log.id);
+    //                 return throwError(() => new Error(error))
+    //             })
+    //         )
+    //     ))
+    //         .pipe(
+    //             catchError(error => this.handleError(error, 'Error: failed to update Guided Journal logs!:')),
+    //             take(1)
+    //         )
 
-            .subscribe(() => {
-                this.alertService.success("Journal Entries have been successfully Updated")
-            });
+    //         .subscribe(() => {
+    //             this.alertService.success("Journal Entries have been successfully Updated")
+    //         });
 
-    }
+    // }
 
     updateWellnessData(formData: IWellnessRating) {
 
@@ -181,22 +181,22 @@ export class AccountService {
                 take(1),
                 catchError(error => this.handleError(error, 'Error: failed to submit habit logs!:')),
 
-            )
-
-    }
-    addJournalRecordEntry(guidedJournalEntry: IGuidedJournalEntry) {
-        return this.http.post<IGuidedJournalEntry>(
-            this.guidedJournalEntriesUrl,
-            guidedJournalEntry
-        ).
-            pipe(
-                catchError(error => this.handleError(
-                    error,
-                    'Error:Failed to add Entry'
-                ))
             );
 
     }
+    // addJournalRecordEntry(guidedJournalEntry: IGuidedJournalEntry) {
+    //     return this.http.post<IGuidedJournalEntry>(
+    //         this.guidedJournalEntriesUrl,
+    //         guidedJournalEntry
+    //     ).
+    //         pipe(
+    //             catchError(error => this.handleError(
+    //                 error,
+    //                 'Error:Failed to add Entry'
+    //             ))
+    //         );
+
+    // }
     addJournalRecordLogs(guidedJournalLogs: IGuidedJournalLog[]) {
 
         return combineLatest(guidedJournalLogs.map(
