@@ -105,25 +105,6 @@ export class AccountService {
             );
 
     }
-    // updateGuidedjournalData(guidedJournalLogs: IGuidedJournalLog[]) {
-    //     combineLatest(guidedJournalLogs.map(log => this.http.put<IGuidedJournalLog>(this.guidedJournalLogsUrl, log)
-    //         .pipe(
-    //             catchError(error => {
-    //                 this.alertService.error('Error updating Guided Journal log:' + log.id);
-    //                 return throwError(() => new Error(error))
-    //             })
-    //         )
-    //     ))
-    //         .pipe(
-    //             catchError(error => this.handleError(error, 'Error: failed to update Guided Journal logs!:')),
-    //             take(1)
-    //         )
-
-    //         .subscribe(() => {
-    //             this.alertService.success("Journal Entries have been successfully Updated")
-    //         });
-
-    // }
 
     updateWellnessData(formData: IWellnessRating) {
 
@@ -142,12 +123,24 @@ export class AccountService {
 
     }
 
-    getHabits(userId: string) {
+    getHabits(userId: string, date: string) {
+
+        const dailyReviewDate = new Date(date).toDateString();
+        const today = new Date().toDateString();
+
         return this.http.get<Habit[]>(this.habitsUrl).
             pipe(
                 map(habits => {
                     habits = habits.filter((habit) => {
-                        return habit.userId === userId && habit.deleted === false;
+                        const habitCreationDate = new Date(habit.creationDate).toDateString();
+                        if (habitCreationDate === today) {
+                            return habit.userId === userId &&
+                                habit.deleted === false;
+                        }
+                        else {
+                            //show include deleted habits if viewing report from previous date
+                            return habit.userId === userId && habitCreationDate === dailyReviewDate;
+                        }
                     });
                     return habits;
                 }),
@@ -359,14 +352,24 @@ export class AccountService {
             );
     }
 
-    getJournalEntry(userId: string) {
+    getJournalEntry(userId: string, date: string) {
+
+        const dailyReviewDate = new Date(date).toDateString();
+        const today = new Date().toDateString();
+
         return this.http.get<IGuidedJournalEntry[]>(this.guidedJournalEntriesUrl).
             pipe(
                 map((entries) => {
-
                     entries = entries.filter((entry) => {
-                        return entry.userId === userId &&
-                            !entry.deleted;
+                        const entryCreationDate = new Date(entry.creationDate).toDateString();
+                        if (entryCreationDate === today) {
+                            return entry.userId === userId &&
+                                entry.deleted === false;
+                        }
+                        else {
+                            //show include deleted entries if viewing report from previous date
+                            return entry.userId === userId && entryCreationDate === dailyReviewDate;
+                        }
                     });
                     return entries;
                 })

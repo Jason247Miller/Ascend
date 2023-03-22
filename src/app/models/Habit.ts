@@ -4,7 +4,8 @@ export class Habit {
       public id:string,
       public userId:string,
       public habitName:string,
+      public creationDate:string, 
       public deleted:boolean
 
-      ) { }
-  }
+      ) {}
+}

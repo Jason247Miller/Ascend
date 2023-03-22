@@ -109,7 +109,6 @@ export class DailyReviewComponent implements OnInit {
 
       });
 
-
       this.journalLogs$ = this.accountService.addJournalRecordLogs(this.entryDateJournalLogs)
         .pipe(take(1));
 
@@ -127,11 +126,8 @@ export class DailyReviewComponent implements OnInit {
       }
       );
 
-
       this.journalLogs$ = this.accountService.updateJournalRecordLogs(this.entryDateJournalLogs)
         .pipe(take(1));
-
-
     }
   }
 
@@ -187,7 +183,7 @@ export class DailyReviewComponent implements OnInit {
   }
   initializeForms() {
     this.habitReviewForm = this.fb.group({});
-    this.accountService.getHabits(this.currentUserId).
+    this.accountService.getHabits(this.currentUserId, this.entryDate).
       pipe(take(1)).
       subscribe(habits => {
         if (habits.length > 0) {
@@ -214,7 +210,7 @@ export class DailyReviewComponent implements OnInit {
       date: this.entryDate
     });
     this.guidedJournalForm = this.fb.group({});
-    this.accountService.getJournalEntry(this.currentUserId).
+    this.accountService.getJournalEntry(this.currentUserId, this.entryDate).
       pipe(take(1)).
       subscribe(entry => {
         if (entry.length !== 0) {
@@ -369,6 +365,11 @@ export class DailyReviewComponent implements OnInit {
         of({}).pipe(take(1));
 
       let newModalHabits = this.modalHabits.filter(habit => habit.id === '');
+
+      newModalHabits.forEach(habit => {
+        console.log("new habits ", habit.creationDate);
+      });
+
       let newHabits$ = newModalHabits.length > 0 ?
         this.accountService.addHabitEntries(newModalHabits)
           .pipe(take(1)) :
@@ -391,13 +392,16 @@ export class DailyReviewComponent implements OnInit {
   addItem() {
 
     if (this.formType === 'journal') {
+
       let newItem = this.modalForm.get('addItemInput')?.value;
       this.modalForm.get('addItemInput')?.setValue('');
+
       let newEntry: IGuidedJournalEntry = {
         id: '',
         userId: this.currentUserId,
         entryName: newItem ?? '',
-        deleted: false
+        deleted: false,
+        creationDate: this.entryDate
       };
       (<FormArray>this.modalForm.get('items')).push(new FormControl(newItem))
       this.modalJournalEntries.push(newEntry);
@@ -409,7 +413,8 @@ export class DailyReviewComponent implements OnInit {
         id: '',
         userId: this.currentUserId,
         habitName: newItem ?? '',
-        deleted: false
+        deleted: false,
+        creationDate: this.entryDate
       };
       (<FormArray>this.modalForm.get('items')).push(new FormControl(newItem))
       this.modalHabits.push(newHabit);

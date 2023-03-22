@@ -128,19 +128,22 @@ export class InMemoryDataService implements InMemoryDbService {
                     id: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     habitName: 'Play Guitar for 20 minutes a day',
-                    deleted: false
+                    deleted: false,
+                    creationDate: '02-11-2023'
                 },
                 {
                     id: '2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec',
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     habitName: 'Cardio for 30 minutes',
-                    deleted: false
+                    deleted: false,
+                    creationDate: '02-11-2023'
                 },
                 {
                     id: '2e2bd1d4-c4a3-475a-bc8a-5aea1157e0ec',
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     habitName: 'Meditate for 10 minutes',
-                    deleted: true
+                    deleted: true,
+                    creationDate: '02-11-2023'
                 }
             ],
             guidedJournalEntries: [
@@ -148,13 +151,15 @@ export class InMemoryDataService implements InMemoryDbService {
                     id: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     entryName: 'What are you most greatful for?',
-                    deleted: false
+                    deleted: false,
+                    creationDate: '03-22-2023'
                 },
                 {
                     id: '2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec',
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     entryName: 'what did you learn today?',
-                    deleted: false
+                    deleted: false,
+                    creationDate: '03-22-2023'
                 }
             ],
             guidedJournalLogs: [
@@ -304,8 +309,6 @@ export class InMemoryDataService implements InMemoryDbService {
         });
     }
 
-
-
     genId(entries: any): string {
         return this.generateGuid();
     }
@@ -313,11 +316,5 @@ export class InMemoryDataService implements InMemoryDbService {
     private generateGuid(): string {
         return uuidv4();
     }
-
-
-    // genId(entries: any): number {
-    //     return entries.length > 0 ? Math.max(...entries.
-    //         map((entry: { id: number; }) => entry.id)) + 1 : 1;
-    // }
-
+    
 }
