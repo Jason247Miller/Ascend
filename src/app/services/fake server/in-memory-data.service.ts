@@ -33,7 +33,7 @@ export class InMemoryDataService implements InMemoryDbService {
                 {
                     id: '8c8b043c-f34d-4198-a2fa-b875b96c37cc',
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
-                    date: '02-11-2023',
+                    date: '2023-03-22',
                     sleepRating: 5,
                     exerciseRating: 7,
                     nutritionRating: 8,
@@ -48,7 +48,7 @@ export class InMemoryDataService implements InMemoryDbService {
                 {
                     id: '2fad9b2d-2404-4929-9d04-b06d8df9a95d',
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
-                    date: '02-07-2023',
+                    date: '2023-02-11',
                     sleepRating: 5,
                     exerciseRating: 7,
                     nutritionRating: 3,
@@ -63,7 +63,7 @@ export class InMemoryDataService implements InMemoryDbService {
                 {
                     id: 'e33cbdb2-e1e6-4893-ad52-74c3906c41ac',
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
-                    date: '02-17-2023',
+                    date: '2023-02-17',
                     sleepRating: 5,
                     exerciseRating: 2,
                     nutritionRating: 3,
@@ -78,7 +78,7 @@ export class InMemoryDataService implements InMemoryDbService {
                 {
                     id: 'b114860a-0edf-40f0-898c-94cd69305ac5',
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
-                    date: '01-06-2023',
+                    date: '2023-01-06',
                     sleepRating: 5,
                     exerciseRating: 0,
                     nutritionRating: 0,
@@ -98,28 +98,28 @@ export class InMemoryDataService implements InMemoryDbService {
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     habitId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     completed: false,
-                    date: '02-17-2023'
+                    date: '2023-02-17'
                 },
                 {
                     id: '96a8a12e-ffda-44c1-bcfd-580a9e3c8b0a',
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     habitId: '2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec',
                     completed: false,
-                    date: '02-17-2023'
+                    date: '2023-02-17'
                 },
                 {
                     id: '9572a061-2f81-4b1a-b101-8bbabfa7fe9b',
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     habitId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     completed: true,
-                    date: '02-11-2023'
+                    date: '2023-02-11'
                 },
                 {
                     id: '32205731-9ea7-4f3b-ba8b-ed9b19c3fbaa',
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     habitId: '2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec',
                     completed: true,
-                    date: '02-11-2023'
+                    date: '2023-02-11'
                 }
 
             ],
@@ -129,21 +129,21 @@ export class InMemoryDataService implements InMemoryDbService {
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     habitName: 'Play Guitar for 20 minutes a day',
                     deleted: false,
-                    creationDate: '02-11-2023'
+                    creationDate: '2023-02-11'
                 },
                 {
                     id: '2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec',
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     habitName: 'Cardio for 30 minutes',
                     deleted: false,
-                    creationDate: '02-11-2023'
+                    creationDate: '2023-02-11'
                 },
                 {
                     id: '2e2bd1d4-c4a3-475a-bc8a-5aea1157e0ec',
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     habitName: 'Meditate for 10 minutes',
                     deleted: true,
-                    creationDate: '02-11-2023'
+                    creationDate: '2023-02-11'
                 }
             ],
             guidedJournalEntries: [
@@ -152,14 +152,14 @@ export class InMemoryDataService implements InMemoryDbService {
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     entryName: 'What are you most greatful for?',
                     deleted: false,
-                    creationDate: '03-22-2023'
+                    creationDate: '2023-03-22'
                 },
                 {
                     id: '2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec',
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     entryName: 'what did you learn today?',
                     deleted: false,
-                    creationDate: '03-22-2023'
+                    creationDate: '2023-03-22'
                 }
             ],
             guidedJournalLogs: [
@@ -168,7 +168,7 @@ export class InMemoryDataService implements InMemoryDbService {
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     entryId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     entryTextValue: 'my health',
-                    date: '02-17-2023'
+                    date: '2023-02-17'
                 },
 
                 {
@@ -176,21 +176,21 @@ export class InMemoryDataService implements InMemoryDbService {
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     entryId: '2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec',
                     entryTextValue: 'how to enjoy the moment',
-                    date: '02-17-2023'
+                    date: '2023-02-17'
                 },
                 {
                     id: '2f8cc6e0-3146-461a-b4bf-f18d184ce651',
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     entryId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     entryTextValue: '',
-                    date: '02-11-2023'
+                    date: '2023-02-11'
                 },
                 {
                     id: '12b72366-f8db-43f0-9e65-9e50a4fe70b5',
                     userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     entryId: '2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec',
                     entryTextValue: '',
-                    date: '02-11-2023'
+                    date: '2023-02-11'
                 }
             ]
         };

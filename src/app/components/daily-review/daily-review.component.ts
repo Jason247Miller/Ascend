@@ -72,11 +72,7 @@ export class DailyReviewComponent implements OnInit {
     }
     else {
       this.previousDailyReview = false;
-      let date = new Date();
-      let month = date.getMonth() + 1; // getMonth() returns a zero-based index, so we need to add 1 to get the correct month
-      let day = date.getDate();
-      let year = date.getFullYear();
-      this.entryDate = month + "-" + day + "-" + year;
+      this.entryDate = new Date().toISOString().split('T', 1)[0];
     }
   }
 
@@ -292,10 +288,9 @@ export class DailyReviewComponent implements OnInit {
   }
 
   isToday(datePassed: Date) {
-    const today = new Date();
-    return (datePassed.getDate() === today.getDate() &&
-      datePassed.getMonth() === today.getMonth() &&
-      datePassed.getFullYear() === today.getFullYear())
+    var datePassedString = datePassed.toISOString().split(/[T ]/i, 1)[0];
+    const today = new Date().toISOString().split(/[T ]/i, 1)[0];
+    return today === datePassedString;
   }
 
   openPopup(formType: string, content: TemplateRef<any>) {
