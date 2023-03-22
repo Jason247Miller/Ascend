@@ -1,6 +1,6 @@
 export interface IWellnessRating {
-       id: number ; 
-       userId: number;
+       id:string; 
+       userId:string;
        date:string;
        sleepRating:number;
        exerciseRating:number;

@@ -1,10 +1,9 @@
 export class Habit {
 
     constructor(
-      public id: number,
-      public userId: number,
+      public id:string,
+      public userId:string,
       public habitName:string,
-      public uuid:string, 
       public deleted:boolean
 
       ) { }

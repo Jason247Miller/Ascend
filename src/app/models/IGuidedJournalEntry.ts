@@ -1,8 +1,7 @@
 export interface IGuidedJournalEntry {
     
- id: number, 
- userId: number, 
+ id:string, 
+ userId:string, 
  entryName:string,
- uuid:string, 
  deleted: boolean
 }

@@ -33,7 +33,7 @@ export class ReportsComponent implements OnInit {
   private energyRatings: (number | null)[];
   private overallRatings: (number | null)[];
   private myChartData: ChartData;
-  private currentUserId!: number;
+  private currentUserId!: string;
 
   ngOnInit(): void {
 

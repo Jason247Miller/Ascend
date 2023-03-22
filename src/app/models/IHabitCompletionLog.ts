@@ -1,6 +1,6 @@
 export interface IHabitCompletionLog {
-      id: number,
-      userId: number,
+      id:string,
+      userId:string,
       habitId:string,
       completed: boolean,
       date:string

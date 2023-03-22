@@ -142,7 +142,7 @@ export class AccountService {
 
     }
 
-    getHabits(userId: number) {
+    getHabits(userId: string) {
         return this.http.get<Habit[]>(this.habitsUrl).
             pipe(
                 map(habits => {
@@ -184,19 +184,6 @@ export class AccountService {
             );
 
     }
-    // addJournalRecordEntry(guidedJournalEntry: IGuidedJournalEntry) {
-    //     return this.http.post<IGuidedJournalEntry>(
-    //         this.guidedJournalEntriesUrl,
-    //         guidedJournalEntry
-    //     ).
-    //         pipe(
-    //             catchError(error => this.handleError(
-    //                 error,
-    //                 'Error:Failed to add Entry'
-    //             ))
-    //         );
-
-    // }
     addJournalRecordLogs(guidedJournalLogs: IGuidedJournalLog[]) {
 
         return combineLatest(guidedJournalLogs.map(
@@ -337,7 +324,7 @@ export class AccountService {
 
     }
 
-    getHabitLogEntries(currentDate: string, userId: number) {
+    getHabitLogEntries(currentDate: string, userId: string) {
         return this.http.get<IHabitCompletionLog[]>(this.habitCompletionLogsUrl).
             pipe(
                 map((habitLogs) => {
@@ -351,9 +338,9 @@ export class AccountService {
                     return this.handleError(error, "Error occured querying current Habit Logs");
                 })
             )
-            }
+    }
 
-    getJournalLogEntries(currentDate: string, userId: number) {
+    getJournalLogEntries(currentDate: string, userId: string) {
         return this.http.get<IGuidedJournalLog[]>(this.guidedJournalLogsUrl).
             pipe(
                 map((journalLogs) => {
@@ -372,7 +359,7 @@ export class AccountService {
             );
     }
 
-    getJournalEntry(userId: number) {
+    getJournalEntry(userId: string) {
         return this.http.get<IGuidedJournalEntry[]>(this.guidedJournalEntriesUrl).
             pipe(
                 map((entries) => {
@@ -391,7 +378,7 @@ export class AccountService {
             );
     }
 
-    getWellnessEntryByDate(date: string, userId: number) {
+    getWellnessEntryByDate(date: string, userId: string) {
 
         return this.http.get<IWellnessRating[]>(this.wellnessRatingsUrl).
             pipe(
@@ -410,7 +397,7 @@ export class AccountService {
             );
     }
 
-    getWellnessEntriesInDateRange(oldestDate: Date, latestDate: Date, userId: number) {
+    getWellnessEntriesInDateRange(oldestDate: Date, latestDate: Date, userId: string) {
         return this.http.get<IWellnessRating[]>(this.wellnessRatingsUrl).
             pipe(
                 map((wellnessRatings) => {

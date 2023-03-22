@@ -1,6 +1,6 @@
 export interface IGuidedJournalLog {
-    id: number,
-    userId: number,
+    id:string,
+    userId:string,
     entryId:string,
     entryTextValue: string,
     date:string

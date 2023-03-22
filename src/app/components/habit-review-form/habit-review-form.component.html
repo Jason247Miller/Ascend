@@ -9,8 +9,8 @@
       </ng-container>
     </div>
     <div class="habitContainer" *ngFor="let habit of habits">
-      <input type="checkbox" formControlName="{{habit.uuid}}">
-      <label for={{habit.uuid}}>{{habit.habitName}}</label><br>
+      <input type="checkbox" formControlName="{{habit.id}}">
+      <label for={{habit.id}}>{{habit.habitName}}</label><br>
     </div>
     <ng-container *ngIf="habits.length === 0">
       <h5 class="heading">There are no habits created to Display</h5>
