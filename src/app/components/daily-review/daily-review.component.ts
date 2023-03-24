@@ -107,9 +107,6 @@ export class DailyReviewComponent implements OnInit {
 
       this.journalLogs$ = this.accountService.addJournalRecordLogs(this.entryDateJournalLogs)
         .pipe(take(1));
-
-
-
     }
     else if (this.entryDateJournalLogs.length > 0) {
 
@@ -360,11 +357,6 @@ export class DailyReviewComponent implements OnInit {
         of({}).pipe(take(1));
 
       let newModalHabits = this.modalHabits.filter(habit => habit.id === '');
-
-      newModalHabits.forEach(habit => {
-        console.log("new habits ", habit.creationDate);
-      });
-
       let newHabits$ = newModalHabits.length > 0 ?
         this.accountService.addHabitEntries(newModalHabits)
           .pipe(take(1)) :

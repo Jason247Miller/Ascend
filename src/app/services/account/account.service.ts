@@ -20,11 +20,11 @@ export class AccountService {
     public localStorageUser$ = this.localStorageUserSubject.asObservable();
     private hideSideBarSubject = new BehaviorSubject(false);
     public hideSideBar$ = this.hideSideBarSubject.asObservable();
-    private wellnessRatingsUrl = 'api/wellnessRatings';
+    private wellnessRatingsUrl = 'api/wellnessRatings/';
     private habitsUrl = 'api/habits';
-    private guidedJournalEntriesUrl = 'api/guidedJournalEntries';
-    private guidedJournalLogsUrl = 'api/guidedJournalLogs';
-    private habitCompletionLogsUrl = 'api/habitCompletionLogs';
+    private guidedJournalEntriesUrl = 'api/guidedJournalEntries/';
+    private guidedJournalLogsUrl = 'api/guidedJournalLogs/';
+    private habitCompletionLogsUrl = 'api/habitCompletionLogs/';
     constructor(private http: HttpClient, private router: Router, private alertService: AlertService) {
     }
     setSidebarValue(display: boolean) {
@@ -90,7 +90,7 @@ export class AccountService {
 
     updateHabitCompletionLogs(habitCompletionLogs: IHabitCompletionLog[]) {
         return combineLatest(habitCompletionLogs.map(
-            log => this.http.put<IHabitCompletionLog>(this.habitCompletionLogsUrl, log)
+            log => this.http.put<IHabitCompletionLog>(this.habitCompletionLogsUrl + log.id, log)
                 .pipe(
                     catchError(error => {
                         this.alertService.error('Error updating habit log:' + log.id);
@@ -109,7 +109,7 @@ export class AccountService {
     updateWellnessData(formData: IWellnessRating) {
 
         return this.http.put<IWellnessRating>(
-            this.wellnessRatingsUrl,
+            this.wellnessRatingsUrl + formData.id,
             formData
         ).
             pipe(
@@ -161,7 +161,7 @@ export class AccountService {
     addJournalRecordEntries(journalEntries: IGuidedJournalEntry[]) {
 
         return combineLatest(journalEntries.map(
-            entry => this.http.post<IGuidedJournalEntry>(this.guidedJournalEntriesUrl, entry)
+            entry => this.http.post<IGuidedJournalEntry>(this.guidedJournalEntriesUrl + entry.id, entry)
                 .pipe(
                     catchError(error => {
                         this.alertService.error('Error submitting Entry log:' + entry.id);
@@ -195,8 +195,6 @@ export class AccountService {
                 catchError(error => this.handleError(error, 'Error: failed to update habit logs!:')),
                 take(1)
             );
-
-
     }
 
     updateJournalRecordEntries(journalEntries: IGuidedJournalEntry[]) {
@@ -221,7 +219,7 @@ export class AccountService {
 
     updateJournalRecordLogs(journalLogs: IGuidedJournalLog[]) {
         return combineLatest(journalLogs.map(
-            log => this.http.put<IGuidedJournalLog>(this.guidedJournalLogsUrl, log)
+            log => this.http.put<IGuidedJournalLog>(this.guidedJournalLogsUrl + log.id, log)
                 .pipe(
                     catchError(error => {
                         this.alertService.error('Error updating journal log:' + log.id);
@@ -252,7 +250,7 @@ export class AccountService {
 
     updateHabitEntries(habits: Habit[]) {
         return combineLatest(habits.map(
-            habit => this.http.put<Habit>(this.habitsUrl, habit)
+            habit => this.http.put<Habit>(this.habitsUrl + habit.id, habit)
                 .pipe(
                     catchError(error => {
                         this.alertService.error('Error submitting Entry log:' + habit.id);
