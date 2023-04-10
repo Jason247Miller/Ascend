@@ -20,11 +20,11 @@ export class AccountService {
     public localStorageUser$ = this.localStorageUserSubject.asObservable();
     private hideSideBarSubject = new BehaviorSubject(false);
     public hideSideBar$ = this.hideSideBarSubject.asObservable();
-    private wellnessRatingsUrl = 'api/wellnessRatings';
+    private wellnessRatingsUrl = 'api/wellnessRatings/';
     private habitsUrl = 'api/habits';
-    private guidedJournalEntriesUrl = 'api/guidedJournalEntries';
-    private guidedJournalLogsUrl = 'api/guidedJournalLogs';
-    private habitCompletionLogsUrl = 'api/habitCompletionLogs';
+    private guidedJournalEntriesUrl = 'api/guidedJournalEntries/';
+    private guidedJournalLogsUrl = 'api/guidedJournalLogs/';
+    private habitCompletionLogsUrl = 'api/habitCompletionLogs/';
     constructor(private http: HttpClient, private router: Router, private alertService: AlertService) {
     }
     setSidebarValue(display: boolean) {
@@ -90,7 +90,7 @@ export class AccountService {
 
     updateHabitCompletionLogs(habitCompletionLogs: IHabitCompletionLog[]) {
         return combineLatest(habitCompletionLogs.map(
-            log => this.http.put<IHabitCompletionLog>(this.habitCompletionLogsUrl, log)
+            log => this.http.put<IHabitCompletionLog>(this.habitCompletionLogsUrl + log.id, log)
                 .pipe(
                     catchError(error => {
                         this.alertService.error('Error updating habit log:' + log.id);
@@ -105,30 +105,11 @@ export class AccountService {
             );
 
     }
-    updateGuidedjournalData(guidedJournalLogs: IGuidedJournalLog[]) {
-        combineLatest(guidedJournalLogs.map(log => this.http.put<IGuidedJournalLog>(this.guidedJournalLogsUrl, log)
-            .pipe(
-                catchError(error => {
-                    this.alertService.error('Error updating Guided Journal log:' + log.id);
-                    return throwError(() => new Error(error))
-                })
-            )
-        ))
-            .pipe(
-                catchError(error => this.handleError(error, 'Error: failed to update Guided Journal logs!:')),
-                take(1)
-            )
-
-            .subscribe(() => {
-                this.alertService.success("Journal Entries have been successfully Updated")
-            });
-
-    }
 
     updateWellnessData(formData: IWellnessRating) {
 
         return this.http.put<IWellnessRating>(
-            this.wellnessRatingsUrl,
+            this.wellnessRatingsUrl + formData.id,
             formData
         ).
             pipe(
@@ -142,12 +123,24 @@ export class AccountService {
 
     }
 
-    getHabits(userId: number) {
+    getHabits(userId: string, date: string) {
+
+        const dailyReviewDate = new Date(date).toDateString();
+        const today = new Date().toDateString();
+
         return this.http.get<Habit[]>(this.habitsUrl).
             pipe(
                 map(habits => {
                     habits = habits.filter((habit) => {
-                        return habit.userId === userId && habit.deleted === false;
+                        const habitCreationDate = new Date(habit.creationDate).toDateString();
+                        if (habitCreationDate === today) {
+                            return habit.userId === userId &&
+                                habit.deleted === false;
+                        }
+                        else {
+                            //show include deleted habits if viewing report from previous date
+                            return habit.userId === userId && habitCreationDate === dailyReviewDate;
+                        }
                     });
                     return habits;
                 }),
@@ -168,7 +161,7 @@ export class AccountService {
     addJournalRecordEntries(journalEntries: IGuidedJournalEntry[]) {
 
         return combineLatest(journalEntries.map(
-            entry => this.http.post<IGuidedJournalEntry>(this.guidedJournalEntriesUrl, entry)
+            entry => this.http.post<IGuidedJournalEntry>(this.guidedJournalEntriesUrl + entry.id, entry)
                 .pipe(
                     catchError(error => {
                         this.alertService.error('Error submitting Entry log:' + entry.id);
@@ -181,19 +174,6 @@ export class AccountService {
                 take(1),
                 catchError(error => this.handleError(error, 'Error: failed to submit habit logs!:')),
 
-            )
-
-    }
-    addJournalRecordEntry(guidedJournalEntry: IGuidedJournalEntry) {
-        return this.http.post<IGuidedJournalEntry>(
-            this.guidedJournalEntriesUrl,
-            guidedJournalEntry
-        ).
-            pipe(
-                catchError(error => this.handleError(
-                    error,
-                    'Error:Failed to add Entry'
-                ))
             );
 
     }
@@ -215,8 +195,6 @@ export class AccountService {
                 catchError(error => this.handleError(error, 'Error: failed to update habit logs!:')),
                 take(1)
             );
-
-
     }
 
     updateJournalRecordEntries(journalEntries: IGuidedJournalEntry[]) {
@@ -241,7 +219,7 @@ export class AccountService {
 
     updateJournalRecordLogs(journalLogs: IGuidedJournalLog[]) {
         return combineLatest(journalLogs.map(
-            log => this.http.put<IGuidedJournalLog>(this.guidedJournalLogsUrl, log)
+            log => this.http.put<IGuidedJournalLog>(this.guidedJournalLogsUrl + log.id, log)
                 .pipe(
                     catchError(error => {
                         this.alertService.error('Error updating journal log:' + log.id);
@@ -272,7 +250,7 @@ export class AccountService {
 
     updateHabitEntries(habits: Habit[]) {
         return combineLatest(habits.map(
-            habit => this.http.put<Habit>(this.habitsUrl, habit)
+            habit => this.http.put<Habit>(this.habitsUrl + habit.id, habit)
                 .pipe(
                     catchError(error => {
                         this.alertService.error('Error submitting Entry log:' + habit.id);
@@ -337,7 +315,7 @@ export class AccountService {
 
     }
 
-    getHabitLogEntries(currentDate: string, userId: number) {
+    getHabitLogEntries(currentDate: string, userId: string) {
         return this.http.get<IHabitCompletionLog[]>(this.habitCompletionLogsUrl).
             pipe(
                 map((habitLogs) => {
@@ -351,9 +329,9 @@ export class AccountService {
                     return this.handleError(error, "Error occured querying current Habit Logs");
                 })
             )
-            }
+    }
 
-    getJournalLogEntries(currentDate: string, userId: number) {
+    getJournalLogEntries(currentDate: string, userId: string) {
         return this.http.get<IGuidedJournalLog[]>(this.guidedJournalLogsUrl).
             pipe(
                 map((journalLogs) => {
@@ -372,14 +350,24 @@ export class AccountService {
             );
     }
 
-    getJournalEntry(userId: number) {
+    getJournalEntry(userId: string, date: string) {
+
+        const dailyReviewDate = new Date(date).toDateString();
+        const today = new Date().toDateString();
+
         return this.http.get<IGuidedJournalEntry[]>(this.guidedJournalEntriesUrl).
             pipe(
                 map((entries) => {
-
                     entries = entries.filter((entry) => {
-                        return entry.userId === userId &&
-                            !entry.deleted;
+                        const entryCreationDate = new Date(entry.creationDate).toDateString();
+                        if (entryCreationDate === today) {
+                            return entry.userId === userId &&
+                                entry.deleted === false;
+                        }
+                        else {
+                            //show include deleted entries if viewing report from previous date
+                            return entry.userId === userId && entryCreationDate === dailyReviewDate;
+                        }
                     });
                     return entries;
                 })
@@ -391,7 +379,7 @@ export class AccountService {
             );
     }
 
-    getWellnessEntryByDate(date: string, userId: number) {
+    getWellnessEntryByDate(date: string, userId: string) {
 
         return this.http.get<IWellnessRating[]>(this.wellnessRatingsUrl).
             pipe(
@@ -410,7 +398,7 @@ export class AccountService {
             );
     }
 
-    getWellnessEntriesInDateRange(oldestDate: Date, latestDate: Date, userId: number) {
+    getWellnessEntriesInDateRange(oldestDate: Date, latestDate: Date, userId: string) {
         return this.http.get<IWellnessRating[]>(this.wellnessRatingsUrl).
             pipe(
                 map((wellnessRatings) => {

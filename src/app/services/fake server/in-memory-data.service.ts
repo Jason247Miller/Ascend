@@ -4,10 +4,8 @@ import { InMemoryDbService } from 'angular-in-memory-web-api';
 import { BehaviorSubject, delay, of } from 'rxjs';
 import { User } from 'src/app/models/Users';
 import { IGuidedJournalLog } from 'src/app/models/IGuidedJournalLog';
-import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
-import { Habit } from 'src/app/models/Habit';
-import { IWellnessRating } from 'src/app/models/IWellnessRating';
-import { IHabitCompletionLog } from 'src/app/models/IHabitCompletionLog';
+import { v4 as uuidv4 } from 'uuid';
+
 @Injectable({ providedIn: 'root', })
 export class InMemoryDataService implements InMemoryDbService {
     private userSubject!: BehaviorSubject<User>;
@@ -16,14 +14,14 @@ export class InMemoryDataService implements InMemoryDbService {
         return {
             users: [
                 {
-                    id: 1,
+                    id: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     firstName: 'Jason',
                     lastName: 'Miller',
                     email: 'jason.miller@yahoo.com',
                     password: 'testPass123!'
                 },
                 {
-                    id: 2,
+                    id: 'a58a9560-3ed8-4eaa-b97e-c558179861e8',
                     firstName: 'John',
                     lastName: 'Smith',
                     email: 'john@gmail.com',
@@ -33,9 +31,9 @@ export class InMemoryDataService implements InMemoryDbService {
 
             wellnessRatings: [
                 {
-                    id: 1,
-                    userId: 1,
-                    date: '02-11-2023',
+                    id: '8c8b043c-f34d-4198-a2fa-b875b96c37cc',
+                    userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
+                    date: '2023-03-22',
                     sleepRating: 5,
                     exerciseRating: 7,
                     nutritionRating: 8,
@@ -48,9 +46,9 @@ export class InMemoryDataService implements InMemoryDbService {
                     overallDayRating: 7
                 },
                 {
-                    id: 1,
-                    userId: 1,
-                    date: '02-07-2023',
+                    id: '2fad9b2d-2404-4929-9d04-b06d8df9a95d',
+                    userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
+                    date: '2023-02-11',
                     sleepRating: 5,
                     exerciseRating: 7,
                     nutritionRating: 3,
@@ -63,9 +61,9 @@ export class InMemoryDataService implements InMemoryDbService {
                     overallDayRating: 7
                 },
                 {
-                    id: 1,
-                    userId: 1,
-                    date: '02-17-2023',
+                    id: 'e33cbdb2-e1e6-4893-ad52-74c3906c41ac',
+                    userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
+                    date: '2023-02-17',
                     sleepRating: 5,
                     exerciseRating: 2,
                     nutritionRating: 3,
@@ -78,9 +76,9 @@ export class InMemoryDataService implements InMemoryDbService {
                     overallDayRating: 7
                 },
                 {
-                    id: 2,
-                    userId: 1,
-                    date: '01-06-2023',
+                    id: 'b114860a-0edf-40f0-898c-94cd69305ac5',
+                    userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
+                    date: '2023-01-06',
                     sleepRating: 5,
                     exerciseRating: 0,
                     nutritionRating: 0,
@@ -96,103 +94,103 @@ export class InMemoryDataService implements InMemoryDbService {
 
             habitCompletionLogs: [
                 {
-                    id: 1,
-                    userId: 1,
+                    id: 'dc755854-c76c-4960-883e-2c792e5ca1f8',
+                    userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     habitId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     completed: false,
-                    date: '02-17-2023'
+                    date: '2023-02-17'
                 },
                 {
-                    id: 2,
-                    userId: 1,
+                    id: '96a8a12e-ffda-44c1-bcfd-580a9e3c8b0a',
+                    userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     habitId: '2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec',
                     completed: false,
-                    date: '02-17-2023'
+                    date: '2023-02-17'
                 },
                 {
-                    id: 3,
-                    userId: 1,
+                    id: '9572a061-2f81-4b1a-b101-8bbabfa7fe9b',
+                    userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     habitId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     completed: true,
-                    date: '02-11-2023'
+                    date: '2023-02-11'
                 },
                 {
-                    id: 4,
-                    userId: 1,
+                    id: '32205731-9ea7-4f3b-ba8b-ed9b19c3fbaa',
+                    userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     habitId: '2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec',
                     completed: true,
-                    date: '02-11-2023'
+                    date: '2023-02-11'
                 }
 
             ],
             habits: [
                 {
-                    id: 1,
-                    userId: 1,
+                    id: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
+                    userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     habitName: 'Play Guitar for 20 minutes a day',
-                    uuid: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
-                    deleted: false
+                    deleted: false,
+                    creationDate: '2023-02-11'
                 },
                 {
-                    id: 2,
-                    userId: 1,
+                    id: '2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec',
+                    userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     habitName: 'Cardio for 30 minutes',
-                    uuid: '2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec',
-                    deleted: false
+                    deleted: false,
+                    creationDate: '2023-02-11'
                 },
                 {
-                    id: 3,
-                    userId: 1,
+                    id: '2e2bd1d4-c4a3-475a-bc8a-5aea1157e0ec',
+                    userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     habitName: 'Meditate for 10 minutes',
-                    uuid: '2e2bd1d4-c4a3-475a-bc8a-5aea1157e0ec',
-                    deleted: true
+                    deleted: true,
+                    creationDate: '2023-02-11'
                 }
             ],
             guidedJournalEntries: [
                 {
-                    id: 1,
-                    userId: 1,
+                    id: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
+                    userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     entryName: 'What are you most greatful for?',
-                    uuid: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
-                    deleted: false
+                    deleted: false,
+                    creationDate: '2023-03-22'
                 },
                 {
-                    id: 2,
-                    userId: 1,
+                    id: '2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec',
+                    userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     entryName: 'what did you learn today?',
-                    uuid: '2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec',
-                    deleted: false
+                    deleted: false,
+                    creationDate: '2023-03-22'
                 }
             ],
             guidedJournalLogs: [
                 {
-                    id: 1,
-                    userId: 1,
+                    id: 'c35a7756-7b06-4abe-970d-fd2dbbdab1f2',
+                    userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     entryId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     entryTextValue: 'my health',
-                    date: '02-17-2023'
+                    date: '2023-02-17'
                 },
 
                 {
-                    id: 2,
-                    userId: 1,
+                    id: '5e794542-7aef-4373-8ca6-e8095e84a15e',
+                    userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     entryId: '2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec',
                     entryTextValue: 'how to enjoy the moment',
-                    date: '02-17-2023'
+                    date: '2023-02-17'
                 },
                 {
-                    id: 3,
-                    userId: 1,
+                    id: '2f8cc6e0-3146-461a-b4bf-f18d184ce651',
+                    userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     entryId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     entryTextValue: '',
-                    date: '02-11-2023'
+                    date: '2023-02-11'
                 },
                 {
-                    id: 4,
-                    userId: 1,
+                    id: '12b72366-f8db-43f0-9e65-9e50a4fe70b5',
+                    userId: 'd58a9560-3ed8-4eaa-b97e-c558179861e8',
                     entryId: '2e2bd1d4-c4a3-475a-bc8a-5aea1156e0ec',
                     entryTextValue: '',
-                    date: '02-11-2023'
+                    date: '2023-02-11'
                 }
             ]
         };
@@ -252,7 +250,7 @@ export class InMemoryDataService implements InMemoryDbService {
     register(reqInfo: any) {
 
         const requestBody = reqInfo['req']['body'];
-        const id: number = this.genId(this.db.users);
+        const id: string = this.genId(this.db.users);
         requestBody['id'] = id;
 
         //return error if email is already in db 
@@ -311,9 +309,12 @@ export class InMemoryDataService implements InMemoryDbService {
         });
     }
 
-    genId(entries: any): number {
-        return entries.length > 0 ? Math.max(...entries.
-            map((entry: { id: number; }) => entry.id)) + 1 : 1;
+    genId(entries: any): string {
+        return this.generateGuid();
+    }
+
+    private generateGuid(): string {
+        return uuidv4();
     }
 
 }

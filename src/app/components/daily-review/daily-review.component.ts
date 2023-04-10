@@ -27,7 +27,7 @@ export class DailyReviewComponent implements OnInit {
   ) { }
   private entryDateHabitLogs: IHabitCompletionLog[];
   private entryDateJournalLogs: IGuidedJournalLog[];
-  private currentUserId: number;
+  private currentUserId: string;
 
   journalLogs$: Observable<IGuidedJournalLog[]>;
   rating$: Observable<IWellnessRating>;
@@ -72,11 +72,7 @@ export class DailyReviewComponent implements OnInit {
     }
     else {
       this.previousDailyReview = false;
-      let date = new Date();
-      let month = date.getMonth() + 1; // getMonth() returns a zero-based index, so we need to add 1 to get the correct month
-      let day = date.getDate();
-      let year = date.getFullYear();
-      this.entryDate = month + "-" + day + "-" + year;
+      this.entryDate = new Date().toISOString().split('T', 1)[0];
     }
   }
 
@@ -100,7 +96,7 @@ export class DailyReviewComponent implements OnInit {
       Object.keys(this.guidedJournalForm.controls).forEach(controlName => {
         const control = this.guidedJournalForm.controls[controlName];
         this.entryDateJournalLogs.push({
-          id: 0,
+          id: '',
           userId: this.currentUserId,
           entryId: controlName,
           entryTextValue: control.value,
@@ -109,12 +105,8 @@ export class DailyReviewComponent implements OnInit {
 
       });
 
-
       this.journalLogs$ = this.accountService.addJournalRecordLogs(this.entryDateJournalLogs)
         .pipe(take(1));
-
-
-
     }
     else if (this.entryDateJournalLogs.length > 0) {
 
@@ -127,11 +119,8 @@ export class DailyReviewComponent implements OnInit {
       }
       );
 
-
       this.journalLogs$ = this.accountService.updateJournalRecordLogs(this.entryDateJournalLogs)
         .pipe(take(1));
-
-
     }
   }
 
@@ -142,7 +131,7 @@ export class DailyReviewComponent implements OnInit {
       Object.keys(this.habitReviewForm.controls).forEach(controlName => {
 
         this.entryDateHabitLogs.push({
-          id: 0,
+          id: '',
           userId: this.currentUserId,
           habitId: controlName,
           completed: this.habitReviewForm.controls[controlName].value,
@@ -187,13 +176,13 @@ export class DailyReviewComponent implements OnInit {
   }
   initializeForms() {
     this.habitReviewForm = this.fb.group({});
-    this.accountService.getHabits(this.currentUserId).
+    this.accountService.getHabits(this.currentUserId, this.entryDate).
       pipe(take(1)).
       subscribe(habits => {
         if (habits.length > 0) {
           habits.forEach(habit => {
             this.habits.push(habit);
-            this.habitReviewForm.addControl(habit.uuid, new FormControl(false));
+            this.habitReviewForm.addControl(habit.id, new FormControl(false));
           });
         }
       });
@@ -214,13 +203,13 @@ export class DailyReviewComponent implements OnInit {
       date: this.entryDate
     });
     this.guidedJournalForm = this.fb.group({});
-    this.accountService.getJournalEntry(this.currentUserId).
+    this.accountService.getJournalEntry(this.currentUserId, this.entryDate).
       pipe(take(1)).
       subscribe(entry => {
         if (entry.length !== 0) {
           entry.forEach(entry => {
             this.journalEntries.push(entry);
-            this.guidedJournalForm.addControl(entry.uuid, new FormControl(''));
+            this.guidedJournalForm.addControl(entry.id, new FormControl(''));
           });
         }
       });
@@ -296,10 +285,9 @@ export class DailyReviewComponent implements OnInit {
   }
 
   isToday(datePassed: Date) {
-    const today = new Date();
-    return (datePassed.getDate() === today.getDate() &&
-      datePassed.getMonth() === today.getMonth() &&
-      datePassed.getFullYear() === today.getFullYear())
+    var datePassedString = datePassed.toISOString().split(/[T ]/i, 1)[0];
+    const today = new Date().toISOString().split(/[T ]/i, 1)[0];
+    return today === datePassedString;
   }
 
   openPopup(formType: string, content: TemplateRef<any>) {
@@ -349,7 +337,7 @@ export class DailyReviewComponent implements OnInit {
           .pipe(take(1)) :
         of({}).pipe(take(1));
 
-      let newModalEntries = this.modalJournalEntries.filter(entry => entry.id === 0);
+      let newModalEntries = this.modalJournalEntries.filter(entry => entry.id === '');
       let newEntries$ = newModalEntries.length > 0 ?
         this.accountService.addJournalRecordEntries(newModalEntries)
           .pipe(take(1)) :
@@ -368,7 +356,7 @@ export class DailyReviewComponent implements OnInit {
           .pipe(take(1)) :
         of({}).pipe(take(1));
 
-      let newModalHabits = this.modalHabits.filter(habit => habit.id === 0);
+      let newModalHabits = this.modalHabits.filter(habit => habit.id === '');
       let newHabits$ = newModalHabits.length > 0 ?
         this.accountService.addHabitEntries(newModalHabits)
           .pipe(take(1)) :
@@ -391,14 +379,16 @@ export class DailyReviewComponent implements OnInit {
   addItem() {
 
     if (this.formType === 'journal') {
+
       let newItem = this.modalForm.get('addItemInput')?.value;
       this.modalForm.get('addItemInput')?.setValue('');
+
       let newEntry: IGuidedJournalEntry = {
-        id: 0,
+        id: '',
         userId: this.currentUserId,
         entryName: newItem ?? '',
-        uuid: this.accountService.generateUUID(),
-        deleted: false
+        deleted: false,
+        creationDate: this.entryDate
       };
       (<FormArray>this.modalForm.get('items')).push(new FormControl(newItem))
       this.modalJournalEntries.push(newEntry);
@@ -407,11 +397,11 @@ export class DailyReviewComponent implements OnInit {
       let newItem = this.modalForm.get('addItemInput')?.value;
       this.modalForm.get('addItemInput')?.setValue('');
       let newHabit: Habit = {
-        id: 0,
+        id: '',
         userId: this.currentUserId,
         habitName: newItem ?? '',
-        uuid: this.accountService.generateUUID(),
-        deleted: false
+        deleted: false,
+        creationDate: this.entryDate
       };
       (<FormArray>this.modalForm.get('items')).push(new FormControl(newItem))
       this.modalHabits.push(newHabit);

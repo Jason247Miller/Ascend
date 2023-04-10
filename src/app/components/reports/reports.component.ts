@@ -20,7 +20,7 @@ export class ReportsComponent implements OnInit {
   dates!: string[];
   startIndex: number = 0;
   yearTracker: number = 0;
-  
+
   private queryDatesArray: string[] = [];
   private sleepRatings: (number | null)[];
   private exerciseRatings: (number | null)[];
@@ -33,7 +33,7 @@ export class ReportsComponent implements OnInit {
   private energyRatings: (number | null)[];
   private overallRatings: (number | null)[];
   private myChartData: ChartData;
-  private currentUserId!: number;
+  private currentUserId!: string;
 
   ngOnInit(): void {
 
@@ -130,12 +130,7 @@ export class ReportsComponent implements OnInit {
         month: "2-digit",
         day: "2-digit"
       });
-      let queryDateString = date.toLocaleDateString("en-US", {
-        month: "2-digit",
-        day: "2-digit",
-        year: "numeric"
-      });
-      queryDateString = queryDateString.replace(/(\d+)\/(\d+)\/(\d+)/, "$1-$2-$3");
+      let queryDateString = date.toISOString().split(/[T ]/i, 1)[0];
       this.queryDatesArray.push(queryDateString);
       displayDateArray.push(chartDateString);
     }

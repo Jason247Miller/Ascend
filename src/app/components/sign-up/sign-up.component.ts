@@ -42,7 +42,7 @@ private fb: FormBuilder,
     submit() {
 
         const formData = this.signUpForm.getRawValue();
-        this.dataToSend = {id:0, //default
+        this.dataToSend = {id:'', //default
             firstName: formData.firstName,
             lastName: formData.lastName,
             email: formData.email, 

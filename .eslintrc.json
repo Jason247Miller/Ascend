@@ -29,15 +29,10 @@
         "plugin:@angular-eslint/template/process-inline-templates"      ],
 
       "rules": {
-        "no-console":"error", 
-        "no-multiple-empty-lines": ["error", {"max": 1}],
-       "object-curly-newline": ["error", "never"
-      
-    ],
+        "no-console":"warn", 
         "@angular-eslint/directive-selector": [
 
           "error",
-
           {
 
             "type": "attribute",
