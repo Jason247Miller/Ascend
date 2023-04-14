@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, combineLatest, EMPTY, map, take, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, EMPTY, map, Subject, take, tap, throwError } from 'rxjs';
 import { User } from 'src/app/models/Users';
 import { Router } from '@angular/router';
 import { IWellnessRating } from 'src/app/models/IWellnessRating';
@@ -9,15 +9,14 @@ import { Habit } from 'src/app/models/Habit';
 import { IHabitCompletionLog } from 'src/app/models/IHabitCompletionLog';
 import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
 import { IGuidedJournalLog } from 'src/app/models/IGuidedJournalLog';
+import { MsalService } from '@azure/msal-angular';
 
 @Injectable({ providedIn: 'root' })
 export class AccountService {
-
+    private readonly _destroying$ = new Subject<void>();
     public redirectUrl?: string;
     private currentUserSubject = new BehaviorSubject<User | string>("default");
     public currentUser$ = this.currentUserSubject.asObservable();
-    private localStorageUserSubject = new BehaviorSubject<User | string | null>("default");
-    public localStorageUser$ = this.localStorageUserSubject.asObservable();
     private hideSideBarSubject = new BehaviorSubject(false);
     public hideSideBar$ = this.hideSideBarSubject.asObservable();
     private wellnessRatingsUrl = 'api/wellnessRatings/';
@@ -25,67 +24,38 @@ export class AccountService {
     private guidedJournalEntriesUrl = 'api/guidedJournalEntries/';
     private guidedJournalLogsUrl = 'api/guidedJournalLogs/';
     private habitCompletionLogsUrl = 'api/habitCompletionLogs/';
-    constructor(private http: HttpClient, private router: Router, private alertService: AlertService) {
+    constructor(private http: HttpClient,
+                private router: Router,
+                private alertService: AlertService,
+                private authService: MsalService,
+                private msalService: MsalService)
+ {
     }
     setSidebarValue(display: boolean) {
         this.hideSideBarSubject.next(display);
     }
-    setLocalStoreageUserSubject(localUser: string | null | User) {
-        this.localStorageUserSubject.next(localUser);
-    }
-    getLocalStoreageUser$() {
-        return this.localStorageUserSubject.asObservable();
-    }
 
-    login(email: string, password: string) {
-        return this.http.post<User>(
-            'api/authenticate',
-            { email, password }
-        ).pipe(
-            tap(user => {
-                localStorage.setItem(
-                    'currentUser',
-                    JSON.stringify(user)
-                );
-                this.updateLocalStorageSubject();
-                return user;
-            }),
-            catchError(error => this.handleError(
-                error,
-                'User name or password is incorrect!'
-            ))
-        );
-    }
-
-    logOut(): void {
-
-        localStorage.removeItem('currentUser');
-        //this.currentUserSubject.next("default");
-        this.localStorageUserSubject.next('default');
-        this.router.navigate(['/login']);
-    }
-
-    signUp(userData: User) {
-        return this.http.post<User>(
-            'api/register',
-            userData
-        ).
-            pipe(
-                catchError(error => {
-                    return this.handleError(
-                        error,
-                        'Email already exists in database!'
-                    );
-                })
-            );
-    }
-
-    isLoggedIn(): boolean {
-        return !!localStorage.getItem('currentUser');
-    }
-
-    updateLocalStorageSubject(): void {
-        this.localStorageUserSubject.next(localStorage.getItem('currentUser'));
+     getUserOid() {
+        const accounts = this.msalService.instance.getAllAccounts();
+        console.log("accounts ", accounts); 
+        if (accounts.length > 0) {
+            const account = accounts[0];
+            console.log("OID = ", account.idTokenClaims?.oid);
+            return account.idTokenClaims?.oid
+          }
+        return "";
+     }
+    
+    login():void {
+       this.authService.loginRedirect()
+        .subscribe({
+            next:(result) => {
+                console.log(result); 
+              //  this.set
+            }
+        });
+        
+        
     }
 
     updateHabitCompletionLogs(habitCompletionLogs: IHabitCompletionLog[]) {
@@ -124,24 +94,30 @@ export class AccountService {
     }
 
     getHabits(userId: string, date: string) {
-
-        const dailyReviewDate = new Date(date).toDateString();
-        const today = new Date().toDateString();
-
+       
+        const today = new Date().toISOString().substring(0,10);
+        const dailyReviewDate = new Date(date).toISOString().substring(0,10);
+       
+        console.log("today date = ", today);
+        console.log("dailyReviewDate =", dailyReviewDate); 
         return this.http.get<Habit[]>(this.habitsUrl).
             pipe(
                 map(habits => {
                     habits = habits.filter((habit) => {
-                        const habitCreationDate = new Date(habit.creationDate).toDateString();
+                        const habitCreationDate = new Date(habit.creationDate).toISOString().substring(0,10);
                         if (habitCreationDate === today) {
                             return habit.userId === userId &&
                                 habit.deleted === false;
                         }
                         else {
                             //show include deleted habits if viewing report from previous date
+                            console.log("date is older than today");
+                            console.log("habit.userId=", habit.userId);
+                            console.log("userId=", userId);
                             return habit.userId === userId && habitCreationDate === dailyReviewDate;
                         }
                     });
+                    console.log("habits = ", habits); 
                     return habits;
                 }),
                 tap(habits => {
@@ -405,7 +381,7 @@ export class AccountService {
 
                     wellnessRatings = wellnessRatings.filter((entry) => {
                         let entryDate = new Date(entry.date);
-                        return (entryDate >= oldestDate) && (entryDate <= latestDate);
+                        return (entryDate >= oldestDate) && (entryDate <= latestDate) && entry.userId === userId;
                     });
 
                     return wellnessRatings;

@@ -6,12 +6,11 @@
         <li class="menu-link" (click)="sideBarMenuDisplay()"><a>Menu</a></li>
       </ng-container>
       <li><a [routerLink]="['/home']">Home</a></li>
-      <ng-container *ngIf="localStorageUser$ | async as localStorageUser">
-        <li *ngIf="localStorageUser === 'default'"><a [routerLink]="['/login']">Login</a></li>
-        <li *ngIf="localStorageUser === 'default'"><a [routerLink]="['/sign-up']">Sign-Up</a></li>
+      <ng-container>
+        <li *ngIf="loginDisplay === false"><a (click)="login()">Login</a></li>
         <li><a [routerLink]="['/kb']">KB</a></li>
-        <li *ngIf="localStorageUser !== 'default'"><a [routerLink]="['/dashboard']">Dashboard</a></li>
-        <li *ngIf="localStorageUser !== 'default'"><a (click)=logOut()>Logout</a></li>
+        <li *ngIf="loginDisplay === true"><a [routerLink]="['/dashboard']">Dashboard</a></li>
+        <li *ngIf="loginDisplay === true"><a (click)=logOut()>Logout</a></li>
       </ng-container>
     </ul>
   </div>

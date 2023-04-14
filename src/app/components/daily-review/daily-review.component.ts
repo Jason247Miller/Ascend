@@ -58,7 +58,7 @@ export class DailyReviewComponent implements OnInit {
   ngOnInit(): void {
 
     this.dateParam = this.activatedRoute.snapshot.paramMap.get('date');
-    this.currentUserId = JSON.parse(localStorage.getItem('currentUser') || '{}').id;
+    this.currentUserId = this.accountService.getUserOid() || "No User Oid Found";
     this.setEntryDate();
     this.initializeForms();
     this.setFormInputValues();

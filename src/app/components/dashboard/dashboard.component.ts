@@ -8,7 +8,7 @@ import { AccountService } from 'src/app/services/account/account.service';
   styleUrls: ['./dashboard.component.less']
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-  constructor(private accountService: AccountService) { }
+  constructor(private accountService: AccountService) {}
   private sidebarSub: Subscription;
   sidebarDisplayProp: string;
   hideSidebar: boolean = true;
