@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, combineLatest, EMPTY, map, Subject, take, tap, throwError } from 'rxjs';
 import { User } from 'src/app/models/Users';
-import { Router } from '@angular/router';
 import { IWellnessRating } from 'src/app/models/IWellnessRating';
 import { AlertService } from '../alert/alert.service';
 import { Habit } from 'src/app/models/Habit';
@@ -19,43 +18,35 @@ export class AccountService {
     public currentUser$ = this.currentUserSubject.asObservable();
     private hideSideBarSubject = new BehaviorSubject(false);
     public hideSideBar$ = this.hideSideBarSubject.asObservable();
-    private wellnessRatingsUrl = 'api/wellnessRatings/';
-    private habitsUrl = 'api/habits';
-    private guidedJournalEntriesUrl = 'api/guidedJournalEntries/';
-    private guidedJournalLogsUrl = 'api/guidedJournalLogs/';
-    private habitCompletionLogsUrl = 'api/habitCompletionLogs/';
+    private wellnessRatingsUrl = 'https://localhost:7282/api/v1/WellnessRating/';
+    private habitsUrl = 'https://localhost:7282/api/v1/habit/';
+    private guidedJournalEntriesUrl = 'https://localhost:7282/api/v1/guidedJournalEntry/';
+    private guidedJournalLogsUrl = 'https://localhost:7282/api/v1/guidedJournalLog/';
+    private habitCompletionLogsUrl = 'https://localhost:7282/api/v1/habitCompletionLog/';
     constructor(private http: HttpClient,
-                private router: Router,
-                private alertService: AlertService,
-                private authService: MsalService,
-                private msalService: MsalService)
- {
+        private alertService: AlertService,
+        private authService: MsalService,
+        private msalService: MsalService) {
     }
     setSidebarValue(display: boolean) {
         this.hideSideBarSubject.next(display);
     }
 
-     getUserOid() {
+    getUserOid() {
         const accounts = this.msalService.instance.getAllAccounts();
-        console.log("accounts ", accounts); 
         if (accounts.length > 0) {
             const account = accounts[0];
-            console.log("OID = ", account.idTokenClaims?.oid);
             return account.idTokenClaims?.oid
-          }
+        }
         return "";
-     }
-    
-    login():void {
-       this.authService.loginRedirect()
-        .subscribe({
-            next:(result) => {
-                console.log(result); 
-              //  this.set
-            }
-        });
-        
-        
+    }
+
+    login(): void {
+        this.authService.loginRedirect()
+            .subscribe({
+                next: (result) => {
+                }
+            });
     }
 
     updateHabitCompletionLogs(habitCompletionLogs: IHabitCompletionLog[]) {
@@ -94,38 +85,36 @@ export class AccountService {
     }
 
     getHabits(userId: string, date: string) {
-       
-        const today = new Date().toISOString().substring(0,10);
-        const dailyReviewDate = new Date(date).toISOString().substring(0,10);
-       
-        console.log("today date = ", today);
-        console.log("dailyReviewDate =", dailyReviewDate); 
-        return this.http.get<Habit[]>(this.habitsUrl).
+
+        const dailyReviewDate = new Date(date).toISOString().substring(0, 10);
+        const today = new Date().toISOString().substring(0, 10);
+
+        return this.http.get<Habit[]>(this.habitsUrl + 'userId/' + userId).
             pipe(
-                map(habits => {
+                map((habits) => {
                     habits = habits.filter((habit) => {
-                        const habitCreationDate = new Date(habit.creationDate).toISOString().substring(0,10);
+                        const habitCreationDate = new Date(habit.creationDate).toISOString().substring(0, 10);
                         if (habitCreationDate === today) {
                             return habit.userId === userId &&
                                 habit.deleted === false;
                         }
                         else {
-                            //show include deleted habits if viewing report from previous date
-                            console.log("date is older than today");
-                            console.log("habit.userId=", habit.userId);
-                            console.log("userId=", userId);
+                            //show include deleted entries if viewing report from previous date
                             return habit.userId === userId && habitCreationDate === dailyReviewDate;
                         }
                     });
-                    console.log("habits = ", habits); 
                     return habits;
-                }),
-                tap(habits => {
                 })
+                ,
+                catchError(error => {
+                    return this.handleError(error, "Error occured retrieving Habits");
+                })
+
             );
     }
 
     handleError(error: string, customMessage?: string) {
+
         if (customMessage) {
             this.alertService.error(customMessage);
         } else {
@@ -173,10 +162,40 @@ export class AccountService {
             );
     }
 
+    deleteJournalRecordEntries(journalEntries: IGuidedJournalEntry[]) {
+
+        return combineLatest(journalEntries.map(
+            entry => this.http.delete<IGuidedJournalEntry>(this.guidedJournalEntriesUrl + entry.id)
+                .pipe(
+                    take(1),
+                    catchError(error => {
+                        this.alertService.error('Error: Failed to delete Guided Journal Entry with ID:' + entry.id);
+                        console.error('Error deleting Journal Entry with ID:' + entry.id);
+                        return throwError(() => new Error(error))
+                    })
+                )
+
+        ))
+    }
+    deleteHabits(habits: Habit[]) {
+
+        return combineLatest(habits.map(
+            habit => this.http.delete<IGuidedJournalEntry>(this.habitsUrl + habit.id)
+                .pipe(
+                    take(1),
+                    catchError(error => {
+                        this.alertService.error('Error: Failed to delete Guided Journal Entry with ID:' + habit.id);
+                        console.error('Error deleting Journal Entry with ID:' + habit.id);
+                        return throwError(() => new Error(error))
+                    })
+                )
+
+        ))
+    }
     updateJournalRecordEntries(journalEntries: IGuidedJournalEntry[]) {
 
         return combineLatest(journalEntries.map(
-            entry => this.http.put<IGuidedJournalEntry>(this.guidedJournalEntriesUrl, entry)
+            entry => this.http.put<IGuidedJournalEntry>(this.guidedJournalEntriesUrl + entry.id, entry)
                 .pipe(
                     take(1),
                     catchError(error => {
@@ -194,6 +213,7 @@ export class AccountService {
     }
 
     updateJournalRecordLogs(journalLogs: IGuidedJournalLog[]) {
+
         return combineLatest(journalLogs.map(
             log => this.http.put<IGuidedJournalLog>(this.guidedJournalLogsUrl + log.id, log)
                 .pipe(
@@ -212,6 +232,7 @@ export class AccountService {
             );
     }
     addWellnessRatingEntry(wellnessEntry: IWellnessRating) {
+
         return this.http.post<IWellnessRating>(
             this.wellnessRatingsUrl,
             wellnessEntry
@@ -225,6 +246,7 @@ export class AccountService {
     }
 
     updateHabitEntries(habits: Habit[]) {
+
         return combineLatest(habits.map(
             habit => this.http.put<Habit>(this.habitsUrl + habit.id, habit)
                 .pipe(
@@ -243,6 +265,7 @@ export class AccountService {
     }
 
     addHabitEntries(habits: Habit[]) {
+
         return combineLatest(habits.map(
             habit => this.http.post<Habit>(this.habitsUrl, habit)
                 .pipe(
@@ -260,6 +283,7 @@ export class AccountService {
 
     }
     updateHabitEntry(habit: Habit) {
+
         return this.http.put<Habit>(
             this.habitsUrl,
             habit
@@ -273,6 +297,7 @@ export class AccountService {
     }
 
     addHabitCompletionLogs(habitCompletionLogs: IHabitCompletionLog[]) {
+
         return combineLatest(habitCompletionLogs.map(
             log => this.http.post<IHabitCompletionLog>(this.habitCompletionLogsUrl, log)
                 .pipe(
@@ -292,7 +317,8 @@ export class AccountService {
     }
 
     getHabitLogEntries(currentDate: string, userId: string) {
-        return this.http.get<IHabitCompletionLog[]>(this.habitCompletionLogsUrl).
+
+        return this.http.get<IHabitCompletionLog[]>(this.habitCompletionLogsUrl + 'userId/' + userId).
             pipe(
                 map((habitLogs) => {
 
@@ -302,13 +328,14 @@ export class AccountService {
                     return habitLogs;
                 }),
                 catchError(error => {
-                    return this.handleError(error, "Error occured querying current Habit Logs");
+                    return this.handleError(error, "Error occured querying Habit Logs");
                 })
             )
     }
 
     getJournalLogEntries(currentDate: string, userId: string) {
-        return this.http.get<IGuidedJournalLog[]>(this.guidedJournalLogsUrl).
+
+        return this.http.get<IGuidedJournalLog[]>(this.guidedJournalLogsUrl + 'userId/' + userId).
             pipe(
                 map((journalLogs) => {
 
@@ -319,7 +346,7 @@ export class AccountService {
                 })
                 ,
                 catchError(error => {
-                    return this.handleError(error, "Error occured querying current Jounral Logs");
+                    return this.handleError(error, "Error occured querying Journal Logs");
                 })
 
 
@@ -328,14 +355,14 @@ export class AccountService {
 
     getJournalEntry(userId: string, date: string) {
 
-        const dailyReviewDate = new Date(date).toDateString();
-        const today = new Date().toDateString();
+        const dailyReviewDate = new Date(date).toISOString().substring(0, 10);
+        const today = new Date().toISOString().substring(0, 10);
 
-        return this.http.get<IGuidedJournalEntry[]>(this.guidedJournalEntriesUrl).
+        return this.http.get<IGuidedJournalEntry[]>(this.guidedJournalEntriesUrl + 'userId/' + userId).
             pipe(
                 map((entries) => {
                     entries = entries.filter((entry) => {
-                        const entryCreationDate = new Date(entry.creationDate).toDateString();
+                        const entryCreationDate = new Date(entry.creationDate).toISOString().substring(0, 10);
                         if (entryCreationDate === today) {
                             return entry.userId === userId &&
                                 entry.deleted === false;
@@ -349,7 +376,7 @@ export class AccountService {
                 })
                 ,
                 catchError(error => {
-                    return this.handleError(error, "Error occured in journal entry exists query");
+                    return this.handleError(error, "Error occured retrieving Journal Entries");
                 })
 
             );
@@ -357,7 +384,7 @@ export class AccountService {
 
     getWellnessEntryByDate(date: string, userId: string) {
 
-        return this.http.get<IWellnessRating[]>(this.wellnessRatingsUrl).
+        return this.http.get<IWellnessRating[]>(this.wellnessRatingsUrl + 'userId/' + userId).
             pipe(
                 map((rating) => {
 
@@ -368,17 +395,17 @@ export class AccountService {
                 })
                 ,
                 catchError(error => {
-                    return this.handleError(error, "Error occured in wellness rating exists query");
+                    return this.handleError(error, "Error occured retrieving Wellness Ratings");
                 })
 
             );
     }
 
     getWellnessEntriesInDateRange(oldestDate: Date, latestDate: Date, userId: string) {
-        return this.http.get<IWellnessRating[]>(this.wellnessRatingsUrl).
+        
+        return this.http.get<IWellnessRating[]>(this.wellnessRatingsUrl + 'userId/' + userId).
             pipe(
                 map((wellnessRatings) => {
-
                     wellnessRatings = wellnessRatings.filter((entry) => {
                         let entryDate = new Date(entry.date);
                         return (entryDate >= oldestDate) && (entryDate <= latestDate) && entry.userId === userId;
@@ -387,7 +414,7 @@ export class AccountService {
                     return wellnessRatings;
                 }),
                 catchError(error => {
-                    return this.handleError(error, "Error occured in Wellness Entries Date Range");
+                    return this.handleError(error, "Error occured in retrieving Wellness Ratings");
                 })
 
             );

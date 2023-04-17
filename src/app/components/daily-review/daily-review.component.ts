@@ -3,7 +3,6 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { AccountService } from 'src/app/services/account/account.service';
 import { IWellnessRating } from 'src/app/models/IWellnessRating';
 import { forkJoin, Observable, of, take } from 'rxjs';
-import { AlertService } from 'src/app/services/alert/alert.service';
 import { Habit } from 'src/app/models/Habit';
 import { IHabitCompletionLog } from 'src/app/models/IHabitCompletionLog';
 import { IGuidedJournalEntry } from 'src/app/models/IGuidedJournalEntry';
@@ -21,7 +20,6 @@ export class DailyReviewComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private accountService: AccountService,
-    private alertService: AlertService,
     private activatedRoute: ActivatedRoute,
     private modalService: NgbModal
   ) { }
@@ -81,13 +79,6 @@ export class DailyReviewComponent implements OnInit {
     this.submitWellnessRatingForm();
     this.submitHabitReviewForm();
     this.submitGuidedJournalForm();
-    forkJoin([this.rating$, this.habits$, this.journalLogs$])
-      .pipe(
-        take(1)
-      )
-      .subscribe(() => {
-        this.alertService.success("Entries Submitted Successfully");
-      });
   }
   submitGuidedJournalForm() {
 
@@ -188,7 +179,7 @@ export class DailyReviewComponent implements OnInit {
       });
 
     this.wellnessRatingForm = this.fb.group({
-      id: 0,
+      id: "",
       sleepRating: [1, Validators.required],
       exerciseRating: [1, Validators.required],
       nutritionRating: [1, Validators.required],
@@ -248,7 +239,6 @@ export class DailyReviewComponent implements OnInit {
       this.currentUserId).
       pipe(take(1)).
       subscribe(wellnessRatings => {
-        //if rating entries exist for current date
         this.wellnessEntry = wellnessRatings;
         if (wellnessRatings.length > 0) {
 
@@ -331,28 +321,32 @@ export class DailyReviewComponent implements OnInit {
   update() {
 
     if (this.formType === 'journal') {
+      let newModalEntries = this.modalJournalEntries.filter(entry => entry.id === '');
+      let newEntries$ = newModalEntries.length > 0 ?
 
-      let deletedEntries$ = this.deletedJournalEntries.length > 0 ?
-        this.accountService.updateJournalRecordEntries(this.deletedJournalEntries)
+        this.accountService.addJournalRecordEntries(newModalEntries)
           .pipe(take(1)) :
         of({}).pipe(take(1));
 
-      let newModalEntries = this.modalJournalEntries.filter(entry => entry.id === '');
-      let newEntries$ = newModalEntries.length > 0 ?
-        this.accountService.addJournalRecordEntries(newModalEntries)
+      let deletedEntries$ = this.deletedJournalEntries.length > 0 ?
+        this.accountService.deleteJournalRecordEntries(this.deletedJournalEntries)
           .pipe(take(1)) :
         of({}).pipe(take(1));
 
       forkJoin([deletedEntries$, newEntries$])
         .pipe(take(1))
         .subscribe(() => {
+          this.habits = [];
+          this.journalEntries = [];
+          this.initializeForms();
+          this.setFormInputValues();
           this.modalService.dismissAll();
         });
     }
 
     else if (this.formType === 'habits') {
       let deletedHabits$ = this.deletedHabits.length > 0 ?
-        this.accountService.updateHabitEntries(this.deletedHabits)
+        this.accountService.deleteHabits(this.deletedHabits)
           .pipe(take(1)) :
         of({}).pipe(take(1));
 
@@ -365,16 +359,14 @@ export class DailyReviewComponent implements OnInit {
       forkJoin([deletedHabits$, newHabits$])
         .pipe(take(1))
         .subscribe(() => {
-
+          this.habits = [];
+          this.journalEntries = [];
+          this.initializeForms();
+          this.setFormInputValues();
           this.modalService.dismissAll();
         });
 
     }
-
-    this.habits = [];
-    this.journalEntries = [];
-    this.initializeForms();
-    this.setFormInputValues();
   }
   addItem() {
 

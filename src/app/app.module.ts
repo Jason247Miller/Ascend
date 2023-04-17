@@ -5,7 +5,7 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
 import { KnowledgeBaseComponent } from './components/knowledge-base/knowledge-base.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { InMemoryDataService } from './services/fake server/in-memory-data.service';
 import { AccountService } from './services/account/account.service';
@@ -20,7 +20,7 @@ import { GuidedJournalFormComponent } from './components/guided-journal-form/gui
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { GoalsComponent } from './components/goals/goals.component';
-import { MsalGuard, MsalGuardConfiguration, MsalInterceptorConfiguration, MsalModule, MsalRedirectComponent } from '@azure/msal-angular';
+import { MsalGuard, MsalGuardConfiguration, MsalInterceptor, MsalInterceptorConfiguration, MsalModule, MsalRedirectComponent } from '@azure/msal-angular';
 import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
 
 
@@ -35,7 +35,8 @@ const msalGuardConfig: MsalGuardConfiguration = {
 const msalInterceptorConfig: MsalInterceptorConfiguration = {
       interactionType: InteractionType.Redirect,
       protectedResourceMap: new Map([
-            ['https://graph.microsoft.com/v1.0/', ['user.read']]
+            ['https://graph.microsoft.com/v1.0/', ['user.read']],
+            ['https://localhost:7282/api/v1/', ['api://c6d1ad12-2efe-4072-9bde-4d9ac568762c/AllAccess']]
       ])
 };
 
@@ -61,9 +62,9 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
                   BrowserModule,
                   ReactiveFormsModule,
                   HttpClientModule,
-                  HttpClientInMemoryWebApiModule.forRoot(
-                        InMemoryDataService, { dataEncapsulation: false }
-                  ),
+                 // HttpClientInMemoryWebApiModule.forRoot(
+                  //      InMemoryDataService, { dataEncapsulation: false }
+                 // ),
                   MsalModule.forRoot(new PublicClientApplication({
                         auth: {
                               clientId: '508a9ea9-9d32-4437-9e24-36cc62dccc63', // Application (client) ID from the app registration
@@ -97,7 +98,13 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
             ],
             providers: [
                   AccountService,
-                  MsalGuard
+                  MsalGuard,
+                  {
+                        provide: HTTP_INTERCEPTORS,
+                        useClass: MsalInterceptor,
+                        multi: true,
+                  },
+                   
             ],
             bootstrap: [AppComponent, MsalRedirectComponent]
       })

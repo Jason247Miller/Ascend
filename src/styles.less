@@ -13,27 +13,39 @@ button{
 button:hover{
   text-decoration: underline;
 }
+.review-form-grid-container {
+  background-color: lightgray;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  padding: 3px;
+  justify-items: center;
+  align-items: center;
+
+  .journal-container {
+    label {
+      font-weight: bold;
+      padding-top: 3px;
+      padding-bottom: 3px;
+      font-size: 15px;
+    }
+  }
+}
 .review-form {
 
   padding-top: 25px;
-  display: flex;
+  display:grid;
   background-color: lightgray;
   flex-direction: row;
   align-content: flex-start;
   margin-top: 25px;
   padding: 5px;
-  justify-content: left;
+  justify-content: center;
   flex-wrap: wrap;
-  width: 300px;
+  width: 500px;
   box-shadow: 3px 3px 10px 9px rgb(63, 61, 61);
 
-  .heading-container {
-    display: flex;
-    width: 100%;
-    flex-direction: row;
-    justify-content: space-between;
-
-  }
+ 
   button, input{
     border-radius: 10px;
   }
@@ -45,4 +57,12 @@ body {
 }
 li a:hover {
   cursor: pointer;
+}
+
+.heading-container {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content:space-evenly;
+
 }

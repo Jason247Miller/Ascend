@@ -13,5 +13,8 @@
       <textarea id={{entry.id}} formControlName={{entry.id}} rows="4"
         cols="50"></textarea>
     </ng-container>
+    <ng-container *ngIf="journalEntries.length === 0">
+      <h5 class="heading">There are no journal entries created to display</h5>
+    </ng-container>
   </div>
 </form>

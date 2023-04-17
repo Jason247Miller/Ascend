@@ -4,19 +4,17 @@
   height: 100%;
 }
 
-.review-form-flex-container {
-
+.review-form-grid-container {
   background-color: rgb(239, 239, 239);
-  position: relative;
-  display: flex;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
-  padding-bottom: 10px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  padding: 10px;
+  justify-items: center;
+  align-items: center;
 
   .journal-container {
-
     label {
-
       font-weight: bold;
       padding-top: 3px;
       padding-bottom: 3px;
