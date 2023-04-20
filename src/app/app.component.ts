@@ -20,19 +20,28 @@ export class AppComponent implements OnInit, OnDestroy {
     loginDisplay = false;
     hideSidebar: boolean;
 
-    constructor(private accountService: AccountService,
+    constructor(
+        private accountService: AccountService,
         private router: Router,
         private authService: MsalService,
         private broadcastService: MsalBroadcastService,
-        @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration) { }
+        @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration
+        ) {}
 
     ngOnInit(): void {
 
         this.broadcastService.msalSubject$
             .subscribe((event: EventMessage) => {
+
                 if (event.eventType === 'msal:loginSuccess') {
+
                     this.router.navigate(['dashboard/overview']);
                 }
+                if (event.eventType === 'msal:logoutSuccess') {
+
+                    this.router.navigate(['Home/']);
+                }
+
             });
 
         this.broadcastService.inProgress$
@@ -64,20 +73,21 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     logOut(): void {
-        
+
         this.authService.logoutRedirect({
             postLogoutRedirectUri: 'http://localhost:4200'
         });
+
     }
 
     sideBarDisplay() {
 
         this.accountService.hideSideBar$
-        .pipe(take(1))
-        .subscribe(value => {
-            this.hideSidebar = value;
-        }); 
-        
+            .pipe(take(1))
+            .subscribe(value => {
+                this.hideSidebar = value;
+            });
+
         this.accountService.setSidebarValue(!this.hideSidebar);
     }
 

@@ -10,7 +10,7 @@
         <li *ngIf="loginDisplay === false"><a (click)="login()">Login</a></li>
         <li><a [routerLink]="['/kb']">KB</a></li>
         <li *ngIf="loginDisplay === true"><a [routerLink]="['/dashboard']">Dashboard</a></li>
-        <li *ngIf="loginDisplay === true"><a (click)=logOut()>Logout</a></li>
+        <li *ngIf="loginDisplay === true"><a (click)="logOut()">Logout</a></li>
       </ng-container>
     </ul>
   </div>

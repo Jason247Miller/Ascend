@@ -24,7 +24,6 @@ import { MsalGuard, MsalGuardConfiguration, MsalInterceptor, MsalInterceptorConf
 import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
 
 
-//redirects a user to login page when trying to access a protected route
 const msalGuardConfig: MsalGuardConfiguration = {
       interactionType: InteractionType.Redirect,
       authRequest: {
@@ -62,14 +61,15 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
                   BrowserModule,
                   ReactiveFormsModule,
                   HttpClientModule,
-                 // HttpClientInMemoryWebApiModule.forRoot(
+                  // HttpClientInMemoryWebApiModule.forRoot(
                   //      InMemoryDataService, { dataEncapsulation: false }
-                 // ),
+                  // ),
                   MsalModule.forRoot(new PublicClientApplication({
                         auth: {
                               clientId: '508a9ea9-9d32-4437-9e24-36cc62dccc63', // Application (client) ID from the app registration
                               authority: 'https://login.microsoftonline.com/07fcd2cd-de40-4214-bf28-7818722bd2d8', // The Azure cloud instance and the app's sign-in audience (tenant ID, common, organizations, or consumers)
                               redirectUri: 'http://localhost:4200'// This is your redirect URI
+
                         },
                         cache: {
                               cacheLocation: 'localStorage',
@@ -104,7 +104,7 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
                         useClass: MsalInterceptor,
                         multi: true,
                   },
-                   
+
             ],
             bootstrap: [AppComponent, MsalRedirectComponent]
       })
