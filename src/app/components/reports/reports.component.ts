@@ -37,7 +37,8 @@ export class ReportsComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.currentUserId = JSON.parse(localStorage.getItem('currentUser') || '{}').id;
+    this.currentUserId = this.accountService.getUserOid() || "No user Oid Found"; 
+    console.log("OID in reports data");
     this.dates = this.updateDays();//previous 7 days by default
     this.setChartData();
     this.canvas = this.canvasRef.nativeElement;
@@ -105,11 +106,13 @@ export class ReportsComponent implements OnInit {
       if (x >= left + (right * i) && x <= right + (right * i) && y >= top && y <= bottom) {
         this.canvas.style.cursor = 'pointer';
         if (this.myChart.data.labels && mouseEvent.type === 'click') {
-          this.accountService.getWellnessEntryByDate(this.queryDatesArray[i], this.currentUserId,)
+          this.accountService.getWellnessEntryByDate(this.queryDatesArray[i], this.currentUserId)
             .pipe(take(1))
             .subscribe(entriesForDate => {
+              console.log("subscribed called for get wellness entry");
               //if rating entries exist for current date
               if (entriesForDate.length !== 0) {
+                console.log("entriesExistForDateClicked");
                 this.router.navigate(['dashboard/daily-review', this.queryDatesArray[i]])
               }
             });
